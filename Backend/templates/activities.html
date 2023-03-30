@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Activities</title>
+  </head>
+  <body>
+    <h1>All Activities</h1>
+    <table>
+    <thead>
+      <tr>
+          <th>ID</th>
+          <th>name</th>
+          <th>description</th>
+          <th>liked</th>
+          <th>action</th>
+      </tr>
+  </thead>
+    <tbody>
+      {% for activity in sport_activities %}
+      <tr>
+          <td>{{ activity.id }}</td>
+          <td>{{ activity.name }}</td>
+          <td>{{ activity.description }}</td>
+          <td>{{ activity.liked }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('like_activity', activity_id=activity.id) }}">
+              <button type="submit">Like</button>
+            </form>
+            
+            <form method="POST" action="{{ url_for('dislike_activity', activity_id=activity.id) }}">
+              <button type="submit">Dislike</button>
+            </form>
+            
+          </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </body>
+</html>
