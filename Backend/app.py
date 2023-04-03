@@ -106,3 +106,7 @@ def questionnaire():
         # Save questionnaire data to database or file
         return render_template('thank_you.html')
     return render_template('questionnaire.html', form=form)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
