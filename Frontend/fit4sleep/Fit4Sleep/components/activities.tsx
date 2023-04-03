@@ -17,16 +17,16 @@ const Activities = () => {
         fetchActivities();
     }, []);
 
-    return (
-        <div>
-            <h1>Activities</h1>
-        <ul>
-        {activities.map(activity => (
-                <li key={activity.id}>{activity.name}</li>
-            ))}
-        </ul>
-        </div>
-    );
+    // return (
+    //     <div>
+    //         <h1>Activities</h1>
+    //         <ul>
+    //             {activities.map(activity => (
+    //                 <li key={activity.id}>{activity.name}</li>
+    //             ))}
+    //         </ul>
+    //     </div>
+    // );
 };
 
 export default Activities;
