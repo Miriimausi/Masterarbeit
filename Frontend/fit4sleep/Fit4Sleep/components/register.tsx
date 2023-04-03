@@ -7,7 +7,7 @@ const Register = () => {
     const [email, setEmail] = useState('');
 
     const handleRegister = async () => {
-        const response = await fetch('http://10.0.2.2:5000/api/register', {
+        const response = await fetch('http://10.0.2.2:5000/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

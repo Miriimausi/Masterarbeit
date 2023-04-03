@@ -8,7 +8,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
-        const response = await fetch('http://10.0.2.2:5000/api/login', {
+        const response = await fetch('http://10.0.2.2:5000/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
