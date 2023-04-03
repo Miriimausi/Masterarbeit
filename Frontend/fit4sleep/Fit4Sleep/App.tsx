@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Login from './components/login';
+import Register from './components/register';
 
 export default function App() {
     return (
         <View style={styles.container}>
-            <Login />
+          {/*<Login />*/}
+            <Register/>
             <StatusBar style="auto" />
         </View>
     );

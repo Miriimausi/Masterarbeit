@@ -8,10 +8,10 @@ db = SQLAlchemy(app)
 
 # Define data models
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(80), nullable=False)
 
 # Initialize Flask-RestX API
 api = Api(app, version='1.0', title='My App API',
@@ -36,6 +36,28 @@ def login():
         return jsonify({'success': True})
     else:
         return jsonify({'success': False})
+    
+
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    email = request.json.get('email')
+    username = request.json.get('username')
+    password = request.json.get('password')
+    
+    if not email or not username or not password:
+        return jsonify({'success': False, 'error': 'Incomplete data'})
+    
+    existing_user = User.query.filter_by(email=email, username=username).first()
+    if existing_user:
+        return jsonify({'success': False, 'error': 'User already exists'})
+    
+    new_user = User(email=email, username=username, password=password)
+    db.session.add(new_user)
+    db.session.commit()
+    
+    return jsonify({'success': True})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

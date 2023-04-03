@@ -1,49 +1,36 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-
-
-const Login = () => {
+const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
 
-    const handleLogin = async () => {
-        const response = await fetch('http://10.0.2.2:5000/api/login', {
+    const handleRegister = async () => {
+        const response = await fetch('http://10.0.2.2:5000/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username, password, email })
         });
         const data = await response.json();
         if (data.success) {
-            console.log('You just logged in');
+            console.log('New User added');
         } else {
-            console.log('You could not log in');
+            console.log('No User was registerd');
         }
     }
-
-    const changeToRegister = async () => {
-        const response = await fetch('http://10.0.2.2:5000/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await response.json();
-        if (data.success) {
-            console.log('You just logged in');
-        } else {
-            console.log('You could not log in');
-        }
-    }
-
-
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>User Login</Text>
+            <Text style={styles.title}>User Registration</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+            />
             <TextInput
                 style={styles.input}
                 placeholder="username"
@@ -57,17 +44,10 @@ const Login = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>Login</Text>
+
+            <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+                <Text style={styles.registerButtonText}>Register</Text>
             </TouchableOpacity>
-            <View style={styles.registerContainer}>
-                <Text style={styles.registerText}>
-                    Have you not registered yet? Click here:
-                    <TouchableOpacity onPress={changeToRegister}>
-                        <Text style={styles.registerButtonText}>Register</Text>
-                    </TouchableOpacity>
-                </Text>
-            </View>
         </View>
     );
 };
@@ -80,11 +60,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#EDF2F7',
         width: '100%',
     },
-    registerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
     title: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -103,7 +78,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         backgroundColor: 'white'
     },
-    loginButton: {
+    registerButton: {
         width: '30%',
         backgroundColor: '#1874CD',
         borderRadius: 5,
@@ -119,35 +94,12 @@ const styles = StyleSheet.create({
         elevation: 5,
         marginLeft: '20%',
     },
-    registerText: {
-        fontSize: 12,
-        color: '#2D3748',
-        width: 'auto',
-        alignSelf: 'center',
-        marginLeft: 10,
-        marginTop:100,
-        flexDirection: 'row',
-    },
-
-    loginButtonText: {
+    registerButtonText: {
         color: '#FFF',
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold'
     },
-
-    registerButtonText: {
-        width: 'auto',
-        alignSelf: 'center',
-        marginLeft: 10,
-        marginTop:110,
-        flexDirection: 'row',
-        color: 'black',
-        textAlign: 'center',
-        fontSize: 14,
-        fontWeight:"bold",
-
-    },
 });
 
-export default Login;
+export default Register;
