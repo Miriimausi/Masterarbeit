@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Image } from 'react-native';
+import {  NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from './navigator';
 
+type LoginProps = {
+    navigation: NavigationProp<RootStackParamList, 'Login'>
+}
 
-
-const Login = () => {
+const Login = ({ navigation }: LoginProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const changeToRegister = () => {
+        navigation.navigate('Register');
+    };
     const handleLogin = async () => {
         const response = await fetch('http://10.0.2.2:5000/auth/login', {
             method: 'POST',
@@ -23,21 +32,7 @@ const Login = () => {
         }
     }
 
-    const changeToRegister = async () => {
-        const response = await fetch('http://10.0.2.2:5000/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await response.json();
-        if (data.success) {
-            console.log('You just logged in');
-        } else {
-            console.log('You could not log in');
-        }
-    }
+
 
 
 
