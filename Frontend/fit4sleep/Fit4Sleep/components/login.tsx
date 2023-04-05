@@ -16,6 +16,10 @@ const Login = ({ navigation }: LoginProps) => {
     const changeToRegister = () => {
         navigation.navigate('Register');
     };
+
+    const changeToUserProfile = () => {
+        navigation.navigate('UserProfile');
+    };
     const handleLogin = async () => {
         const response = await fetch('http://10.0.2.2:5000/auth/login', {
             method: 'POST',
@@ -27,6 +31,7 @@ const Login = ({ navigation }: LoginProps) => {
         const data = await response.json();
         if (data.success) {
             console.log('You just logged in');
+            navigation.navigate('UserProfile');
         } else {
             console.log('You could not log in');
         }

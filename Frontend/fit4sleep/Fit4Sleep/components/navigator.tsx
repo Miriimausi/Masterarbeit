@@ -2,9 +2,14 @@ import { createStackNavigator, StackNavigationProp } from '@react-navigation/sta
 import { RouteProp } from '@react-navigation/native';
 import Register from "./register";
 import Login from "./login";
+import Activities from "./activities";
+import UserProfile from "./userProfile";
+
 type RootStackParamList = {
     Login: undefined;
     Register: undefined;
+    Activities: undefined;
+    UserProfile: undefined;
 };
 
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
@@ -13,6 +18,13 @@ export type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 export type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
 export type RegisterScreenRouteProp = RouteProp<RootStackParamList, 'Register'>;
 
+export type UserProfilesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'UserProfile'>;
+export type UserProfileScreenRouteProp = RouteProp<RootStackParamList, 'UserProfile'>;
+
+export type ActivitiesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Activities'>;
+export type ActivitiesScreenRouteProp = RouteProp<RootStackParamList, 'Activities'>;
+
+
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
@@ -20,6 +32,9 @@ function AppNavigator() {
         <Stack.Navigator>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="UserProfile" component={UserProfile}/>
+            <Stack.Screen name="Activities" component={Activities}/>
+
         </Stack.Navigator>
     );
 }

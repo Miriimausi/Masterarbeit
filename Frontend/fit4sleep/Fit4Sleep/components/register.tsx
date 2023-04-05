@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {NavigationProp} from "@react-navigation/native";
+import {RootStackParamList} from "./navigator";
 
+
+type RegisterProps = {
+    navigation: NavigationProp<RootStackParamList, 'Register'>
+}
 const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
