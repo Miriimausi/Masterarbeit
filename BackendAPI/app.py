@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Resource, Api, fields, Namespace
 from flask import Flask, request, jsonify
+from flask import redirect, url_for
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost/mydatabase'
@@ -33,7 +35,7 @@ api = Api(app, version='1.0', title='My App API',
           description='API for my app')
 
 auth_namespace= Namespace("auth", description="handles authentication")
-activity_namespace =Namespace("activity", description="handles activities")
+activity_namespace =Namespace("activities", description="handles activities")
 userProfile_namespace =Namespace("UserProfile", description="handles the UserProfile")
 
 
@@ -107,10 +109,10 @@ class UserProfileS(Resource):
 
 
 # GET and PUT all activities
-@activity_namespace.route('/activities')
+@activity_namespace.route('/')
 class ActivityList(Resource):
     def get(self):
-        activities = Activity.query.all()
+        activities = Activity.query.order_by(Activity.id.asc()).all()
         return jsonify([activity.to_dict() for activity in activities])
     
     @activity_namespace.expect(activity_model)
@@ -149,7 +151,33 @@ class ActivityDetail(Resource):
         else:
             db.session.delete(activity)
             db.session.commit()
-            return {'message': 'Activity deleted'}    
+            return {'message': 'Activity deleted'} 
+
+
+#like and dislike actvities
+
+@activity_namespace.route('/like/<int:activity_id>')
+class ActivityDetail(Resource): 
+    def put(self,activity_id):
+        activity = Activity.query.get_or_404(activity_id)
+        if activity.liked :
+            activity.liked += 1
+        else:
+            activity.liked = 1
+        db.session.commit()
+        return activity.to_dict()
+
+
+@activity_namespace.route('/dislike/<int:activity_id>')
+class ActivityDetail(Resource): 
+    def put(self,activity_id):
+        activity = Activity.query.get_or_404(activity_id)
+        if activity.liked :
+            activity.liked -= 1
+        else:
+            activity.liked = -1
+        db.session.commit()
+        return activity.to_dict()
 
 
 
