@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Image } from 'react-native';
 import {  NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from './navigator';
+
+type Login = {
+    username: string;
+    password: string;
+}
 
 type LoginProps = {
     navigation: NavigationProp<RootStackParamList, 'Login'>
 }
+
+
+
 
 const Login = ({ navigation }: LoginProps) => {
     const [username, setUsername] = useState('');
@@ -17,9 +23,6 @@ const Login = ({ navigation }: LoginProps) => {
         navigation.navigate('Register');
     };
 
-    const changeToUserProfile = () => {
-        navigation.navigate('UserProfile');
-    };
     const handleLogin = async () => {
         const response = await fetch('http://10.0.2.2:5000/auth/login', {
             method: 'POST',
@@ -36,6 +39,7 @@ const Login = ({ navigation }: LoginProps) => {
             console.log('You could not log in');
         }
     }
+
 
 
 
@@ -105,7 +109,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         width: '30%',
-        backgroundColor: '#1874CD',
+        backgroundColor: '#0E9CDA',
         borderRadius: 5,
         paddingVertical: 15,
         marginVertical: 5,
