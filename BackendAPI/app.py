@@ -20,14 +20,15 @@ class Activity(db.Model):
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(120), nullable=False)
     liked = db.Column(db.Integer)
+    tracked =db.Column(db.Integer)
 
     def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'liked': self.liked
-        }
+            'liked': self.liked,
+            'tracked':self.tracked        }
 
 
 # Initialize Flask-RestX API
@@ -53,6 +54,7 @@ activity_model = api.model('Activity', {
     'name': fields.String,
     'description': fields.String,
     'liked': fields.Integer,
+    'tracked': fields.Integer,
 })
 
 # Define API routes
@@ -141,6 +143,7 @@ class ActivityDetail(Resource):
             activity.name = request.json.get('name', activity.name)
             activity.description = request.json.get('description', activity.description)
             activity.liked = request.json.get('liked', activity.liked)
+            activity.tracked =request.json.get('tracked', activity.tracked)
             db.session.commit()
             return activity.to_dict()
         
@@ -176,6 +179,18 @@ class ActivityDetail(Resource):
             activity.liked -= 1
         else:
             activity.liked = -1
+        db.session.commit()
+        return activity.to_dict()
+
+
+@activity_namespace.route('/tracked/<int:activity_id>')
+class ActivityDetail(Resource): 
+    def put(self,activity_id):
+        activity = Activity.query.get_or_404(activity_id)
+        if activity.tracked :
+            activity.tracked += 1
+        else:
+            activity.tracked = 1
         db.session.commit()
         return activity.to_dict()
 

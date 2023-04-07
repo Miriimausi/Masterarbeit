@@ -4,6 +4,7 @@ import Register from "./register";
 import Login from "./login";
 import Activities from "./activities";
 import UserProfile from "./userProfile";
+import ActivitiesDetails from "./activitiesDetails";
 
 type RootStackParamList = {
     Login: undefined;
@@ -24,6 +25,9 @@ export type UserProfileScreenRouteProp = RouteProp<RootStackParamList, 'UserProf
 export type ActivitiesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Activities'>;
 export type ActivitiesScreenRouteProp = RouteProp<RootStackParamList, 'Activities'>;
 
+export type ActivitiesDetailScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ActivitiesDetails'>;
+export type ActivitiesDetailScreenRouteProp = RouteProp<RootStackParamList, 'ActivitiesDetails'>;
+
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -34,6 +38,7 @@ function AppNavigator() {
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="UserProfile" component={UserProfile}/>
             <Stack.Screen name="Activities" component={Activities}/>
+            <Stack.Screen name="ActivitiesDetails" component={ActivitiesDetails}/>
 
         </Stack.Navigator>
     );

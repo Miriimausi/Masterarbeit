@@ -65,7 +65,7 @@ const Activities = ({ navigation }: ActivitiesProps) => {
                 <Text style={styles.title}>Activities</Text>
                 <View style={styles.tilesContainer}>
                     {activities.map((activity: Activity) => (
-                        <TouchableOpacity key={activity.id} style={styles.tile} onPress={() => navigation.navigate('Details', { activity })}>
+                        <TouchableOpacity key={activity.id} style={styles.tile} onPress={() => navigation.navigate('ActivitiesDetails', {activity })}>
                             <Image source={{ uri: 'https://picsum.photos/200/300' }} style={styles.tileImage} />
                             <View style={styles.tileDetails}>
                                 <Text style={styles.tileTitle}>{activity.name}</Text>
