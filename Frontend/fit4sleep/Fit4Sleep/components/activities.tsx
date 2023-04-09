@@ -58,7 +58,6 @@ const Activities = ({ navigation }: ActivitiesProps) => {
     };
 
 
-    // Details gibt es momentan noch nicht
     return (
         <ScrollView style={styles.ActivitiesContainer}>
             <View style={styles.container}>
@@ -89,7 +88,7 @@ const Activities = ({ navigation }: ActivitiesProps) => {
 const styles = StyleSheet.create({
     ActivitiesContainer: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#eee',
     },
     container: {
         flex: 1,
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
     },
     tile: {
         width: '48%',
-        backgroundColor: '#eee',
+        backgroundColor: '#fff',
         marginBottom: 10,
         borderRadius: 10,
         overflow: 'hidden',

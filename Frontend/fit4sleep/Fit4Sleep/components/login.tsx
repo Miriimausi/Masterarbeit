@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, {useRef, useState} from 'react';
+import {Animated, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {  NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from './navigator';
+import { AntDesign } from '@expo/vector-icons';
+import { KeyboardAvoidingView } from 'react-native';
 
 type Login = {
     username: string;
@@ -18,7 +20,7 @@ type LoginProps = {
 const Login = ({ navigation }: LoginProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+    const inputScale = useRef(new Animated.Value(1)).current;
     const changeToRegister = () => {
         navigation.navigate('Register');
     };
@@ -34,33 +36,58 @@ const Login = ({ navigation }: LoginProps) => {
         const data = await response.json();
         if (data.success) {
             console.log('You just logged in');
-            navigation.navigate('UserProfile');
+            navigation.navigate('Overview');
         } else {
             console.log('You could not log in');
         }
     }
 
+    const handleFocus = () => {
+        Animated.timing(inputScale, {
+            toValue: 1.2,
+            duration: 300,
+            useNativeDriver: true,
+        }).start();
+    };
 
+    const handleBlur = () => {
+        Animated.timing(inputScale, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+        }).start();
+    };
 
 
 
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>User Login</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="username"
-                value={username}
-                onChangeText={setUsername}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}
+        >
+        <Animated.View style={styles.container}>
+            <Animated.View style={[styles.inputContainer, { transform: [{ scale: inputScale }] }]}>
+                <AntDesign name="user" size={24} color="#bfbfbf" />
+                <TextInput
+                    placeholder="username"
+                    value={username}
+                    onChangeText={setUsername}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                />
+            </Animated.View>
+            <Animated.View style={[styles.inputContainer, { transform: [{ scale: inputScale }] }]}>
+                <AntDesign name="lock" size={24} color="#bfbfbf" />
+                <TextInput
+                    placeholder="password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                />
+            </Animated.View>
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                 <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
@@ -72,17 +99,36 @@ const Login = ({ navigation }: LoginProps) => {
                     </TouchableOpacity>
                 </Text>
             </View>
-        </View>
+        </Animated.View>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+
+
+container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#EDF2F7',
         width: '100%',
+
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: 50,
+        width: '50%',
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginVertical: 10,
+        backgroundColor: 'white'
+    },
+    inputIcon: {
+        marginRight: 10,
     },
     registerContainer: {
         flexDirection: 'row',
@@ -96,16 +142,6 @@ const styles = StyleSheet.create({
         margin: 20,
         color: '#2D3748',
         width: '90%',
-    },
-    input: {
-        height: 50,
-        width: '50%',
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        marginVertical: 10,
-        backgroundColor: 'white'
     },
     loginButton: {
         width: '30%',

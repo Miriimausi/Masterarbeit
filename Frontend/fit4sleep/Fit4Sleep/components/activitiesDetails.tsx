@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     },
     detailsContainer: {
         backgroundColor: 'white',
-        borderRadius: 10,
+        borderRadius: 20,
         margin: 10,
         overflow: 'hidden',
     },
