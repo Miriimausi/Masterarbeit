@@ -7,9 +7,7 @@ import Collapsible from 'react-native-collapsible';
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {  ScrollView } from 'react-native';
-
-
-
+import WheelPicker from 'react-native-wheel-pick';
 
 
 type Activity = {
@@ -25,10 +23,11 @@ type ActivitiesDetailsProps = {
 }
 
 const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
-    const { activity } = route.params;
+    const {activity} = route.params;
     const [activities, setActivities] = useState<Activity[]>([]);
     const [isTableCollapsed, setIsTableCollapsed] = useState(true);
-
+    const [trackingCount, setTrackingCount] = useState(0);
+    const TRACKING_OPTIONS = ['1 Mal', '2 Mal', '3 Mal'];
 
 
 
@@ -70,7 +69,7 @@ const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
         }
     };
 
-    const trackActivity = async (activityId: number) => {
+    const trackActivity = async (activityId: number, count) => {
         try {
             console.log(activityId);
             const response = await axios.put(`http://10.0.2.2:5000/activities/tracked/${activityId}`);
@@ -81,14 +80,27 @@ const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
             console.error(error);
         }
     };
+    const TrackedCountPicker = ({ onSelect, selectedValue }) => {
+        const [selectedIndex, setSelectedIndex] = useState(
+            TRACKING_OPTIONS.indexOf(selectedValue)
+        );
 
+        const handlePickerChange = (index) => {
+            setSelectedIndex(index);
+            onSelect(TRACKING_OPTIONS[index]);
+        };
 
+        const handleTrackingCountChange = (count) => {
+            setTrackingCount(count);
+        };
     const toggleTable = () => {
         setIsTableCollapsed(!isTableCollapsed);
     };
+
     const showInfo = () => {
         alert('Herzfrequenz-Zonengrenzwerte geben an, in welchem Herzfrequenzbereich das Training am effektivsten ist. Die Werte variieren je nach Trainingsintensität von sehr leicht bis maximal.' );
     };
+
 
     return (
         <ScrollView>
@@ -147,16 +159,24 @@ const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
                     </Collapsible>
                 </View>
                 <View style={styles.detailsContainer}>
-                <View style={styles.trackedCountContainer}>
-                    <Text style={styles.trackedCountText}>Diese Aktivität tracken</Text>
-                    <TouchableOpacity onPress={() => trackActivity(activity.id)}>
-                        <Icon name="add" size={40} color="#0E9CDA" />
-                    </TouchableOpacity>
-                </View>
+                    <View style={styles.trackedCountContainer}>
+                        <Text style={styles.trackedCountText}>Diese Aktivität tracken</Text>
+                        <View style={styles.trackedCountPicker}>
+                            <WheelPicker
+                                data={TRACKING_OPTIONS}
+                                selectedItem={trackingCount - 1}
+                                onItemSelected={handleTrackingCountChange}
+                            />
+                        </View>
+                        <TouchableOpacity onPress={() => trackActivity(activity.id, trackingCount)}>
+                            <Icon name="add" size={40} color="#0E9CDA" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </ScrollView>
     );
+
 };
 
 const styles = StyleSheet.create({
@@ -280,6 +300,9 @@ const styles = StyleSheet.create({
     trackedCountText: {
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    trackedCountPicker:{
+
     },
 
 });
