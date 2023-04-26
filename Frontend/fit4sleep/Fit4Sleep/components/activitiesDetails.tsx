@@ -7,30 +7,28 @@ import Collapsible from 'react-native-collapsible';
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {  ScrollView } from 'react-native';
-import WheelPicker from 'react-native-wheel-pick';
+
+
 
 
 type Activity = {
     id: number,
     name: string,
     description: string,
-    liked: number
+    liked: number,
 }
+
 
 type ActivitiesDetailsProps = {
     navigation: NavigationProp<RootStackParamList, 'ActivitiesDetails'>,
     route: RouteProp<RootStackParamList, 'ActivitiesDetails'>,
 }
 
-const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
-    const {activity} = route.params;
+const ActivitiesDetails = ({ navigation, route }: ActivitiesDetailsProps) => {
+    const { activity } = route.params;
     const [activities, setActivities] = useState<Activity[]>([]);
     const [isTableCollapsed, setIsTableCollapsed] = useState(true);
     const [trackingCount, setTrackingCount] = useState(0);
-    const TRACKING_OPTIONS = ['1 Mal', '2 Mal', '3 Mal'];
-
-
-
     useEffect(() => {
         const fetchActivities = async () => {
             try {
@@ -40,65 +38,45 @@ const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
                 console.error(error);
             }
         };
-
         fetchActivities();
     }, []);
 
     const likeActivity = async (activityId: number) => {
         try {
-            console.log(activityId);
             const response = await axios.put(`http://10.0.2.2:5000/activities/like/${activityId}`);
             const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(a => a.id === updatedActivity.id ? updatedActivity : a));
-            console.log("liked");
+            setActivities(prevActivities => prevActivities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity));
         } catch (error) {
             console.error(error);
         }
     };
-
 
     const dislikeActivity = async (activityId: number) => {
         try {
-            console.log(activityId);
             const response = await axios.put(`http://10.0.2.2:5000/activities/dislike/${activityId}`);
             const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(a => a.id === updatedActivity.id ? updatedActivity : a));
-            console.log("disliked");
+            setActivities(prevActivities => prevActivities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity));
         } catch (error) {
             console.error(error);
         }
     };
 
-    const trackActivity = async (activityId: number, count) => {
+    const trackActivity = async (activityId: number, count: number) => {
         try {
-            console.log(activityId);
             const response = await axios.put(`http://10.0.2.2:5000/activities/tracked/${activityId}`);
             const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(a => a.id === updatedActivity.id ? updatedActivity : a));
-            console.log("tracked");
+            setActivities(prevActivities => prevActivities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity));
         } catch (error) {
             console.error(error);
         }
     };
-    const TrackedCountPicker = ({ onSelect, selectedValue }) => {
-        const [selectedIndex, setSelectedIndex] = useState(
-            TRACKING_OPTIONS.indexOf(selectedValue)
-        );
 
-        const handlePickerChange = (index) => {
-            setSelectedIndex(index);
-            onSelect(TRACKING_OPTIONS[index]);
+        const toggleTable = () => {
+            setIsTableCollapsed(!isTableCollapsed);
         };
-
-        const handleTrackingCountChange = (count) => {
-            setTrackingCount(count);
-        };
-    const toggleTable = () => {
-        setIsTableCollapsed(!isTableCollapsed);
-    };
 
     const showInfo = () => {
-        alert('Herzfrequenz-Zonengrenzwerte geben an, in welchem Herzfrequenzbereich das Training am effektivsten ist. Die Werte variieren je nach Trainingsintensität von sehr leicht bis maximal.' );
+        alert('Heart rate zone limits indicate in which heart rate zone the training is most effective. The values vary from very light to maximum depending on the training intensity.' );
     };
 
 
@@ -120,7 +98,7 @@ const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
                 <View style={styles.detailsContainer}>
                     <TouchableOpacity onPress={toggleTable}>
                         <View style={styles.tableTitleContainer}>
-                            <Text style={styles.tableTitle}>Herzfrequenz-Zonengrenzwerte</Text>
+                            <Text style={styles.tableTitle}>Heart rate zone limits</Text>
                             <View style={styles.infoButtonContainer}>
                                 <TouchableOpacity onPress={showInfo}>
                                     <Icon name="info" size={25} color="#0E9CDA" />
@@ -132,27 +110,27 @@ const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
                     <Collapsible collapsed={isTableCollapsed}>
                         <View style={styles.tableContainer}>
                             <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableHeader]}>Intensität</Text>
-                                <Text style={[styles.tableCell, styles.tableHeader]}>Herzfrequenzbereich</Text>
+                                <Text style={[styles.tableCell, styles.tableHeader]}>Intensity</Text>
+                                <Text style={[styles.tableCell, styles.tableHeader]}>Heart rate zone</Text>
                             </View>
                             <View style={styles.tableRow}>
                                 <Text style={[styles.tableCell, styles.tableLabel, styles.red]}>Maximum</Text>
                                 <Text style={[styles.tableCell, styles.tableData]}>177-197</Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.yellow]}>Intensiv</Text>
+                                <Text style={[styles.tableCell, styles.tableLabel, styles.yellow]}>Hard</Text>
                                 <Text style={[styles.tableCell, styles.tableData]}>158-176</Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.green]}>Mittel</Text>
+                                <Text style={[styles.tableCell, styles.tableLabel, styles.green]}>Medium</Text>
                                 <Text style={[styles.tableCell, styles.tableData]}>138-157</Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.lightblue]}>Leicht</Text>
+                                <Text style={[styles.tableCell, styles.tableLabel, styles.lightblue]}>Light</Text>
                                 <Text style={[styles.tableCell, styles.tableData]}>118-137</Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.gray]}>Sehr leicht</Text>
+                                <Text style={[styles.tableCell, styles.tableLabel, styles.gray]}>Easy</Text>
                                 <Text style={[styles.tableCell, styles.tableData]}>99-117</Text>
                             </View>
                         </View>
@@ -160,14 +138,7 @@ const ActivitiesDetails = ({ navigation, route}: ActivitiesDetailsProps) => {
                 </View>
                 <View style={styles.detailsContainer}>
                     <View style={styles.trackedCountContainer}>
-                        <Text style={styles.trackedCountText}>Diese Aktivität tracken</Text>
-                        <View style={styles.trackedCountPicker}>
-                            <WheelPicker
-                                data={TRACKING_OPTIONS}
-                                selectedItem={trackingCount - 1}
-                                onItemSelected={handleTrackingCountChange}
-                            />
-                        </View>
+                        <Text style={styles.trackedCountText}>Track this activity</Text>
                         <TouchableOpacity onPress={() => trackActivity(activity.id, trackingCount)}>
                             <Icon name="add" size={40} color="#0E9CDA" />
                         </TouchableOpacity>
