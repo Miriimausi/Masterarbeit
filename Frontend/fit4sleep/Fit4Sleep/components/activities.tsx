@@ -1,23 +1,67 @@
-import { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { NavigationProp } from "@react-navigation/native";
-import { RootStackParamList } from "./navigator";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
-import Icon from "react-native-vector-icons/MaterialIcons";
+import {NavigationProp} from "@react-navigation/native";
+import {RootStackParamList} from "./navigator";
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import ActivityItem from "./activityItem";
 
-type Activity = {
+export type Activity = {
     id: number,
     name: string,
     description: string,
-    liked: number
+    liked: number,
+    imageUrl?: string
 }
 
 type ActivitiesProps = {
     navigation: NavigationProp<RootStackParamList, 'Activities'>
 }
 
-const Activities = ({ navigation }: ActivitiesProps) => {
+
+const Activities = ({navigation}: ActivitiesProps) => {
     const [activities, setActivities] = useState<Activity[]>([]);
+
+    useEffect(() => {
+        setActivities([
+            {
+                id: 1,
+                name: "Test",
+                description: "TestBeschreibung",
+                liked: 3,
+                imageUrl: "https://picsum.photos/200/100"
+            },
+            {
+                id: 2,
+                name: "Test",
+                description: "TestBeschreibung",
+                liked: 3,
+                imageUrl: "https://picsum.photos/200/400"
+            },
+            {
+                id: 3,
+                name: "Test",
+                description: "TestBeschreibung",
+                liked: 3,
+                imageUrl: "https://picsum.photos/200/600"
+            },
+            {
+                id: 4,
+                name: "Test",
+                description: "TestBeschreibung",
+                liked: 3,
+                imageUrl: "https://picsum.photos/200/300"
+            },
+            {
+                id: 5,
+                name: "Test",
+                description: "TestBeschreibung",
+                liked: 3,
+                imageUrl: "https://picsum.photos/200/800"
+            },
+
+
+        ])
+    }, [])
 
     useEffect(() => {
         const fetchActivities = async () => {
@@ -57,28 +101,19 @@ const Activities = ({ navigation }: ActivitiesProps) => {
         }
     };
 
-
     return (
         <ScrollView style={styles.ActivitiesContainer}>
             <View style={styles.container}>
                 <Text style={styles.title}>Activities</Text>
                 <View style={styles.tilesContainer}>
-                    {activities.map((activity: Activity) => (
-                        <TouchableOpacity key={activity.id} style={styles.tile} onPress={() => navigation.navigate('ActivitiesDetails', {activity })}>
-                            <Image source={{ uri: 'https://picsum.photos/200/300' }} style={styles.tileImage} />
-                            <View style={styles.tileDetails}>
-                                <Text style={styles.tileTitle}>{activity.name}</Text>
-                                <Text style={styles.tileDescription}>{activity.description}</Text>
-                            </View>
-                            <View style={styles.tileActions}>
-                                <TouchableOpacity onPress={() => likeActivity(activity.id)} style={styles.actionButton}>
-                                    <Icon name="thumb-up" size={30} color="#0E9CDA" />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => dislikeActivity(activity.id)} style={styles.actionButton}>
-                                    <Icon name="thumb-down" size={30} color="#0E9CDA" />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
+                    {activities.map((activity: Activity, index: number) => (
+                       <ActivityItem
+                           key={index}
+                           navigation={navigation}
+                           activity={activity}
+                           likeFun={likeActivity(activity.id)}
+                           dislikeFun={dislikeActivity(activity.id)}
+                       ></ActivityItem>
                     ))}
                 </View>
             </View>

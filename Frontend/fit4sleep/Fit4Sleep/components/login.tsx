@@ -1,9 +1,9 @@
 import React, {useRef, useState} from 'react';
 import {Animated, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {  NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from './navigator';
-import { AntDesign } from '@expo/vector-icons';
-import { KeyboardAvoidingView } from 'react-native';
+import {NavigationProp} from '@react-navigation/native';
+import {RootStackParamList} from './navigator';
+import {AntDesign} from '@expo/vector-icons';
+import {KeyboardAvoidingView} from 'react-native';
 
 type Login = {
     username: string;
@@ -15,9 +15,7 @@ type LoginProps = {
 }
 
 
-
-
-const Login = ({ navigation }: LoginProps) => {
+const Login = ({navigation}: LoginProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const inputScale = useRef(new Animated.Value(1)).current;
@@ -26,12 +24,13 @@ const Login = ({ navigation }: LoginProps) => {
     };
 
     const handleLogin = async () => {
+        // navigation.navigate('Overview');
         const response = await fetch('http://10.0.2.2:5000/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({username, password})
         });
         const data = await response.json();
         if (data.success) {
@@ -59,47 +58,45 @@ const Login = ({ navigation }: LoginProps) => {
     };
 
 
-
-
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}
         >
-        <Animated.View style={styles.container}>
-            <Animated.View style={[styles.inputContainer, { transform: [{ scale: inputScale }] }]}>
-                <AntDesign name="user" size={24} color="#bfbfbf" />
-                <TextInput
-                    placeholder="username"
-                    value={username}
-                    onChangeText={setUsername}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                />
+            <Animated.View style={styles.container}>
+                <Animated.View style={[styles.inputContainer, {transform: [{scale: inputScale}]}]}>
+                    <AntDesign name="user" size={24} color="#bfbfbf"/>
+                    <TextInput
+                        placeholder="username"
+                        value={username}
+                        onChangeText={setUsername}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                    />
+                </Animated.View>
+                <Animated.View style={[styles.inputContainer, {transform: [{scale: inputScale}]}]}>
+                    <AntDesign name="lock" size={24} color="#bfbfbf"/>
+                    <TextInput
+                        placeholder="password"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                    />
+                </Animated.View>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                    <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
+                <View style={styles.registerContainer}>
+                    <Text style={styles.registerText}>
+                        Have you not registered yet? Click here:
+                        <TouchableOpacity onPress={changeToRegister}>
+                            <Text style={styles.registerButtonText}>Register</Text>
+                        </TouchableOpacity>
+                    </Text>
+                </View>
             </Animated.View>
-            <Animated.View style={[styles.inputContainer, { transform: [{ scale: inputScale }] }]}>
-                <AntDesign name="lock" size={24} color="#bfbfbf" />
-                <TextInput
-                    placeholder="password"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                />
-            </Animated.View>
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
-            <View style={styles.registerContainer}>
-                <Text style={styles.registerText}>
-                    Have you not registered yet? Click here:
-                    <TouchableOpacity onPress={changeToRegister}>
-                        <Text style={styles.registerButtonText}>Register</Text>
-                    </TouchableOpacity>
-                </Text>
-            </View>
-        </Animated.View>
         </KeyboardAvoidingView>
     );
 };
@@ -107,7 +104,7 @@ const Login = ({ navigation }: LoginProps) => {
 const styles = StyleSheet.create({
 
 
-container: {
+    container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -165,7 +162,7 @@ container: {
         width: 'auto',
         alignSelf: 'center',
         marginLeft: 10,
-        marginTop:100,
+        marginTop: 100,
         flexDirection: 'row',
     },
 
@@ -180,12 +177,12 @@ container: {
         width: 'auto',
         alignSelf: 'center',
         marginLeft: 10,
-        marginTop:110,
+        marginTop: 110,
         flexDirection: 'row',
         color: 'black',
         textAlign: 'center',
         fontSize: 14,
-        fontWeight:"bold",
+        fontWeight: "bold",
 
     },
 });
