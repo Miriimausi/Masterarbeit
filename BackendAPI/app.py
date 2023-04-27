@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask import redirect, url_for
 
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost/mydatabase'
 db = SQLAlchemy(app)
@@ -21,6 +22,7 @@ class Activity(db.Model):
     description = db.Column(db.String(120), nullable=False)
     liked = db.Column(db.Integer)
     tracked =db.Column(db.Integer)
+    imageUrl =db.Column(db.String)
 
     def to_dict(self):
         return {
@@ -28,8 +30,25 @@ class Activity(db.Model):
             'name': self.name,
             'description': self.description,
             'liked': self.liked,
-            'tracked':self.tracked        }
+            'tracked':self.tracked,
+            'imageUrl':self.imageUrl}
 
+
+class Questionnaire(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    question = db.Column(db.String(200), nullable=False)
+    type = db.Column(db.String)
+    answer =db.Column(db.String)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'question': self.question,
+            'type':self.type,
+            'answer': self.answer,
+            
+            }
+    
 
 # Initialize Flask-RestX API
 api = Api(app, version='1.0', title='My App API',
@@ -38,7 +57,7 @@ api = Api(app, version='1.0', title='My App API',
 auth_namespace= Namespace("auth", description="handles authentication")
 activity_namespace =Namespace("activities", description="handles activities")
 userProfile_namespace =Namespace("UserProfile", description="handles the UserProfile")
-
+question_namespace = Namespace("Questionnaire", description="handles the questions")
 
 
 # Define data model for API documentation
@@ -55,6 +74,13 @@ activity_model = api.model('Activity', {
     'description': fields.String,
     'liked': fields.Integer,
     'tracked': fields.Integer,
+    'imageUrl': fields.String,
+})
+
+question_model = api.model('Questionnaire',{
+'id': fields.Integer,
+'question': fields.String
+
 })
 
 # Define API routes
@@ -92,7 +118,7 @@ class Authentication(Resource):
         return jsonify({'success': True})
     
 @userProfile_namespace.route('/')
-class UserProfileS(Resource):
+class UserProfiles(Resource):
     def get(self):
         username = request.json.get('username')
         password = request.json.get('password')
@@ -195,10 +221,25 @@ class ActivityDetail(Resource):
         return activity.to_dict()
 
 
+@question_namespace.route('/')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+    
+    @question_namespace.expect(question_model)
+    def post(self):
+        questionnaire = Questionnaire(**request.json)
+        db.session.add(questionnaire)
+        db.session.commit()
+        return questionnaire.to_dict(), 201
+
+
 
 api.add_namespace(auth_namespace)
 api.add_namespace(activity_namespace)
 api.add_namespace(userProfile_namespace)
+api.add_namespace(question_namespace)
 
 if __name__ == '__main__':
     app.run(debug=True)

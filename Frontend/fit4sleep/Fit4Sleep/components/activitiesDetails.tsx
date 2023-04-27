@@ -15,6 +15,7 @@ type Activity = {
     id: number,
     name: string,
     description: string,
+    tracked: number,
     liked: number,
 }
 

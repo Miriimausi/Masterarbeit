@@ -10,6 +10,7 @@ export type Activity = {
     name: string,
     description: string,
     liked: number,
+    tracked: number,
     imageUrl?: string
 }
 
@@ -21,47 +22,6 @@ type ActivitiesProps = {
 const Activities = ({navigation}: ActivitiesProps) => {
     const [activities, setActivities] = useState<Activity[]>([]);
 
-    useEffect(() => {
-        setActivities([
-            {
-                id: 1,
-                name: "Test",
-                description: "TestBeschreibung",
-                liked: 3,
-                imageUrl: "https://picsum.photos/200/100"
-            },
-            {
-                id: 2,
-                name: "Test",
-                description: "TestBeschreibung",
-                liked: 3,
-                imageUrl: "https://picsum.photos/200/400"
-            },
-            {
-                id: 3,
-                name: "Test",
-                description: "TestBeschreibung",
-                liked: 3,
-                imageUrl: "https://picsum.photos/200/600"
-            },
-            {
-                id: 4,
-                name: "Test",
-                description: "TestBeschreibung",
-                liked: 3,
-                imageUrl: "https://picsum.photos/200/300"
-            },
-            {
-                id: 5,
-                name: "Test",
-                description: "TestBeschreibung",
-                liked: 3,
-                imageUrl: "https://picsum.photos/200/800"
-            },
-
-
-        ])
-    }, [])
 
     useEffect(() => {
         const fetchActivities = async () => {
@@ -111,8 +71,6 @@ const Activities = ({navigation}: ActivitiesProps) => {
                            key={index}
                            navigation={navigation}
                            activity={activity}
-                           likeFun={likeActivity(activity.id)}
-                           dislikeFun={dislikeActivity(activity.id)}
                        ></ActivityItem>
                     ))}
                 </View>
