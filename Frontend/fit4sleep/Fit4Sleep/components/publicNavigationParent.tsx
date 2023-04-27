@@ -7,7 +7,7 @@ const PublicStack = createStackNavigator();
 function PublicNavigationParent() {
     return (
         <PublicStack.Navigator>
-            <PublicStack.Screen name="Login" component={Login} />
+            <PublicStack.Screen options={{headerShown:false}} name="Login" component={Login} />
             <PublicStack.Screen name="Register" component={Register} />
         </PublicStack.Navigator>
     );

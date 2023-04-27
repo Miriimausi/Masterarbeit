@@ -44,10 +44,12 @@ const Overview = ({navigation}: OverviewProps) => {
     const handleHeaderPressSleep = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsExpandedSleep(!isExpandedSleep);
+        changetoSleepProfile()
     };
     const handleHeaderPressQuest = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setIsExpanedQuest(!isExpandedQuest);
+        changetoQuestionnaire()
     };
 
     const changeToActivities = () => {
@@ -56,6 +58,14 @@ const Overview = ({navigation}: OverviewProps) => {
 
     const changetoUserProfile = () => {
         navigation.navigate('UserProfile');
+    };
+
+    const changetoSleepProfile = () => {
+        navigation.navigate('SleepProfile');
+    };
+
+    const changetoQuestionnaire = () => {
+        navigation.navigate('Questionnaire');
     };
 
 
