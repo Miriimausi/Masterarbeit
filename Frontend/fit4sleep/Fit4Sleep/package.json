@@ -13,8 +13,8 @@
     "expo": "~48.0.9",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
-    "react-native": "0.71.4",
-    "react-native-svg": "^13.9.0",
+    "react-native": "0.71.7",
+    "react-native-svg": "13.4.0",
     "react-native-table-component": "^1.2.2",
     "react-native-wheel-picker": "^1.2.0",
     "react-router-dom": "^6.10.0"
