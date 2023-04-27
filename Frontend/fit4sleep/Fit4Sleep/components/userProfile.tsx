@@ -76,9 +76,6 @@ const UserProfile = ({navigation}: UserProps) => {
                 </View>
             </View>
             <View>
-                <View style={styles.progressBar}>
-                    <View style={styles.progressBarFill}/>
-                </View>
             </View>
         </View>
     );

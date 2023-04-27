@@ -4,9 +4,9 @@ import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "./navigator";
 
 type UserProps = {
-    navigation: NavigationProp<RootStackParamList, 'sleepProfile'>
+    navigation: NavigationProp<RootStackParamList, 'SleepProfile'>
 }
-const sleepProfile = ({navigation}: UserProps) => {
+const SleepProfile = ({navigation}: UserProps) => {
     const [editMode, setEditMode] = useState(false);
     const [username, setUsername] = useState('JohnDoe');
     const [password, setPassword] = useState('password');
@@ -162,4 +162,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default sleepProfile;
+export default SleepProfile;
