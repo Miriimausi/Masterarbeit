@@ -1,10 +1,11 @@
 import React, {useContext, useRef, useState} from 'react';
-import {Animated, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Animated, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from './navigator';
 import {AntDesign} from '@expo/vector-icons';
 import {KeyboardAvoidingView} from 'react-native';
 import {AuthContext, AuthContextType} from "../contexts/auth-context";
+import {ImageBackground} from 'react-native';
 
 type Login = {
     username: string;
@@ -31,82 +32,61 @@ const Login = ({navigation}: LoginProps) => {
         const loggedIn: boolean = login(username, password);
     }
 
-    const handleFocus = () => {
-        Animated.timing(inputScale, {
-            toValue: 1.2,
-            duration: 300,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    const handleBlur = () => {
-        Animated.timing(inputScale, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-        }).start();
-    };
-
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container}
-        >
-            <Animated.View style={styles.container}>
-                <Animated.View style={[styles.inputContainer, {transform: [{scale: inputScale}]}]}>
-                    <AntDesign name="user" size={24} color="#bfbfbf"/>
-                    <TextInput
-                        placeholder="username"
-                        value={username}
-                        onChangeText={setUsername}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                    />
-                </Animated.View>
-                <Animated.View style={[styles.inputContainer, {transform: [{scale: inputScale}]}]}>
-                    <AntDesign name="lock" size={24} color="#bfbfbf"/>
-                    <TextInput
-                        placeholder="password"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                    />
-                </Animated.View>
-                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                    <Text style={styles.loginButtonText}>Login</Text>
-                </TouchableOpacity>
-                <View style={styles.registerContainer}>
-                    <Text style={styles.registerText}>
-                        Have you not registered yet? Click here:
-                        <TouchableOpacity onPress={changeToRegister}>
-                            <Text style={styles.registerButtonText}>Register</Text>
-                        </TouchableOpacity>
-                    </Text>
-                </View>
-            </Animated.View>
-        </KeyboardAvoidingView>
+        <ImageBackground
+            source={require('../assets/background-image.png')}
+            style={styles.background}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <View style={styles.inputContainer}>
+                        <AntDesign name="user" size={24} color="#bfbfbf" />
+                        <TextInput
+                            placeholder="username"
+                            value={username}
+                            onChangeText={setUsername}
+                        />
+                    </View>
+                    <View style={styles.inputContainer}>
+                        <AntDesign name="lock" size={24} color="#bfbfbf" />
+                        <TextInput
+                            placeholder="password"
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                        <Text style={styles.loginButtonText}>Login</Text>
+                    </TouchableOpacity>
+                    <View style={styles.registerContainer}>
+                        <Text style={styles.registerText}>
+                            Have you not registered yet? Click here:
+                            <TouchableOpacity onPress={changeToRegister}>
+                                <Text style={styles.registerButtonText}>Register</Text>
+                            </TouchableOpacity>
+                        </Text>
+                    </View>
+            </ScrollView>
+        </ImageBackground>
     );
-};
+}
 
 const styles = StyleSheet.create({
-
-
-    container: {
-        flex: 1,
+    background: {
+        resizeMode: 'cover',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#EDF2F7',
-        width: '100%',
-
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         height: 50,
-        width: '50%',
+        width: '80%',
         borderColor: 'gray',
         borderWidth: 1,
         borderRadius: 5,
@@ -114,24 +94,12 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         backgroundColor: 'white'
     },
-    inputIcon: {
-        marginRight: 10,
-    },
     registerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        margin: 20,
-        color: '#2D3748',
-        width: '90%',
-    },
     loginButton: {
-        width: '30%',
+        width: '80%',
         backgroundColor: '#0E9CDA',
         borderRadius: 5,
         paddingVertical: 15,
@@ -144,18 +112,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-        marginLeft: '20%',
+
     },
     registerText: {
         fontSize: 12,
-        color: '#2D3748',
+        color: 'white',
         width: 'auto',
         alignSelf: 'center',
         marginLeft: 10,
         marginTop: 100,
         flexDirection: 'row',
     },
-
     loginButtonText: {
         color: '#FFF',
         textAlign: 'center',
@@ -165,11 +132,11 @@ const styles = StyleSheet.create({
 
     registerButtonText: {
         width: 'auto',
+        color: 'white',
         alignSelf: 'center',
         marginLeft: 10,
         marginTop: 110,
         flexDirection: 'row',
-        color: 'black',
         textAlign: 'center',
         fontSize: 14,
         fontWeight: "bold",
