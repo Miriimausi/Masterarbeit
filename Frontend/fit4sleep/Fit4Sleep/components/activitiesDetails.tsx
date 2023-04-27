@@ -24,8 +24,8 @@ type ActivitiesDetailsProps = {
     route: RouteProp<RootStackParamList, 'ActivitiesDetails'>,
 }
 
-const ActivitiesDetails = ({ navigation, route }: ActivitiesDetailsProps) => {
-    const {activity } = route.params;
+const ActivitiesDetails = ({ navigation, route }: {navigation: any, route: any}) => {
+    const { activity } = route.params;
     const [activities, setActivities] = useState<Activity[]>([]);
     const [isTableCollapsed, setIsTableCollapsed] = useState(true);
     const [trackingCount, setTrackingCount] = useState(0);

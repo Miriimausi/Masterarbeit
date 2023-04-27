@@ -8,10 +8,11 @@ export interface IActivityItemProps {
     dislikeFun: any,
     activity: Activity,
 }
+
 const ActivityItem = (props: IActivityItemProps) => {
     return (
         <TouchableOpacity style={styles.tile}
-                          onPress={() => props.navigation.navigate('ActivitiesDetails', {activity})}>
+                          onPress={() => props.navigation.navigate('ActivitiesDetails', {activity: props.activity})}>
             <Image source={{uri: props.activity.imageUrl}} style={styles.tileImage}/>
             <View style={styles.tileDetails}>
                 <Text style={styles.tileTitle}>{props.activity.name}</Text>

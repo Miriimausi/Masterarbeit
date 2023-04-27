@@ -3,10 +3,14 @@ import { RouteProp } from '@react-navigation/native';
 import Register from "./register";
 import Login from "./login";
 import Activities from "./activities";
-import Overview from "./Overview";
+import Overview from "./overview";
 import UserProfile from "./userProfile";
 import ActivitiesDetails from "./activitiesDetails";
 import SleepProfile from "./sleepProfile";
+import {useContext} from "react";
+import {AuthContext, AuthContextType} from "../contexts/auth-context";
+import RestrictedNavigationParent from "./restrictedNavigationParent";
+import PublicNavigationParent from "./publicNavigationParent";
 
 type RootStackParamList = {
     Login: undefined;
@@ -45,17 +49,16 @@ export type SleepProfileScreenRouteProp = RouteProp<RootStackParamList, 'SleepPr
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen name="Overview" component={Overview}/>
-            <Stack.Screen name="UserProfile" component={UserProfile}/>
-            <Stack.Screen name="SleepProfile" component={SleepProfile}/>
-            <Stack.Screen name="Activities" component={Activities}/>
-            <Stack.Screen name="ActivitiesDetails" component={ActivitiesDetails}/>
+    const {isLoggedIn} = useContext(AuthContext) as AuthContextType;
 
-        </Stack.Navigator>
+    return (
+
+        <>
+            {
+                isLoggedIn ?
+                    <RestrictedNavigationParent />: <PublicNavigationParent />
+            }
+        </>
     );
 }
 

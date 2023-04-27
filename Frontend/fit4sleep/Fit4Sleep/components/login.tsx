@@ -1,9 +1,10 @@
-import React, {useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {Animated, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from './navigator';
 import {AntDesign} from '@expo/vector-icons';
 import {KeyboardAvoidingView} from 'react-native';
+import {AuthContext, AuthContextType} from "../contexts/auth-context";
 
 type Login = {
     username: string;
@@ -18,27 +19,16 @@ type LoginProps = {
 const Login = ({navigation}: LoginProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const {login} = useContext(AuthContext) as AuthContextType;
+
     const inputScale = useRef(new Animated.Value(1)).current;
     const changeToRegister = () => {
         navigation.navigate('Register');
     };
 
     const handleLogin = async () => {
-        // navigation.navigate('Overview');
-        const response = await fetch('http://10.0.2.2:5000/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({username, password})
-        });
-        const data = await response.json();
-        if (data.success) {
-            console.log('You just logged in');
-            navigation.navigate('Overview');
-        } else {
-            console.log('You could not log in');
-        }
+        const loggedIn: boolean = login(username, password);
     }
 
     const handleFocus = () => {

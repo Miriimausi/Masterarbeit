@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import {
     View,
     Text,
@@ -8,13 +8,14 @@ import {
     TouchableOpacity,
     LayoutAnimation,
     Animated,
-    Easing
+    Easing, ImageBackground
 } from 'react-native';
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "./navigator";
 import {AntDesign} from "@expo/vector-icons";
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {Entypo} from '@expo/vector-icons';
+import {AuthContext, AuthContextType} from "../contexts/auth-context";
 type OverviewProps = {
     navigation: NavigationProp<RootStackParamList, 'Overview'>
 }
@@ -27,7 +28,7 @@ const Overview = ({navigation}: OverviewProps) => {
     const [isExpandedQuest, setIsExpanedQuest] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [animatedValue] = useState(new Animated.Value(0));
-
+    const {isLoggedIn, login, logout} = useContext(AuthContext) as AuthContextType;
 
     const handleHeaderPressUserProfile = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -75,7 +76,7 @@ const Overview = ({navigation}: OverviewProps) => {
                 style={styles.profileContainer}
                 onPress={handleHeaderPressUserProfile}
             >
-                <View style={styles.headerContainer}>
+                <View style={styles.headerContainer} >
                     <AntDesign name="user" size={30} color="#bfbfbf"/>
                     <Text style={styles.headerTitle}>User Profile</Text>
                 </View>
