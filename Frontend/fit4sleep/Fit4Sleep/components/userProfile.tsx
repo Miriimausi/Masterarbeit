@@ -1,18 +1,11 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, TextInput, StyleSheet, Button, TouchableOpacity, LayoutAnimation, Animated} from 'react-native';
-import {NavigationProp} from "@react-navigation/native";
-import {RootStackParamList} from "./navigator";
+import React, {useState} from 'react';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 
-type UserProps = {
-    navigation: NavigationProp<RootStackParamList, 'UserProfile'>
-}
-const UserProfile = ({navigation}: UserProps) => {
+const UserProfile = () => {
     const [editMode, setEditMode] = useState(false);
     const [username, setUsername] = useState('JohnDoe');
     const [password, setPassword] = useState('password');
     const [email, setEmail] = useState('john.doe@gmail.com');
-    const profileRef = useRef<View>(null);
-
 
     const handleEditButtonPress = () => {
         setEditMode(true);
@@ -22,112 +15,111 @@ const UserProfile = ({navigation}: UserProps) => {
         setEditMode(false);
     };
 
-
     return (
-        <View style={styles.userProfileContainer}>
-            <View style={styles.profileContainer}>
+        <View style={styles.container}>
+            <View style={styles.headerContainer}>
                 <Text style={styles.headerTitle}>My Profile</Text>
-                <View style={styles.container}>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Username:</Text>
-                        {editMode ? (
-                            <TextInput
-                                style={styles.input}
-                                value={username}
-                                onChangeText={setUsername}
-                            />
-                        ) : (
-                            <Text style={styles.value}>{username}</Text>
-                        )}
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Password:</Text>
-                        {editMode ? (
-                            <TextInput
-                                style={styles.input}
-                                value={password}
-                                onChangeText={setPassword}
-                                secureTextEntry={true}
-                            />
-                        ) : (
-                            <Text style={styles.value}>******</Text>
-                        )}
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Email:</Text>
-                        {editMode ? (
-                            <TextInput
-                                style={styles.input}
-                                value={email}
-                                onChangeText={setEmail}
-                                secureTextEntry={true}
-                            />
-                        ) : (
-                            <Text style={styles.value}>{email}</Text>
-                        )}
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        {editMode ? (
-                            <Button title="Save" onPress={handleSaveButtonPress}/>
-                        ) : (
-                            <Button title="Edit" onPress={handleEditButtonPress}/>
-                        )}
-                    </View>
-                </View>
+                {editMode ? (
+                    <TouchableOpacity onPress={handleSaveButtonPress}>
+                        <Text style={styles.headerButton}>Save</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity onPress={handleEditButtonPress}>
+                        <Text style={styles.headerButton}>Edit</Text>
+                    </TouchableOpacity>
+                )}
             </View>
-            <View>
+            <View style={styles.profileContainer}>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Username:</Text>
+                    {editMode ? (
+                        <TextInput
+                            style={styles.input}
+                            value={username}
+                            onChangeText={setUsername}
+                        />
+                    ) : (
+                        <Text style={styles.value}>{username}</Text>
+                    )}
+                </View>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Password:</Text>
+                    {editMode ? (
+                        <TextInput
+                            style={styles.input}
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry={true}
+                        />
+                    ) : (
+                        <Text style={styles.value}>******</Text>
+                    )}
+                </View>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Email:</Text>
+                    {editMode ? (
+                        <TextInput
+                            style={styles.input}
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                        />
+                    ) : (
+                        <Text style={styles.value}>{email}</Text>
+                    )}
+                </View>
             </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-
-    userProfileContainer: {
+    container: {
         flex: 1,
-        borderRadius: 10,
-        backgroundColor: '#eee',
-    },
-
-    profileContainer: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 10,
-        overflow: 'hidden',
+        backgroundColor: '#F2F2F2',
     },
     headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 10,
+        padding: 20,
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: 24,
         fontWeight: 'bold',
-        margin: 10,
     },
-    headerIcon: {
-        fontSize: 20,
+    headerButton: {
+        fontSize: 18,
+        color: '#007AFF',
     },
-    container: {
-        padding: 10,
+    profileContainer: {
+        backgroundColor: 'white',
+        borderRadius: 20,
+        margin: 20,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 5,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 20,
     },
     label: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     input: {
         flex: 2,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 5,
-        fontSize: 16,
+        padding: 10,
+        fontSize: 18,
     },
     value: {
         flex: 2,

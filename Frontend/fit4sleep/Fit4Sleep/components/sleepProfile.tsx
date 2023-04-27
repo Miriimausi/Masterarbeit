@@ -1,107 +1,62 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, TextInput, StyleSheet, Button, TouchableOpacity, LayoutAnimation, Animated} from 'react-native';
-import {NavigationProp} from "@react-navigation/native";
-import {RootStackParamList} from "./navigator";
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 
-type UserProps = {
-    navigation: NavigationProp<RootStackParamList, 'SleepProfile'>
-}
-const SleepProfile = ({navigation}: UserProps) => {
-    const [editMode, setEditMode] = useState(false);
-    const [username, setUsername] = useState('JohnDoe');
-    const [password, setPassword] = useState('password');
-    const [email, setEmail] = useState('john.doe@gmail.com');
-    const profileRef = useRef<View>(null);
+const SleepProfile = () => {
+    const [hoursSlept, setHoursSlept] = useState(8);
 
-
-    const handleEditButtonPress = () => {
-        setEditMode(true);
+    const handleIncreaseHours = () => {
+        setHoursSlept(hoursSlept + 1);
     };
 
-    const handleSaveButtonPress = () => {
-        setEditMode(false);
+    const handleDecreaseHours = () => {
+        if (hoursSlept > 0) {
+            setHoursSlept(hoursSlept - 1);
+        }
     };
-
 
     return (
-        <View style={styles.userProfileContainer}>
-        <View style={styles.profileContainer}>
-        <Text style={styles.headerTitle}>My Profile</Text>
-    <View style={styles.container}>
-    <View style={styles.inputContainer}>
-    <Text style={styles.label}>Username:</Text>
-    {editMode ? (
-            <TextInput
-                style={styles.input}
-        value={username}
-        onChangeText={setUsername}
-        />
-    ) : (
-        <Text style={styles.value}>{username}</Text>
-    )}
-    </View>
-    <View style={styles.inputContainer}>
-    <Text style={styles.label}>Password:</Text>
-    {editMode ? (
-            <TextInput
-                style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry={true}
-        />
-    ) : (
-        <Text style={styles.value}>******</Text>
-    )}
-    </View>
-    <View style={styles.inputContainer}>
-    <Text style={styles.label}>Email:</Text>
-    {editMode ? (
-            <TextInput
-                style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        secureTextEntry={true}
-        />
-    ) : (
-        <Text style={styles.value}>{email}</Text>
-    )}
-    </View>
-    <View style={styles.buttonContainer}>
-        {editMode ? (
-                <Button title="Save" onPress={handleSaveButtonPress}/>
-) : (
-        <Button title="Edit" onPress={handleEditButtonPress}/>
-)}
-    </View>
-    </View>
-    </View>
-    <View>
-    <View style={styles.progressBar}>
-    <View style={styles.progressBarFill}/>
-    </View>
-    </View>
-    </View>
-);
+        <View style={styles.container}>
+            <View style={styles.profileContainer}>
+                <Text style={styles.headerTitle}>My Sleep Profile</Text>
+                <View style={styles.statsContainer}>
+                    <View style={styles.statContainer}>
+                        <Text style={styles.statTitle}>Hours Slept</Text>
+                        <View style={styles.statValueContainer}>
+                            <TouchableOpacity onPress={handleDecreaseHours}>
+                                <Image source={require('../assets/minus.png')} style={styles.icon} />
+                            </TouchableOpacity>
+                            <Text style={styles.statValue}>{hoursSlept}</Text>
+                            <TouchableOpacity onPress={handleIncreaseHours}>
+                                <Image source={require('../assets/plus.png')} style={styles.icon} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.statContainer}>
+                        <Text style={styles.statTitle}>Sleep Quality</Text>
+                        <View style={styles.statValueContainer}>
+                            <Text style={styles.statValue}>80%</Text>
+                        </View>
+                    </View>
+                    <View style={styles.statContainer}>
+                        <Text style={styles.statTitle}>Sleep Questionnaire Result</Text>
+                        <View style={styles.statValueContainer}>
+                            <Text style={styles.statValue}>85%</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+        </View>
+    );
 };
-
 const styles = StyleSheet.create({
-
-    userProfileContainer: {
+    container: {
         flex: 1,
-        borderRadius: 10,
         backgroundColor: '#eee',
     },
-
     profileContainer: {
         backgroundColor: 'white',
         borderRadius: 10,
         margin: 10,
-        overflow: 'hidden',
-    },
-    headerContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
         padding: 10,
     },
     headerTitle: {
@@ -109,57 +64,31 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 10,
     },
-    headerIcon: {
-        fontSize: 20,
+    statsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginVertical: 10,
     },
-    container: {
-        padding: 10,
+    statContainer: {
+        alignItems: 'center',
     },
-    inputContainer: {
+    statTitle: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    statValueContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
     },
-    label: {
-        flex: 1,
+    statValue: {
         fontSize: 16,
+        fontWeight: 'bold',
+        marginHorizontal: 10,
     },
-    input: {
-        flex: 2,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 5,
-        fontSize: 16,
+    icon: {
+        width: 20,
+        height: 20,
     },
-    value: {
-        flex: 2,
-        fontSize: 16,
-    },
-    buttonContainer: {
-        marginLeft: 250,
-        marginBottom: 20,
-        width: 90,
-        maxWidth: 200,
-    },
-
-    progressBar: {
-        height: 50,
-        backgroundColor: '#0E9CDA',
-        borderRadius: 5,
-        overflow: 'hidden',
-        marginTop: 10,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20
-    },
-    progressBarFill: {
-        height: '100%',
-        backgroundColor: '#0E9CDA',
-        borderRadius: 5
-    },
-
-
 });
 
 export default SleepProfile;
