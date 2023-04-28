@@ -15,6 +15,7 @@ type RootStackParamList = {
     Overview: undefined;
 
     SleepProfile : undefined;
+    Questionnaire: undefined;
 };
 
 function AppNavigator() {

@@ -1,31 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     StyleSheet,
     Text,
     View,
     TouchableOpacity,
-    ScrollView,
+    ScrollView, Dimensions,
 } from 'react-native';
 import axios from 'axios';
+import * as Progress from 'react-native-progress';
 
 
 interface Question {
     id: number;
     question: string;
 }
+
 const Questionnaire = () => {
     const [answers, setAnswers] = useState<(string | null)[]>([]);
     const [questions, setQuestions] = useState<Question[]>([]);
+    const [questionStep, setQuestionStep] = useState<number>(0);
+    const [currentQuestion, setCurrentQuestion] = useState<Question | undefined>();
+    const [progressInPercent, setProgressInPercent] = useState<number>(0)
 
-    const handleAnswer = (index, answer) => {
-        const newAnswers = [...answers];
-        newAnswers[index] = answer;
-        setAnswers(newAnswers);
-    };
 
-    const handleSubmit = () => {
-        console.log('Answers:', answers);
-    };
     useEffect(() => {
         axios
             .get('http://10.0.2.2:5000/Questionnaire/')
@@ -39,37 +36,126 @@ const Questionnaire = () => {
             });
     }, []);
 
+    // TEST DATA
+    // useEffect(() => {
+    //     setQuestions([
+    //         {
+    //             id: 1,
+    //             question: "How long did it take you to fall asleep"
+    //         },
+    //         {
+    //             id: 2,
+    //             question: "How long did it take you to fall asleep2"
+    //         },
+    //         {
+    //             id: 3,
+    //             question: "How long did it take you to fall asleep3"
+    //         },
+    //         {
+    //             id: 4,
+    //             question: "How long did it take you to fall asleep4"
+    //         },
+    //         {
+    //             id: 5,
+    //             question: "How long did it take you to fall asleep5"
+    //         },
+    //         {
+    //             id: 6,
+    //             question: "How long did it take you to fall asleep6"
+    //         },
+    //         {
+    //             id: 7,
+    //             question: "How long did it take you to fall asleep7"
+    //         },
+    //
+    //     ])
+    // }, [])
+
+
+    useEffect(() => {
+        setCurrentQuestion(questions[questionStep]);
+    }, [questionStep, questions])
+
+
+    const handleAnswer = (index: number, answer: string) => {
+        const newAnswers = [...answers];
+        newAnswers[index] = answer;
+        setAnswers(newAnswers);
+    };
+
+    const handleSubmit = () => {
+        const progress: number = 1 / (questions.length - 1);
+        setProgressInPercent(progressInPercent + progress)
+
+        if (questionStep < questions.length - 1) {
+            setQuestionStep(questionStep + 1);
+        }
+
+        if (questionStep === questions.length -1) {
+            setQuestionStep(0);
+            setProgressInPercent(0);
+        }
+
+
+    };
+
+
+    const Question = (question: Question) => {
+        return (
+            <View style={styles.questionContainer}>
+                <Text style={styles.questionText}>{question.question}</Text>
+                <View style={styles.answerContainer}>
+                    <TouchableOpacity
+                        style={
+                            {
+                                backgroundColor: "#44607c",
+                                borderRadius: 5,
+                                width: 120,
+                                height: 42,
+                                justifyContent:"center",
+                                alignItems:"center"
+                            }
+                        }
+                    >
+                        <Text style={{color: "white", fontSize: 16, fontWeight:"bold" }}>Yes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={
+                            {
+                                marginLeft: 12,
+                                borderWidth: 1,
+                                borderColor:"#44607c",
+                                borderRadius: 5,
+                                width: 120,
+                                height: 42,
+                                justifyContent:"center",
+                                alignItems:"center"
+                            }
+                        }
+                    >
+                        <Text style={{color: "#44607c", fontSize: 16, fontWeight:"bold" }}>No</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+        );
+    }
+
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.container}>
-                <Text style={styles.headerTitle}>Survey</Text>
-                {questions.map((question, index) => (
-                    <View key={index} style={styles.questionContainer}>
-                        <Text style={styles.questionText}>{question.question}</Text>
-                        <View style={styles.answerContainer}>
-                            <TouchableOpacity
-                                style={[
-                                    styles.button,
-                                    answers[index] === 'yes' && styles.selectedAnswer,
-                                ]}
-                                onPress={() => handleAnswer(index, 'yes')}
-                            >
-                                <Text style={styles.answerText}>Yes</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[
-                                    styles.button,
-                                    answers[index] === 'no' && styles.selectedAnswer,
-                                ]}
-                                onPress={() => handleAnswer(index, 'no')}
-                            >
-                                <Text style={styles.answerText}>No</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                ))}
+                <Text style={{fontWeight: "bold", fontSize: 16, marginBottom: 9}}>Question: <Text
+                    style={{fontSize: 15}}>{questionStep + 1} / {questions.length}</Text></Text>
+                <Progress.Bar color={"#44607c"} borderWidth={0} unfilledColor={"#f1efef"} progress={progressInPercent}
+                              width={320}/>
+                {
+                    currentQuestion &&
+                    <Question id={currentQuestion.id} question={currentQuestion.question}/>
+                }
+
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                    <Text style={styles.submitButtonText}>Submit</Text>
+                    <Text
+                        style={styles.submitButtonText}>{questionStep === questions.length - 1 ? "Done" : "Next"}</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
@@ -80,12 +166,15 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
         backgroundColor: '#F4F4F4',
+        alignItems: "center",
     },
     container: {
-        flex: 1,
-        backgroundColor: '#F4F4F4',
-        paddingHorizontal: 24,
-        paddingVertical: 40,
+        marginTop: 18,
+        borderRadius: 10,
+        width: "95%",
+        padding: 24,
+        backgroundColor: '#ffffff',
+        elevation: 2,
     },
     headerTitle: {
         fontSize: 28,
@@ -94,17 +183,19 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     questionContainer: {
-        marginBottom: 32,
+        marginTop: 24
+
     },
     questionText: {
-        fontSize: 20,
+        fontSize: 18,
         marginBottom: 16,
         color: '#555',
     },
     answerContainer: {
+        marginVertical: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent:"center"
     },
     answerText: {
         fontSize: 18,
@@ -126,15 +217,14 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
     },
     submitButton: {
-        backgroundColor: '#007AFF',
         borderRadius: 8,
         paddingVertical: 16,
-        marginTop: 24,
+        marginTop: 18,
     },
     submitButtonText: {
-        color: '#fff',
+        color: '#44607c',
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: "500",
         textAlign: 'center',
     },
 });
