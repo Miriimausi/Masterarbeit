@@ -4,10 +4,11 @@ import {
     Text,
     View,
     TouchableOpacity,
-    ScrollView, Dimensions,
+    ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import * as Progress from 'react-native-progress';
+import {appColorTheme} from "../../../constants/colors";
 
 
 interface Question {
@@ -108,7 +109,7 @@ const Questionnaire = () => {
                     <TouchableOpacity
                         style={
                             {
-                                backgroundColor: "#44607c",
+                                backgroundColor: appColorTheme.primaryColor,
                                 borderRadius: 5,
                                 width: 120,
                                 height: 42,
@@ -124,7 +125,7 @@ const Questionnaire = () => {
                             {
                                 marginLeft: 12,
                                 borderWidth: 1,
-                                borderColor:"#44607c",
+                                borderColor:appColorTheme.primaryColor,
                                 borderRadius: 5,
                                 width: 120,
                                 height: 42,
@@ -133,7 +134,7 @@ const Questionnaire = () => {
                             }
                         }
                     >
-                        <Text style={{color: "#44607c", fontSize: 16, fontWeight:"bold" }}>No</Text>
+                        <Text style={{color: appColorTheme.primaryColor, fontSize: 16, fontWeight:"bold" }}>No</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -146,7 +147,7 @@ const Questionnaire = () => {
             <View style={styles.container}>
                 <Text style={{fontWeight: "bold", fontSize: 16, marginBottom: 9}}>Question: <Text
                     style={{fontSize: 15}}>{questionStep + 1} / {questions.length}</Text></Text>
-                <Progress.Bar color={"#44607c"} borderWidth={0} unfilledColor={"#f1efef"} progress={progressInPercent}
+                <Progress.Bar color={appColorTheme.primaryColor} borderWidth={0} unfilledColor={"#f1efef"} progress={progressInPercent}
                               width={320}/>
                 {
                     currentQuestion &&
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
         marginTop: 18,
     },
     submitButtonText: {
-        color: '#44607c',
+        color: appColorTheme.primaryColor,
         fontSize: 18,
         fontWeight: "500",
         textAlign: 'center',

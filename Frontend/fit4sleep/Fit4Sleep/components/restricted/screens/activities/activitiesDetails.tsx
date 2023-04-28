@@ -1,5 +1,5 @@
 import { NavigationProp, RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "./navigator";
+import { RootStackParamList } from "../../../navigator";
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from "react-native-vector-icons/MaterialIcons"  ;
 import { TouchableOpacity } from "react-native-gesture-handler";

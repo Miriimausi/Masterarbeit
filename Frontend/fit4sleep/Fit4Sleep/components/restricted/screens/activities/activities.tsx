@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {NavigationProp} from "@react-navigation/native";
-import {RootStackParamList} from "./navigator";
+import {RootStackParamList} from "../../../navigator";
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import ActivityItem from "./activityItem";
 

@@ -1,6 +1,6 @@
-import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
-import Register from "./register";
-import Login from "./login";
+import { createStackNavigator } from '@react-navigation/stack';
+import Register from "./screens/register";
+import Login from "./screens/login";
 
 const PublicStack = createStackNavigator();
 

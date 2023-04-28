@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import {NavigationProp} from "@react-navigation/native";
-import {RootStackParamList} from "./navigator";
+import {RootStackParamList} from "../../navigator";
 
 
 type RegisterProps = {

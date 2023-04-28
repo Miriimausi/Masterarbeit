@@ -1,9 +1,7 @@
-import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
 import {useContext} from "react";
 import {AuthContext, AuthContextType} from "../contexts/auth-context";
-import RestrictedNavigationParent from "./restrictedNavigationParent";
-import PublicNavigationParent from "./publicNavigationParent";
+import RestrictedNavigationParent from "./restricted/restrictedNavigationParent";
+import PublicNavigationParent from "./public/publicNavigationParent";
 
 type RootStackParamList = {
     Login: undefined;
