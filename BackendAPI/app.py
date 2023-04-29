@@ -50,6 +50,23 @@ class Questionnaire(db.Model):
             }
     
 
+class UserAntecedents(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    age = db.Column(db.Integer, nullable=False)
+    bmi = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
+    gender =db.Column(db.String)
+    sleepDuration = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'age': self.age,
+            'bmi': self.bmi,
+            'gender': self.gender,
+            'sleepDuration': self.sleepDuration
+        }
+
+
 # Initialize Flask-RestX API
 api = Api(app, version='1.0', title='My App API',
           description='API for my app')
@@ -58,7 +75,7 @@ auth_namespace= Namespace("auth", description="handles authentication")
 activity_namespace =Namespace("activities", description="handles activities")
 userProfile_namespace =Namespace("UserProfile", description="handles the UserProfile")
 question_namespace = Namespace("Questionnaire", description="handles the questions")
-
+antecendents_namespace = Namespace("Antecedents", description="handles the antecedents of the users")
 
 # Define data model for API documentation
 user_model = api.model('User', {
@@ -79,7 +96,14 @@ activity_model = api.model('Activity', {
 
 question_model = api.model('Questionnaire',{
 'id': fields.Integer,
-'question': fields.String
+'question': fields.String,
+'type': fields.String,
+'answer': fields.String
+
+})
+
+antecendents_model = api.model ('Antecedents', {
+'id': fields.Integer,
 
 })
 
@@ -221,12 +245,14 @@ class ActivityDetail(Resource):
         return activity.to_dict()
 
 
-@question_namespace.route('/')
+
+#yes - no Questions
+@question_namespace.route('/typeone')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == '1').order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
-    
+
     @question_namespace.expect(question_model)
     def post(self):
         questionnaire = Questionnaire(**request.json)
@@ -236,10 +262,30 @@ class Questions(Resource):
 
 
 
+# offene Fragen
+@question_namespace.route('/typetwo')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == '2').order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+
+    @question_namespace.expect(question_model)
+    def post(self):
+        questionnaire = Questionnaire(**request.json)
+        db.session.add(questionnaire)
+        db.session.commit()
+        return questionnaire.to_dict(), 201
+    
+
+
+
+
+
 api.add_namespace(auth_namespace)
 api.add_namespace(activity_namespace)
 api.add_namespace(userProfile_namespace)
 api.add_namespace(question_namespace)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

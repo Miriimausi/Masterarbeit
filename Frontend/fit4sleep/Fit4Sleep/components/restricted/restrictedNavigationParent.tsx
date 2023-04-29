@@ -7,6 +7,7 @@ import {FontAwesome5} from '@expo/vector-icons';
 import {MaterialIcons} from '@expo/vector-icons';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {appColorTheme} from "../../constants/colors";
+import OnboardingSurvey from "./screens/onboardingSurvey/onboarding";
 
 
 const RestrictedTab = createBottomTabNavigator();
@@ -14,6 +15,14 @@ const RestrictedTab = createBottomTabNavigator();
 function RestrictedNavigationParent() {
     return (
         <RestrictedTab.Navigator>
+
+            <RestrictedTab.Screen name="OnboardingSurvey" options={{
+                tabBarShowLabel: false,
+                tabBarIcon: ({focused}) => {
+                    return <FontAwesome5 name="walking" size={24} color={focused ? "#44607c" : "black"}/>
+                },
+            }} component={OnboardingSurvey}/>
+
             <RestrictedTab.Screen name="Activities" options={{
                 tabBarShowLabel: false,
                 tabBarIcon: ({focused}) => {

@@ -26,7 +26,7 @@ const Questionnaire = () => {
 
     useEffect(() => {
         axios
-            .get('http://10.0.2.2:5000/Questionnaire/')
+            .get('http://10.0.2.2:5000/Questionnaire/typeone')
             .then((response) => {
                 const newAnswers = new Array(response.data.length).fill(null);
                 setAnswers(newAnswers);
