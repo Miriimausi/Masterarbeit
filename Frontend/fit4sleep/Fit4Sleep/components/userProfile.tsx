@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import ImagePicker from 'react-native-image-picker';
 
 const UserProfile = () => {
     const [editMode, setEditMode] = useState(false);
     const [username, setUsername] = useState('JohnDoe');
     const [password, setPassword] = useState('password');
     const [email, setEmail] = useState('john.doe@gmail.com');
+    const [profilePicture, setProfilePicture] = useState(null);
 
     const handleEditButtonPress = () => {
         setEditMode(true);
@@ -13,6 +15,22 @@ const UserProfile = () => {
 
     const handleSaveButtonPress = () => {
         setEditMode(false);
+    };
+
+    const handleSelectImage = () => {
+        const options = {
+            title: 'Select Profile Picture',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+
+        ImagePicker.showImagePicker(options, (response: { uri: React.SetStateAction<null>; }) => {
+            if (response.uri) {
+                setProfilePicture(response.uri);
+            }
+        });
     };
 
     return (
@@ -30,14 +48,19 @@ const UserProfile = () => {
                 )}
             </View>
             <View style={styles.profileContainer}>
+                <TouchableOpacity onPress={handleSelectImage}>
+                    {profilePicture ? (
+                        <Image style={styles.profilePicture} source={{ uri: profilePicture }} />
+                    ) : (
+                        <View style={styles.profilePicturePlaceholder}>
+                            <Text >Select Image</Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Username:</Text>
                     {editMode ? (
-                        <TextInput
-                            style={styles.input}
-                            value={username}
-                            onChangeText={setUsername}
-                        />
+                        <TextInput style={styles.input} value={username} onChangeText={setUsername} />
                     ) : (
                         <Text style={styles.value}>{username}</Text>
                     )}
@@ -72,7 +95,6 @@ const UserProfile = () => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -146,6 +168,52 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: '#0E9CDA',
         borderRadius: 5
+    },
+    imageContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    imageLabel: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    imagePickerButton: {
+        flex: 2,
+        backgroundColor: '#007AFF',
+        borderRadius: 5,
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 20,
+    },
+    imagePickerButtonText: {
+        color: 'white',
+        fontSize: 18,
+    },
+    profilePicture: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginTop: 20,
+        alignSelf: 'center',
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+
+    profilePicturePlaceholder: {
+        width: 120,
+        height: 120,
+        backgroundColor: '#b3f0ff',
+        borderRadius: 60,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    profilePicturePlaceholderIcon: {
+        fontSize: 50,
+        color: 'white',
     },
 
 

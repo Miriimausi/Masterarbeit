@@ -36,40 +36,6 @@ const Questionnaire = () => {
             });
     }, []);
 
-    // TEST DATA
-    // useEffect(() => {
-    //     setQuestions([
-    //         {
-    //             id: 1,
-    //             question: "How long did it take you to fall asleep"
-    //         },
-    //         {
-    //             id: 2,
-    //             question: "How long did it take you to fall asleep2"
-    //         },
-    //         {
-    //             id: 3,
-    //             question: "How long did it take you to fall asleep3"
-    //         },
-    //         {
-    //             id: 4,
-    //             question: "How long did it take you to fall asleep4"
-    //         },
-    //         {
-    //             id: 5,
-    //             question: "How long did it take you to fall asleep5"
-    //         },
-    //         {
-    //             id: 6,
-    //             question: "How long did it take you to fall asleep6"
-    //         },
-    //         {
-    //             id: 7,
-    //             question: "How long did it take you to fall asleep7"
-    //         },
-    //
-    //     ])
-    // }, [])
 
 
     useEffect(() => {
