@@ -1,10 +1,9 @@
 import React, {useContext, useRef, useState} from 'react';
-import {Animated, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Animated, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from './navigator';
+import {RootStackParamList} from '../../navigator';
 import {AntDesign} from '@expo/vector-icons';
-import {KeyboardAvoidingView} from 'react-native';
-import {AuthContext, AuthContextType} from "../contexts/auth-context";
+import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
 import {ImageBackground} from 'react-native';
 
 type Login = {
@@ -23,7 +22,6 @@ const Login = ({navigation}: LoginProps) => {
 
     const {login} = useContext(AuthContext) as AuthContextType;
 
-    const inputScale = useRef(new Animated.Value(1)).current;
     const changeToRegister = () => {
         navigation.navigate('Register');
     };
@@ -35,7 +33,7 @@ const Login = ({navigation}: LoginProps) => {
 
     return (
         <ImageBackground
-            source={require('../assets/background-image.png')}
+            source={require('../../../assets/background-image.png')}
             style={styles.background}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.inputContainer}>

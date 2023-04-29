@@ -23,11 +23,11 @@ const SleepProfile = () => {
                         <Text style={styles.statTitle}>Hours Slept</Text>
                         <View style={styles.statValueContainer}>
                             <TouchableOpacity onPress={handleDecreaseHours}>
-                                <Image source={require('../assets/minus.png')} style={styles.icon} />
+                                <Image source={require('../../../assets/minus.png')} style={styles.icon} />
                             </TouchableOpacity>
                             <Text style={styles.statValue}>{hoursSlept}</Text>
                             <TouchableOpacity onPress={handleIncreaseHours}>
-                                <Image source={require('../assets/plus.png')} style={styles.icon} />
+                                <Image source={require('../../../assets/plus.png')} style={styles.icon} />
                             </TouchableOpacity>
                         </View>
                     </View>
