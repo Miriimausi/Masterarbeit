@@ -26,11 +26,7 @@ const UserProfile = () => {
             },
         };
 
-        ImagePicker.showImagePicker(options, (response: { uri: React.SetStateAction<null>; }) => {
-            if (response.uri) {
-                setProfilePicture(response.uri);
-            }
-        });
+
     };
 
     return (
