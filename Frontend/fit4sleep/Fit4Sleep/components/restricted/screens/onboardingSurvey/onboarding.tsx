@@ -7,6 +7,7 @@ import { ToggleButton } from 'react-native-paper';
 
 
 interface SurveyResponse {
+    id: number;
     age: number;
     height: number;
     weight: number;
@@ -14,16 +15,16 @@ interface SurveyResponse {
     gender: string;
     smoking: String;
     alcohol: String;
-    sleepDuration: String;
-
+    // sleepDuration: String;
     activityLevel: String;
 
-    favoriteActivities: string[];
+    // favoriteActivities: string[];
 
 }
 
 const OnboardingSurvey = () => {
     const [response, setResponse] = useState<SurveyResponse>({
+        id:0,
         age: 0,
         height: 0,
         weight: 0,
@@ -31,9 +32,9 @@ const OnboardingSurvey = () => {
         gender: '',
         smoking:'',
         alcohol: '',
-        sleepDuration: '',
+        // sleepDuration: '',
         activityLevel:'',
-        favoriteActivities:[]
+        // favoriteActivities:[]
 
     });
     const [stressLevel, setStressLevel] = useState(3);
@@ -83,15 +84,25 @@ const OnboardingSurvey = () => {
     const handleAlcoholChange = (alcohol: string) => {
         setResponse({ ...response, alcohol: alcohol });
     };
-    const handleSleepDurationChange = (sleepDuration: string) => {
-        setResponse({ ...response, sleepDuration: sleepDuration });
-    };
+    // const handleSleepDurationChange = (sleepDuration: string) => {
+    //     setResponse({ ...response, sleepDuration: sleepDuration });
+    // };
 
-
-        const handleSubmit = () => {
-        console.log(response);
-        // Submit survey response here
-    };
+    const handleSubmit = async () => {
+    //     const response = await fetch('http://10.0.2.2:5000/Antecedents', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ id, age, height, weight, bmi, gender , smoking, alcohol, activityLevel  })
+    //     });
+    //     const data = await response.json();
+    //     if (data.success) {
+            console.log(response);
+    //     } else {
+    //         console.log('No Information was submitted');
+    //     }
+    }
 
 
     // adding alcohol consumtion, smoking, sports, stress, depression?? - maybe divide the sleep parameters and the atenecedents
@@ -163,8 +174,8 @@ const OnboardingSurvey = () => {
                         >
                             <Picker.Item label="Select" value="" />
                             <Picker.Item label="Not at all" value="not_at_all" />
-                            <Picker.Item label="Sometimes" value="sometimes" />
-                            <Picker.Item label ="Regularly"  value="regularly" />
+                            <Picker.Item label="Occasional" value="occasional" />
+                            <Picker.Item label ="Regular"  value="regular" />
                         </Picker>
                     </View>
                 </View>
@@ -179,8 +190,8 @@ const OnboardingSurvey = () => {
                         >
                             <Picker.Item label="Select" value="" />
                             <Picker.Item label="Not at all" value="not_at_all" />
-                            <Picker.Item label="Once or Twice in the Week" value="once_or_twice" />
-                            <Picker.Item label ="Regularly"  value="regularly" />
+                            <Picker.Item label="Occasional" value="occasional" />
+                            <Picker.Item label ="Regularly"  value="regular" />
                         </Picker>
                     </View>
                 </View>

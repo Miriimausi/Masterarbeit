@@ -59,17 +59,27 @@ class Questionnaire(db.Model):
 class UserAntecedents(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     age = db.Column(db.Integer, nullable=False)
+    height= db.Column (db.Numeric(precision=2, scale=2),nullable= False)
+    weight= db.Column (db.Numeric(precision=2, scale=2),nullable= False)
     bmi = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
-    gender =db.Column(db.String)
-    sleepDuration = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
+    gender =db.Column(db.String, nullable=False)
+    smoking= db.Column(db.String)
+    alcohol= db.Column(db.String)
+    activityLevel =db.Column(db.String)
+    
 
     def to_dict(self):
         return {
-            'id': self.id,
+            
             'age': self.age,
+            'height': self.height,
+            'weight': self.weight,
             'bmi': self.bmi,
             'gender': self.gender,
-            'sleepDuration': self.sleepDuration
+            'smoking': self.smoking,
+            'alcohol': self.alcohol,
+            'activtyLevel': self.activityLevel,
+            
         }
 
 
@@ -81,7 +91,7 @@ auth_namespace= Namespace("auth", description="handles authentication")
 activity_namespace =Namespace("activities", description="handles activities")
 userProfile_namespace =Namespace("UserProfile", description="handles the UserProfile")
 question_namespace = Namespace("Questionnaire", description="handles the questions")
-antecendents_namespace = Namespace("Antecedents", description="handles the antecedents of the users")
+antecedents_namespace = Namespace("Antecedents", description="handles the antecedents of the users")
 
 # Define data model for API documentation
 user_model = api.model('User', {
@@ -109,7 +119,14 @@ question_model = api.model('Questionnaire',{
 })
 
 antecendents_model = api.model ('Antecedents', {
-'id': fields.Integer,
+'age': fields.Integer,
+'height': fields.Float,
+'weight': fields.Float,
+'bmi': fields.Float,
+'gender': fields.String,
+'smoking': fields.String,
+'alcohol': fields.String,
+'activtyLevel': fields.String,
 
 })
 
@@ -146,6 +163,75 @@ class Authentication(Resource):
         db.session.commit()
         
         return jsonify({'success': True})
+    
+
+
+
+antecedents_model = api.model('Antecedents', {
+    'age': fields.Integer,
+    'height': fields.Float,
+    'weight': fields.Float,
+    'bmi':fields.Float,
+    'gender': fields.String,
+    'smoking': fields.String,
+    'alcohol': fields.String,
+    'activityLevel': fields.String
+})
+
+@antecedents_namespace.route('/')
+class Antecedents(Resource):
+    @api.expect(antecedents_model)
+    def post(self):
+        antecedents = request.json
+
+        # Validate required fields
+        required_fields = ['age', 'height', 'weight', 'bmi', 'gender', 'activityLevel']
+        for field in required_fields:
+            if field not in antecedents:
+                return {'error': f'{field} is required'}, 400
+
+        # Validate age
+        if 'age' in antecedents and antecedents['age'] < 0:
+            return {'error': 'Age must be a positive integer'}, 400
+
+        # Validate height
+        if 'height' in antecedents and (antecedents['height'] < 0 or antecedents['height'] > 3):
+            return {'error': 'Height must be between 0 and 3 meters'}, 400
+
+        # Validate weight
+        if 'weight' in antecedents and antecedents['weight'] < 0:
+            return {'error': 'Weight must be a positive number'}, 400
+
+        # Validate bmi
+        if 'bmi' in antecedents and antecedents['bmi'] < 0:
+            return {'error': 'BMI must be a positive number'}, 400
+        # Validate gender
+        valid_genders = ['male', 'female', 'other']
+        if 'gender' in antecedents and antecedents['gender'].lower() not in valid_genders:
+            return {'error': f'Gender must be one of {", ".join(valid_genders)}'}, 400
+
+        # Validate smoking
+        valid_smoking_values = ['not_at_all', 'occasional', 'regular']
+        if 'smoking' in antecedents and antecedents['smoking'].lower() not in valid_smoking_values:
+            return {'error': f'Smoking must be one of {", ".join(valid_smoking_values)}'}, 400
+
+        # Validate alcohol
+        valid_alcohol_values = ['not_at_all', 'occasional', 'regular']
+        if 'alcohol' in antecedents and antecedents['alcohol'].lower() not in valid_alcohol_values:
+            return {'error': f'Alcohol must be one of {", ".join(valid_alcohol_values)}'}, 400
+
+        # Validate activityLevel
+        valid_activity_levels = ['low', 'moderate', 'high', 'very_high']
+        if 'activityLevel' in antecedents and antecedents['activityLevel'].lower() not in valid_activity_levels:
+            return {'error': f'Activity level must be one of {", ".join(valid_activity_levels)}'}, 400
+
+        # If all validations pass, return success message
+        return {'success': True}, 200
+
+
+
+
+
     
 @userProfile_namespace.route('/')
 class UserProfiles(Resource):
@@ -291,7 +377,7 @@ api.add_namespace(auth_namespace)
 api.add_namespace(activity_namespace)
 api.add_namespace(userProfile_namespace)
 api.add_namespace(question_namespace)
-
+api.add_namespace(antecedents_namespace)
 
 if __name__ == '__main__':
     app.run(debug=True)
