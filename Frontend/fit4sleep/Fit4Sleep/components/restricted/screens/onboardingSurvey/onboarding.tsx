@@ -1,9 +1,14 @@
-import React, {useRef, useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet, TouchableOpacity, ScrollView, Animated, ActivityIndicator} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, {useState} from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    TouchableOpacity,
+} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import Swiper from 'react-native-swiper';
-import { ToggleButton } from 'react-native-paper';
-
+import CustomNumericScale from "./customNumericScale";
 
 
 interface SurveyResponse {
@@ -24,21 +29,20 @@ interface SurveyResponse {
 
 const OnboardingSurvey = () => {
     const [response, setResponse] = useState<SurveyResponse>({
-        id:0,
+        id: 0,
         age: 0,
         height: 0,
         weight: 0,
         bmi: 0,
         gender: '',
-        smoking:'',
+        smoking: '',
         alcohol: '',
         // sleepDuration: '',
-        activityLevel:'',
+        activityLevel: '',
         // favoriteActivities:[]
 
     });
     const [stressLevel, setStressLevel] = useState(3);
-
 
 
     const handleAgeChange = (age: string) => {
@@ -78,30 +82,30 @@ const OnboardingSurvey = () => {
     };
 
     const handleSmokingChange = (smoking: string) => {
-        setResponse({ ...response, smoking: smoking });
+        setResponse({...response, smoking: smoking});
     };
 
     const handleAlcoholChange = (alcohol: string) => {
-        setResponse({ ...response, alcohol: alcohol });
+        setResponse({...response, alcohol: alcohol});
     };
     // const handleSleepDurationChange = (sleepDuration: string) => {
     //     setResponse({ ...response, sleepDuration: sleepDuration });
     // };
 
     const handleSubmit = async () => {
-    //     const response = await fetch('http://10.0.2.2:5000/Antecedents', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({ id, age, height, weight, bmi, gender , smoking, alcohol, activityLevel  })
-    //     });
-    //     const data = await response.json();
-    //     if (data.success) {
-            console.log(response);
-    //     } else {
-    //         console.log('No Information was submitted');
-    //     }
+        //     const response = await fetch('http://10.0.2.2:5000/Antecedents', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({ id, age, height, weight, bmi, gender , smoking, alcohol, activityLevel  })
+        //     });
+        //     const data = await response.json();
+        //     if (data.success) {
+        console.log(response);
+        //     } else {
+        //         console.log('No Information was submitted');
+        //     }
     }
 
 
@@ -110,6 +114,11 @@ const OnboardingSurvey = () => {
         <Swiper showsButtons={true} loop={false}>
             <View style={styles.slide}>
                 <Text style={styles.headerText}>Personal Information </Text>
+                <View style={styles.field}>
+                    <Text style={styles.label}>Stress Level:</Text>
+                    <CustomNumericScale numOfSteps={5} setFun={setStressLevel}></CustomNumericScale>
+
+                </View>
 
                 <View style={styles.field}>
                     <Text style={styles.label}>Age:</Text>
@@ -126,10 +135,10 @@ const OnboardingSurvey = () => {
                             selectedValue={response.gender}
                             onValueChange={handleGenderChange}
                         >
-                            <Picker.Item label="Select" value="" />
-                            <Picker.Item label="Male" value="male" />
-                            <Picker.Item label="Female" value="female" />
-                            <Picker.Item label="Other" value="other" />
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="Male" value="male"/>
+                            <Picker.Item label="Female" value="female"/>
+                            <Picker.Item label="Other" value="other"/>
                         </Picker>
                     </View>
                 </View>
@@ -160,7 +169,7 @@ const OnboardingSurvey = () => {
                 </View>
             </View>
 
-            < View style ={styles.slide}>
+            < View style={styles.slide}>
                 <Text style={styles.headerText}>Health-assessment </Text>
 
                 <View style={styles.field}>
@@ -169,13 +178,13 @@ const OnboardingSurvey = () => {
                         <Picker
                             selectedValue={response.smoking}
                             onValueChange={(value) =>
-                                setResponse({ ...response, smoking: value })
+                                setResponse({...response, smoking: value})
                             }
                         >
-                            <Picker.Item label="Select" value="" />
-                            <Picker.Item label="Not at all" value="not_at_all" />
-                            <Picker.Item label="Occasional" value="occasional" />
-                            <Picker.Item label ="Regular"  value="regular" />
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="Not at all" value="not_at_all"/>
+                            <Picker.Item label="Occasional" value="occasional"/>
+                            <Picker.Item label="Regular" value="regular"/>
                         </Picker>
                     </View>
                 </View>
@@ -185,13 +194,13 @@ const OnboardingSurvey = () => {
                         <Picker
                             selectedValue={response.alcohol}
                             onValueChange={(value) =>
-                                setResponse({ ...response, alcohol: value })
+                                setResponse({...response, alcohol: value})
                             }
                         >
-                            <Picker.Item label="Select" value="" />
-                            <Picker.Item label="Not at all" value="not_at_all" />
-                            <Picker.Item label="Occasional" value="occasional" />
-                            <Picker.Item label ="Regularly"  value="regular" />
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="Not at all" value="not_at_all"/>
+                            <Picker.Item label="Occasional" value="occasional"/>
+                            <Picker.Item label="Regularly" value="regular"/>
                         </Picker>
                     </View>
                 </View>
@@ -223,13 +232,13 @@ const OnboardingSurvey = () => {
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.activityLevel}
-                            onValueChange={(value) => setResponse({ ...response, activityLevel: value })}
+                            onValueChange={(value) => setResponse({...response, activityLevel: value})}
                         >
-                            <Picker.Item label="Select" value="" />
-                            <Picker.Item label="Low" value="low" />
-                            <Picker.Item label="Moderate" value="moderate" />
-                            <Picker.Item label="High" value="high" />
-                            <Picker.Item label="Very High" value="very_high" />
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="Low" value="low"/>
+                            <Picker.Item label="Moderate" value="moderate"/>
+                            <Picker.Item label="High" value="high"/>
+                            <Picker.Item label="Very High" value="very_high"/>
                         </Picker>
                     </View>
                 </View>
@@ -239,15 +248,15 @@ const OnboardingSurvey = () => {
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.activityLevel}
-                            onValueChange={(value) => setResponse({ ...response, activityLevel: value })}
+                            onValueChange={(value) => setResponse({...response, activityLevel: value})}
                         >
-                            <Picker.Item label="Select" value="" />
-                            <Picker.Item  label="Circuit Training" value= "circuit_training"/>
-                            <Picker.Item label="Yoga" value="yoga" />
-                            <Picker.Item label="Jogging" value="jogging" />
-                            <Picker.Item label="Weight Training" value="weight_training" />
-                            <Picker.Item label="Swimming" value="swimming" />
-                            <Picker.Item label="Cycling" value="cycling" />
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="Circuit Training" value="circuit_training"/>
+                            <Picker.Item label="Yoga" value="yoga"/>
+                            <Picker.Item label="Jogging" value="jogging"/>
+                            <Picker.Item label="Weight Training" value="weight_training"/>
+                            <Picker.Item label="Swimming" value="swimming"/>
+                            <Picker.Item label="Cycling" value="cycling"/>
                         </Picker>
                     </View>
                 </View>
@@ -271,10 +280,7 @@ const OnboardingSurvey = () => {
     );
 
 
-
-
 };
-
 
 
 const styles = StyleSheet.create({
@@ -360,7 +366,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-        textAlign:'center'
+        textAlign: 'center'
     },
 
     radioButtonContainer: {
