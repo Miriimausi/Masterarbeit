@@ -60,15 +60,10 @@ const OnboardingSurvey = () => {
         setResponse({
             ...response,
             age: parseInt(age),
-            bmi: calculateBmi(response.weight, response.height),
         });
     };
     const handleGenderChange = (gender: string) => {
-        setResponse({
-            ...response,
-            gender: gender,
-            bmi: calculateBmi(response.weight, response.height),
-        });
+        setResponse({...response, gender: gender});
     };
     const handleWeightChange = (weight: string) => {
         setResponse({
@@ -106,15 +101,18 @@ const OnboardingSurvey = () => {
 
     const handleSubmit = async () => {
         const requestBody = {
-            age: age,
-            height: height,
-            weight: weight,
-            bmi: bmi,
-            gender: gender,
-            timeAvailability: timeAvailability,
-            trainingPreference: trainingPreference,
-            favoriteActivities: favoriteActivities,
+            id:69,
+            age: response.age,
+            height: response.height,
+            weight: response.weight,
+            bmi: response.bmi,
+            gender: response.gender,
+            timeAvailability: response.timeAvailability,
+            trainingPreference: response.trainingPreference,
+            favoriteActivities: response.favoriteActivities,
         };
+
+        console.log(requestBody);
 
         try {
             const response = await fetch('http://10.0.2.2:5000/Antecedents', {

@@ -15,6 +15,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost/mydatabase'
 db = SQLAlchemy(app)
 
+
+
 # Define data models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,28 +59,30 @@ class Questionnaire(db.Model):
     
 
 class UserAntecedents(db.Model):
+
+    __tablename__="userAntecedents"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     age = db.Column(db.Integer, nullable=False)
     height= db.Column (db.Numeric(precision=2, scale=2),nullable= False)
     weight= db.Column (db.Numeric(precision=2, scale=2),nullable= False)
     bmi = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
     gender =db.Column(db.String, nullable=False)
-    smoking= db.Column(db.String)
-    alcohol= db.Column(db.String)
-    activityLevel =db.Column(db.String)
+    timeAvailability= db.Column(db.String)
+    trainingPreference= db.Column(db.String)
+    favoriteActivities= db.Column(db.String)
     
 
     def to_dict(self):
         return {
-            
+            'id': self.id,
             'age': self.age,
             'height': self.height,
             'weight': self.weight,
             'bmi': self.bmi,
             'gender': self.gender,
-            'smoking': self.smoking,
-            'alcohol': self.alcohol,
-            'activtyLevel': self.activityLevel,
+            'timeAvailability': self.timeAvailability,
+            'trainingPreference': self.trainingPreference,
+            'favoriteActivities': self.favoriteActivities,
             
         }
 
@@ -111,23 +115,24 @@ activity_model = api.model('Activity', {
 })
 
 question_model = api.model('Questionnaire',{
-'id': fields.Integer,
-'question': fields.String,
-'type': fields.String,
-'answer': fields.String
+    'id': fields.Integer,
+    'question': fields.String,
+    'type': fields.String,
+    'answer': fields.String
 
 })
 
-antecendents_model = api.model ('Antecedents', {
-'age': fields.Integer,
-'height': fields.Float,
-'weight': fields.Float,
-'bmi': fields.Float,
-'gender': fields.String,
-'smoking': fields.String,
-'alcohol': fields.String,
-'activtyLevel': fields.String,
 
+antecedents_model = api.model('Antecedents', {
+    'id': fields.Integer,
+    'age': fields.Integer,
+    'height': fields.Float,
+    'weight': fields.Float,
+    'bmi':fields.Float,
+    'gender': fields.String,
+    'timeAvailability': fields.String,
+    'trainingPreference': fields.String,
+    'favoriteActivities': fields.String,
 })
 
 # Define API routes
@@ -167,80 +172,28 @@ class Authentication(Resource):
 
 
 
-antecedents_model = api.model('Antecedents', {
-    'age': fields.Integer,
-    'height': fields.Float,
-    'weight': fields.Float,
-    'bmi':fields.Float,
-    'gender': fields.String,
-    'timeAvailability': fields.String,
-    'trainingPreference': fields.String,
-    'favoriteActivities': fields.String,
-})
 
 @antecedents_namespace.route('/')
 class Antecedents(Resource):
     @api.expect(antecedents_model)
     def post(self):
-        antecedents = request.json
+        id =request.json.get('id')
+        age = request.json.get('age')
+        height = request.json.get('height')
+        weight = request.json.get('weight')
+        bmi = request.json.get('bmi')
+        gender = request.json.get('gender')
+        timeAvailability = request.json.get('timeAvailability')
+        trainingPreference = request.json.get('trainingPreference')
+        favoriteActivities = request.json.get('favoriteActivities')
 
-        # Validate required fields
-        required_fields = ['age', 'height', 'weight', 'bmi', 'gender', 'timeAvailability', 'trainingPreference', 'favoriteActivities']
-        for field in required_fields:
-            if field not in antecedents:
-                return {'error': f'{field} is required'}, 400
+        # Add the new antecedents to the database session
+        new_antecedents = UserAntecedents(id=id, age=age, height=height, weight=weight, bmi=bmi, gender =gender, timeAvailability=timeAvailability, trainingPreference= trainingPreference,favoriteActivities=favoriteActivities  )
+        db.session.add(new_antecedents)
+        db.session.commit()
 
-        # Validate age
-        if 'age' in antecedents:
-            age = antecedents['age']
-            if not age.isdigit():
-                return {'error': 'Age must be a positive integer'}, 400
-            age = int(age)
-            if age < 0:
-                return {'error': 'Age must be a positive integer'}, 400
-
-
-        # Validate height
-        if 'height' in antecedents:
-            height = float(antecedents['height'])
-            if height < 0 or height > 3:
-                return {'error': 'Height must be between 0 and 3 meters'}, 400
-
-        # Validate weight
-        if 'weight' in antecedents:
-            weight = float(antecedents['weight'])
-            if weight < 0:
-                return {'error': 'Weight must be a positive number'}, 400
-
-        # Validate bmi
-        if 'bmi' in antecedents:
-            bmi = float(antecedents['bmi'])
-            if bmi < 0:
-                return {'error': 'BMI must be a positive number'}, 400
-
-        # Validate gender
-        valid_genders = ['male', 'female', 'other']
-        if 'gender' in antecedents and antecedents['gender'].lower() not in valid_genders:
-            return {'error': f'Gender must be one of {", ".join(valid_genders)}'}, 400
-
-        # Validate timeAvailability
-        valid_time_availabilities = ['morning', 'midday', 'afternoon', 'evening']
-        if 'timeAvailability' in antecedents and antecedents['timeAvailability'].lower() not in valid_time_availabilities:
-            return {'error': f'Time availability must be one of {", ".join(valid_time_availabilities)}'}, 400
-
-        # Validate trainingPreference
-        valid_training_preferences = ['endurance', 'strength', 'hiit']
-        if 'trainingPreference' in antecedents and antecedents['trainingPreference'].lower() not in valid_training_preferences:
-            return {'error': f'Training preference must be one of {", ".join(valid_training_preferences)}'}, 400
-
-        # Validate favoriteActivities
-        valid_favorite_activities = ['circuit_training', 'yoga', 'jogging', 'weight_training', 'swimming', 'cycling']
-        if 'favoriteActivities' in antecedents and antecedents['favoriteActivities'].lower() not in valid_favorite_activities:
-            return {'error': f'Favorite activity must be one of {", ".join(valid_favorite_activities)}'}, 400
-
-        # If all validations pass, return success message
+        # Return success message
         return {'success': True}, 200
-
 
 
 
@@ -383,7 +336,10 @@ class Questions(Resource):
     
 
 
-
+def recreate_db():
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
 
 
 api.add_namespace(auth_namespace)
@@ -394,5 +350,5 @@ api.add_namespace(antecedents_namespace)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
+    #recreate_db()
 
