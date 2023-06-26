@@ -5,10 +5,12 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
+    ImageBackground,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Swiper from 'react-native-swiper';
 import CustomNumericScale from "./customNumericScale";
+
 
 
 interface SurveyResponse {
@@ -18,12 +20,10 @@ interface SurveyResponse {
     weight: number;
     bmi: number;
     gender: string;
-    smoking: String;
-    alcohol: String;
-    // sleepDuration: String;
-    activityLevel: String;
-
-    // favoriteActivities: string[];
+    timeAvailability: String;
+    trainingPreference: String;
+    activityLevel: number;
+    favoriteActivities: String;
 
 }
 
@@ -35,14 +35,25 @@ const OnboardingSurvey = () => {
         weight: 0,
         bmi: 0,
         gender: '',
-        smoking: '',
-        alcohol: '',
-        // sleepDuration: '',
-        activityLevel: '',
-        // favoriteActivities:[]
+        timeAvailability: '',
+        trainingPreference: '',
+        activityLevel: 0,
+        favoriteActivities:'',
+
 
     });
-    const [stressLevel, setStressLevel] = useState(3);
+    const [id, setId] = useState('');
+    const [age, setAge] = useState('');
+    const [height, setHeight] = useState('');
+    const [weight, setWeight] = useState('');
+    const [bmi, setBmi] = useState('');
+    const [gender, setGender] = useState('');
+    const [timeAvailability, setTimeAvailability] = useState('');
+    const [trainingPreference, setTrainingPreference] = useState('');
+    const [favoriteActivities, setFavoriteActivities] = useState('');
+
+
+    const [activityLevel, setActivityLevel] = useState(3);
 
 
     const handleAgeChange = (age: string) => {
@@ -81,44 +92,57 @@ const OnboardingSurvey = () => {
         return bmi;
     };
 
-    const handleSmokingChange = (smoking: string) => {
-        setResponse({...response, smoking: smoking});
+    const handleTimeChange = (timeAvailability: string) => {
+        setResponse({...response, timeAvailability: timeAvailability});
     };
 
-    const handleAlcoholChange = (alcohol: string) => {
-        setResponse({...response, alcohol: alcohol});
+    const handleTrainingPreferenceChange = (trainingPreference: string) => {
+        setResponse({...response, trainingPreference: trainingPreference});
     };
-    // const handleSleepDurationChange = (sleepDuration: string) => {
-    //     setResponse({ ...response, sleepDuration: sleepDuration });
-    // };
+
+    const handleFavouriteActivitiesChange = (favoriteActivities: string) => {
+        setResponse({...response, favoriteActivities: favoriteActivities});
+    };
 
     const handleSubmit = async () => {
-        //     const response = await fetch('http://10.0.2.2:5000/Antecedents', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ id, age, height, weight, bmi, gender , smoking, alcohol, activityLevel  })
-        //     });
-        //     const data = await response.json();
-        //     if (data.success) {
-        console.log(response);
-        //     } else {
-        //         console.log('No Information was submitted');
-        //     }
-    }
+        const requestBody = {
+            age: age,
+            height: height,
+            weight: weight,
+            bmi: bmi,
+            gender: gender,
+            timeAvailability: timeAvailability,
+            trainingPreference: trainingPreference,
+            favoriteActivities: favoriteActivities,
+        };
+
+        try {
+            const response = await fetch('http://10.0.2.2:5000/Antecedents', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log(data);  // Success response
+            } else {
+                console.log('No information was submitted');  // Error response
+            }
+        } catch (error) {
+            console.log('An error occurred:', error);  // Error handling
+        }
+    };
 
 
-    // adding alcohol consumtion, smoking, sports, stress, depression?? - maybe divide the sleep parameters and the atenecedents
     return (
+
         <Swiper showsButtons={true} loop={false}>
+
             <View style={styles.slide}>
                 <Text style={styles.headerText}>Personal Information </Text>
-                <View style={styles.field}>
-                    <Text style={styles.label}>Stress Level:</Text>
-                    <CustomNumericScale numOfSteps={5} setFun={setStressLevel}></CustomNumericScale>
-
-                </View>
 
                 <View style={styles.field}>
                     <Text style={styles.label}>Age:</Text>
@@ -170,85 +194,49 @@ const OnboardingSurvey = () => {
             </View>
 
             < View style={styles.slide}>
-                <Text style={styles.headerText}>Health-assessment </Text>
-
-                <View style={styles.field}>
-                    <Text style={styles.label}>Smoking</Text>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={response.smoking}
-                            onValueChange={(value) =>
-                                setResponse({...response, smoking: value})
-                            }
-                        >
-                            <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="Not at all" value="not_at_all"/>
-                            <Picker.Item label="Occasional" value="occasional"/>
-                            <Picker.Item label="Regular" value="regular"/>
-                        </Picker>
-                    </View>
-                </View>
-                <View style={styles.field}>
-                    <Text style={styles.label}>Alcohol Intake</Text>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={response.alcohol}
-                            onValueChange={(value) =>
-                                setResponse({...response, alcohol: value})
-                            }
-                        >
-                            <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="Not at all" value="not_at_all"/>
-                            <Picker.Item label="Occasional" value="occasional"/>
-                            <Picker.Item label="Regularly" value="regular"/>
-                        </Picker>
-                    </View>
-                </View>
-            </View>
-            {/*ToggleButton will nicht :(*/}
-            {/*    <View style={styles.field}>*/}
-            {/*        <Text style={styles.label}>Stress Level</Text>*/}
-            {/*        <View style={styles.container}>*/}
-            {/*            {[1, 2, 3, 4, 5].map((level) => (*/}
-            {/*                <View key={level} style={styles.radioButtonContainer}>*/}
-            {/*                    <Text style={styles.radioButtonLabel}>{level}</Text>*/}
-            {/*                    <ToggleButton*/}
-            {/*                        value={level}*/}
-            {/*                        status={stressLevel === level ? 'checked' : 'unchecked'}*/}
-            {/*                        onPress={() => setStressLevel(level)}*/}
-            {/*                        color="#008080"*/}
-            {/*                    />*/}
-            {/*                </View>*/}
-            {/*            ))}*/}
-            {/*        </View>*/}
-            {/*    </View>*/}
-
-
-            <View style={styles.slide}>
                 <Text style={styles.headerText}>Activity Assessment</Text>
 
                 <View style={styles.field}>
-                    <Text style={styles.label}>Level of Activity</Text>
+                    <Text style={styles.label}>Time Availability</Text>
                     <View style={styles.picker}>
                         <Picker
-                            selectedValue={response.activityLevel}
-                            onValueChange={(value) => setResponse({...response, activityLevel: value})}
+                            selectedValue={response.timeAvailability}
+                            onValueChange={(value) =>
+                                setResponse({...response, timeAvailability: value})
+                            }
                         >
                             <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="Low" value="low"/>
-                            <Picker.Item label="Moderate" value="moderate"/>
-                            <Picker.Item label="High" value="high"/>
-                            <Picker.Item label="Very High" value="very_high"/>
+                            <Picker.Item label="Morning" value="morning"/>
+                            <Picker.Item label="Midday" value="midday"/>
+                            <Picker.Item label="Afternoon" value="afternoon"/>
+                            <Picker.Item label="Evening" value="evening"/>
                         </Picker>
                     </View>
                 </View>
+                <View style={styles.field}>
+                    <Text style={styles.label}>Activity Preference</Text>
+                    <View style={styles.picker}>
+                        <Picker
+                            selectedValue={response.trainingPreference}
+                            onValueChange={(value) =>
+                                setResponse({...response, trainingPreference: value})
+                            }
+                        >
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="HIIT" value="hiit"/>
+                            <Picker.Item label="Endurance Training" value="endurance"/>
+                            <Picker.Item label="Strength Training " value="strength"/>
+                        </Picker>
+                    </View>
+                </View>
+
 
                 <View style={styles.field}>
                     <Text style={styles.label}>Favourite Activity</Text>
                     <View style={styles.picker}>
                         <Picker
-                            selectedValue={response.activityLevel}
-                            onValueChange={(value) => setResponse({...response, activityLevel: value})}
+                            selectedValue={response.favoriteActivities}
+                            onValueChange={(value) => setResponse({...response, favoriteActivities: value})}
                         >
                             <Picker.Item label="Select" value=""/>
                             <Picker.Item label="Circuit Training" value="circuit_training"/>
@@ -260,8 +248,12 @@ const OnboardingSurvey = () => {
                         </Picker>
                     </View>
                 </View>
-            </View>
+                <View style={styles.field}>
+                    <Text style={styles.label}>Level of Activity:</Text>
+                    <CustomNumericScale numOfSteps={5} setFun={setActivityLevel}></CustomNumericScale>
 
+                </View>
+            </View>
             <View style={styles.slide}>
                 <View style={styles.surveyContainer}>
                     <Text style={styles.surveyTitle}>Thank You!</Text>
@@ -277,6 +269,7 @@ const OnboardingSurvey = () => {
                 </View>
             </View>
         </Swiper>
+
     );
 
 
@@ -284,32 +277,41 @@ const OnboardingSurvey = () => {
 
 
 const styles = StyleSheet.create({
+    imageBackground: {
+        flex: 1,
+        resizeMode: 'cover',
+    },
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#fff',
     },
+
     slide: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+
     },
     headerText: {
         fontWeight: "bold",
         fontSize: 20,
-        marginBottom: 9
+        marginBottom: 9,
+        color: '#293e7d'
     },
 
     field: {
         width: '80%',
         marginTop: 5,
         marginBottom: 5,
+
     },
     label: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 10,
+        color: '#293e7d'
     },
     input: {
         borderWidth: 1,
@@ -319,6 +321,7 @@ const styles = StyleSheet.create({
         width: '100%',
         fontSize: 16,
         backgroundColor: '#fff',
+        paddingHorizontal: 10,
     },
     picker: {
         borderWidth: 1,

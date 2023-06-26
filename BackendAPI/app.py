@@ -173,9 +173,9 @@ antecedents_model = api.model('Antecedents', {
     'weight': fields.Float,
     'bmi':fields.Float,
     'gender': fields.String,
-    'smoking': fields.String,
-    'alcohol': fields.String,
-    'activityLevel': fields.String
+    'timeAvailability': fields.String,
+    'trainingPreference': fields.String,
+    'favoriteActivities': fields.String,
 })
 
 @antecedents_namespace.route('/')
@@ -185,45 +185,58 @@ class Antecedents(Resource):
         antecedents = request.json
 
         # Validate required fields
-        required_fields = ['age', 'height', 'weight', 'bmi', 'gender', 'activityLevel']
+        required_fields = ['age', 'height', 'weight', 'bmi', 'gender', 'timeAvailability', 'trainingPreference', 'favoriteActivities']
         for field in required_fields:
             if field not in antecedents:
                 return {'error': f'{field} is required'}, 400
 
         # Validate age
-        if 'age' in antecedents and antecedents['age'] < 0:
-            return {'error': 'Age must be a positive integer'}, 400
+        if 'age' in antecedents:
+            age = antecedents['age']
+            if not age.isdigit():
+                return {'error': 'Age must be a positive integer'}, 400
+            age = int(age)
+            if age < 0:
+                return {'error': 'Age must be a positive integer'}, 400
+
 
         # Validate height
-        if 'height' in antecedents and (antecedents['height'] < 0 or antecedents['height'] > 3):
-            return {'error': 'Height must be between 0 and 3 meters'}, 400
+        if 'height' in antecedents:
+            height = float(antecedents['height'])
+            if height < 0 or height > 3:
+                return {'error': 'Height must be between 0 and 3 meters'}, 400
 
         # Validate weight
-        if 'weight' in antecedents and antecedents['weight'] < 0:
-            return {'error': 'Weight must be a positive number'}, 400
+        if 'weight' in antecedents:
+            weight = float(antecedents['weight'])
+            if weight < 0:
+                return {'error': 'Weight must be a positive number'}, 400
 
         # Validate bmi
-        if 'bmi' in antecedents and antecedents['bmi'] < 0:
-            return {'error': 'BMI must be a positive number'}, 400
+        if 'bmi' in antecedents:
+            bmi = float(antecedents['bmi'])
+            if bmi < 0:
+                return {'error': 'BMI must be a positive number'}, 400
+
         # Validate gender
         valid_genders = ['male', 'female', 'other']
         if 'gender' in antecedents and antecedents['gender'].lower() not in valid_genders:
             return {'error': f'Gender must be one of {", ".join(valid_genders)}'}, 400
 
-        # Validate smoking
-        valid_smoking_values = ['not_at_all', 'occasional', 'regular']
-        if 'smoking' in antecedents and antecedents['smoking'].lower() not in valid_smoking_values:
-            return {'error': f'Smoking must be one of {", ".join(valid_smoking_values)}'}, 400
+        # Validate timeAvailability
+        valid_time_availabilities = ['morning', 'midday', 'afternoon', 'evening']
+        if 'timeAvailability' in antecedents and antecedents['timeAvailability'].lower() not in valid_time_availabilities:
+            return {'error': f'Time availability must be one of {", ".join(valid_time_availabilities)}'}, 400
 
-        # Validate alcohol
-        valid_alcohol_values = ['not_at_all', 'occasional', 'regular']
-        if 'alcohol' in antecedents and antecedents['alcohol'].lower() not in valid_alcohol_values:
-            return {'error': f'Alcohol must be one of {", ".join(valid_alcohol_values)}'}, 400
+        # Validate trainingPreference
+        valid_training_preferences = ['endurance', 'strength', 'hiit']
+        if 'trainingPreference' in antecedents and antecedents['trainingPreference'].lower() not in valid_training_preferences:
+            return {'error': f'Training preference must be one of {", ".join(valid_training_preferences)}'}, 400
 
-        # Validate activityLevel
-        valid_activity_levels = ['low', 'moderate', 'high', 'very_high']
-        if 'activityLevel' in antecedents and antecedents['activityLevel'].lower() not in valid_activity_levels:
-            return {'error': f'Activity level must be one of {", ".join(valid_activity_levels)}'}, 400
+        # Validate favoriteActivities
+        valid_favorite_activities = ['circuit_training', 'yoga', 'jogging', 'weight_training', 'swimming', 'cycling']
+        if 'favoriteActivities' in antecedents and antecedents['favoriteActivities'].lower() not in valid_favorite_activities:
+            return {'error': f'Favorite activity must be one of {", ".join(valid_favorite_activities)}'}, 400
 
         # If all validations pass, return success message
         return {'success': True}, 200

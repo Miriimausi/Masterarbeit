@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../navigator";
 
@@ -29,22 +29,26 @@ const Register = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <ImageBackground
+            source={require('../../../assets/background-image_2.jpg')}
+            style={styles.background}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+
             <Text style={styles.title}>User Registration</Text>
             <TextInput
-                style={styles.input}
+                style={styles.inputContainer}
                 placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
             />
             <TextInput
-                style={styles.input}
+                style={styles.inputContainer}
                 placeholder="username"
                 value={username}
                 onChangeText={setUsername}
             />
             <TextInput
-                style={styles.input}
+                style={styles.inputContainer}
                 placeholder="password"
                 value={password}
                 onChangeText={setPassword}
@@ -54,64 +58,62 @@ const Register = () => {
             <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
                 <Text style={styles.registerButtonText}>Register</Text>
             </TouchableOpacity>
-        </View>
+            </ScrollView>
+    </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+
+    background: {
+        resizeMode: 'cover',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#EDF2F7',
-        width: '100%',
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     title: {
         fontSize: 32,
         fontWeight: 'bold',
         textAlign: 'center',
         margin: 20,
-        color: '#2D3748',
+        color: '#29448f',
         width: '90%',
     },
 
-    input: {
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         height: 50,
-        width: '50%',
-        borderColor: '#A0AEC0',
+        width: '80%',
+        borderColor: 'gray',
         borderWidth: 1,
         borderRadius: 5,
         paddingHorizontal: 10,
         marginVertical: 10,
-        backgroundColor: 'white',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
-
-        elevation: 6,
+        backgroundColor: 'white'
     },
 
 
     registerButton: {
-        width: '30%',
-        backgroundColor: '#0E9CDA',
-        borderRadius: 5,
-        paddingVertical: 15,
-        marginVertical: 5,
-        shadowColor: '#104E8B',
-        shadowOffset: {
-            width: 0,
-            height: 5,
+            width: '80%',
+            backgroundColor: '#6295c2',
+            borderRadius: 5,
+            paddingVertical: 15,
+            marginVertical: 5,
+            shadowColor: '#104E8B',
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        marginLeft: '20%',
-    },
     registerButtonText: {
         color: '#FFF',
         textAlign: 'center',

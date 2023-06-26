@@ -33,9 +33,10 @@ const Login = ({navigation}: LoginProps) => {
 
     return (
         <ImageBackground
-            source={require('../../../assets/background-image.png')}
+            source={require('../../../assets/background-image_2.jpg')}
             style={styles.background}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <Text style={styles.title}>Welcome</Text>
                     <View style={styles.inputContainer}>
                         <AntDesign name="user" size={24} color="#bfbfbf" />
                         <TextInput
@@ -80,6 +81,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    title: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        margin: 20,
+        color: '#29448f',
+        width: '90%',
+    },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -98,7 +107,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         width: '80%',
-        backgroundColor: '#0E9CDA',
+        backgroundColor: '#6295c2',
         borderRadius: 5,
         paddingVertical: 15,
         marginVertical: 5,
