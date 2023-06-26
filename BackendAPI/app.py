@@ -305,7 +305,7 @@ class ActivityDetail(Resource):
 
 
 #yes - no Questions
-@question_namespace.route('/typeone')
+@question_namespace.route('/')
 class Questions(Resource):
     def get(self):
         questionnaires = Questionnaire.query.filter(Questionnaire.type == '1').order_by(Questionnaire.id.asc()).all()
@@ -320,20 +320,6 @@ class Questions(Resource):
 
 
 
-# offene Fragen
-@question_namespace.route('/typetwo')
-class Questions(Resource):
-    def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == '2').order_by(Questionnaire.id.asc()).all()
-        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
-
-    @question_namespace.expect(question_model)
-    def post(self):
-        questionnaire = Questionnaire(**request.json)
-        db.session.add(questionnaire)
-        db.session.commit()
-        return questionnaire.to_dict(), 201
-    
 
 
 def recreate_db():

@@ -51,8 +51,6 @@ const OnboardingSurvey = () => {
     const [timeAvailability, setTimeAvailability] = useState('');
     const [trainingPreference, setTrainingPreference] = useState('');
     const [favoriteActivities, setFavoriteActivities] = useState('');
-
-
     const [activityLevel, setActivityLevel] = useState(3);
 
 
@@ -98,6 +96,7 @@ const OnboardingSurvey = () => {
     const handleFavouriteActivitiesChange = (favoriteActivities: string) => {
         setResponse({...response, favoriteActivities: favoriteActivities});
     };
+
 
     const handleSubmit = async () => {
         const requestBody = {
@@ -246,11 +245,11 @@ const OnboardingSurvey = () => {
                         </Picker>
                     </View>
                 </View>
-                <View style={styles.field}>
-                    <Text style={styles.label}>Level of Activity:</Text>
-                    <CustomNumericScale numOfSteps={5} setFun={setActivityLevel}></CustomNumericScale>
+                {/*<View style={styles.field}>*/}
+                {/*    <Text style={styles.label}>Level of Activity:</Text>*/}
+                {/*    <CustomNumericScale numOfSteps={5} setFun={setActivityLevel}></CustomNumericScale>*/}
 
-                </View>
+                {/*</View>*/}
             </View>
             <View style={styles.slide}>
                 <View style={styles.surveyContainer}>

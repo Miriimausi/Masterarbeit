@@ -4,39 +4,45 @@ import {
     Text,
     View,
     TouchableOpacity,
-    ScrollView,
+    ScrollView, TextInput,
 } from 'react-native';
 import axios from 'axios';
 import * as Progress from 'react-native-progress';
 import {appColorTheme} from "../../../constants/colors";
+import CustomNumericScale from "./onboardingSurvey/customNumericScale";
+import {Picker} from "@react-native-picker/picker";
 
 
 interface Question {
     id: number;
     question: string;
+
+    type: number;
 }
 
 const Questionnaire = () => {
     const [answers, setAnswers] = useState<(string | null)[]>([]);
     const [questions, setQuestions] = useState<Question[]>([]);
+    const [type, setType] = useState<Question[]>([]);
     const [questionStep, setQuestionStep] = useState<number>(0);
     const [currentQuestion, setCurrentQuestion] = useState<Question | undefined>();
     const [progressInPercent, setProgressInPercent] = useState<number>(0)
+    const [activityLevel, setActivityLevel] = useState(3);
 
 
     useEffect(() => {
         axios
-            .get('http://10.0.2.2:5000/Questionnaire/typeone')
+            .get('http://10.0.2.2:5000/Questionnaire')
             .then((response) => {
                 const newAnswers = new Array(response.data.length).fill(null);
                 setAnswers(newAnswers);
                 setQuestions(response.data);
+                setType(response.data.type)
             })
             .catch((error) => {
                 console.log(error);
             });
     }, []);
-
 
 
     useEffect(() => {
@@ -58,7 +64,7 @@ const Questionnaire = () => {
             setQuestionStep(questionStep + 1);
         }
 
-        if (questionStep === questions.length -1) {
+        if (questionStep === questions.length - 1) {
             setQuestionStep(0);
             setProgressInPercent(0);
         }
@@ -67,57 +73,105 @@ const Questionnaire = () => {
     };
 
 
-    const Question = (question: Question) => {
+    const PickerQuestion = (question: Question) => {
+        const isPickerQuestion = question.type === 2;
+
         return (
             <View style={styles.questionContainer}>
                 <Text style={styles.questionText}>{question.question}</Text>
-                <View style={styles.answerContainer}>
-                    <TouchableOpacity
-                        style={
-                            {
-                                backgroundColor: appColorTheme.primaryColor,
-                                borderRadius: 5,
-                                width: 120,
-                                height: 42,
-                                justifyContent:"center",
-                                alignItems:"center"
-                            }
-                        }
-                    >
-                        <Text style={{color: "white", fontSize: 16, fontWeight:"bold" }}>Yes</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={
-                            {
-                                marginLeft: 12,
-                                borderWidth: 1,
-                                borderColor:appColorTheme.primaryColor,
-                                borderRadius: 5,
-                                width: 120,
-                                height: 42,
-                                justifyContent:"center",
-                                alignItems:"center"
-                            }
-                        }
-                    >
-                        <Text style={{color: appColorTheme.primaryColor, fontSize: 16, fontWeight:"bold" }}>No</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
 
+                {isPickerQuestion ? (
+                    <View style={styles.answerContainer}>
+                        <View style={styles.field}>
+                            <View style={styles.picker}>
+                                <Picker>
+                                    <Picker.Item label="Select" value="" />
+                                    <Picker.Item label="Circuit Training" value="circuit_training" />
+                                    <Picker.Item label="Yoga" value="yoga" />
+                                    <Picker.Item label="Jogging" value="jogging" />
+                                    <Picker.Item label="Weight Training" value="weight_training" />
+                                    <Picker.Item label="Swimming" value="swimming" />
+                                    <Picker.Item label="Cycling" value="cycling" />
+                                </Picker>
+                            </View>
+                        </View>
+                    </View>
+                ) : (
+                    <View style={styles.answerContainer}>
+                        <TextInput
+                            placeholder="Type your answer here"
+                            onChangeText={(answer) => handleAnswer(question.id, answer)}
+                            value={answers[question.id] || ''}
+                        />
+                    </View>
+                )}
+            </View>
         );
-    }
+    };
+
+
+
+
+
+
+
+
+    {/*<View style={styles.answerContainer}>*/}
+                {/*    <TouchableOpacity*/}
+                {/*        style={*/}
+                {/*            {*/}
+                {/*                backgroundColor: appColorTheme.primaryColor,*/}
+                {/*                borderRadius: 5,*/}
+                {/*                width: 120,*/}
+                {/*                height: 42,*/}
+                {/*                justifyContent: "center",*/}
+                {/*                alignItems: "center"*/}
+                {/*            }*/}
+                {/*        }*/}
+                {/*    >*/}
+                {/*        <Text style={{color: "white", fontSize: 16, fontWeight: "bold"}}>Yes</Text>*/}
+                {/*    </TouchableOpacity>*/}
+                {/*    <TouchableOpacity*/}
+                {/*        style={*/}
+                {/*            {*/}
+                {/*                marginLeft: 12,*/}
+                {/*                borderWidth: 1,*/}
+                {/*                borderColor: appColorTheme.primaryColor,*/}
+                {/*                borderRadius: 5,*/}
+                {/*                width: 120,*/}
+                {/*                height: 42,*/}
+                {/*                justifyContent: "center",*/}
+                {/*                alignItems: "center"*/}
+                {/*            }*/}
+                {/*        }*/}
+                {/*    >*/}
+                {/*        <Text style={{color: appColorTheme.primaryColor, fontSize: 16, fontWeight: "bold"}}>No</Text>*/}
+                {/*    </TouchableOpacity>*/}
+                {/*</View>*/}
+                {/*<View style={styles.center}>*/}
+
+                {/*    <View style={styles.field}>*/}
+                {/*        <Text style={styles.label}>Level of Activity:</Text>*/}
+                {/*        <CustomNumericScale numOfSteps={5} setFun={setActivityLevel}></CustomNumericScale>*/}
+
+                {/*    </View>*/}
+                {/*</View>*/}
+
+
+
+
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.container}>
                 <Text style={{fontWeight: "bold", fontSize: 16, marginBottom: 9}}>Question: <Text
                     style={{fontSize: 15}}>{questionStep + 1} / {questions.length}</Text></Text>
-                <Progress.Bar color={appColorTheme.primaryColor} borderWidth={0} unfilledColor={"#f1efef"} progress={progressInPercent}
+                <Progress.Bar color={appColorTheme.primaryColor} borderWidth={0} unfilledColor={"#f1efef"}
+                              progress={progressInPercent}
                               width={320}/>
                 {
                     currentQuestion &&
-                    <Question id={currentQuestion.id} question={currentQuestion.question}/>
+                    <PickerQuestion id={currentQuestion.id} question={currentQuestion.question}/>
                 }
 
                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -153,6 +207,30 @@ const styles = StyleSheet.create({
         marginTop: 24
 
     },
+    picker: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        width: '100%',
+        backgroundColor: '#fff',
+    },
+    center:{
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    field: {
+        width: '80%',
+        marginTop: 5,
+        marginBottom: 5,
+
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#293e7d'
+    },
+
     questionText: {
         fontSize: 18,
         marginBottom: 16,
@@ -162,7 +240,7 @@ const styles = StyleSheet.create({
         marginVertical: 12,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:"center"
+        justifyContent: "center"
     },
     answerText: {
         fontSize: 18,
