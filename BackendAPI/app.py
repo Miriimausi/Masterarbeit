@@ -117,7 +117,7 @@ activity_model = api.model('Activity', {
 question_model = api.model('Questionnaire',{
     'id': fields.Integer,
     'question': fields.String,
-    'type': fields.String,
+    'type': fields.Integer,
     'answer': fields.String
 
 })
@@ -218,6 +218,27 @@ class UserProfiles(Resource):
 
 
 
+#Questions
+@question_namespace.route('/')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == '1').order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+
+    @api.expect(question_model)
+    def post(self):
+        id = request.json.get('id')
+        question = request.json.get('question')
+        answer =request.json.get('answer')
+        type = request.json.get('type')
+
+        new_questions = Questions(id=id, question=question, answer=answer, type=type)
+        db.session.add(new_questions)
+        db.session.commit()   
+
+
+        
+               
 # GET and PUT all activities
 @activity_namespace.route('/')
 class ActivityList(Resource):
@@ -303,20 +324,6 @@ class ActivityDetail(Resource):
         return activity.to_dict()
 
 
-
-#yes - no Questions
-@question_namespace.route('/')
-class Questions(Resource):
-    def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == '1').order_by(Questionnaire.id.asc()).all()
-        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
-
-    @question_namespace.expect(question_model)
-    def post(self):
-        questionnaire = Questionnaire(**request.json)
-        db.session.add(questionnaire)
-        db.session.commit()
-        return questionnaire.to_dict(), 201
 
 
 
