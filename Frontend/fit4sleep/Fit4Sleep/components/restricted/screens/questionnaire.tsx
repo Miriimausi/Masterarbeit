@@ -16,7 +16,6 @@ import {Picker} from "@react-native-picker/picker";
 interface Question {
     id: number;
     question: string;
-
     type: number;
 }
 
@@ -28,6 +27,7 @@ const Questionnaire = () => {
     const [currentQuestion, setCurrentQuestion] = useState<Question | undefined>();
     const [progressInPercent, setProgressInPercent] = useState<number>(0)
     const [activityLevel, setActivityLevel] = useState(3);
+    const [QuestionsType, setQuestionsType] = useState();
 
 
     useEffect(() => {
@@ -37,12 +37,13 @@ const Questionnaire = () => {
                 const newAnswers = new Array(response.data.length).fill(null);
                 setAnswers(newAnswers);
                 setQuestions(response.data);
-                setType(response.data.type)
             })
             .catch((error) => {
                 console.log(error);
             });
     }, []);
+
+
 
 
     useEffect(() => {
@@ -54,49 +55,61 @@ const Questionnaire = () => {
         const newAnswers = [...answers];
         newAnswers[index] = answer;
         setAnswers(newAnswers);
+        console.log(answer);
     };
+
 
     const handleSubmit = () => {
         const progress: number = 1 / (questions.length - 1);
-        setProgressInPercent(progressInPercent + progress)
+        setProgressInPercent(progressInPercent + progress);
 
         if (questionStep < questions.length - 1) {
             setQuestionStep(questionStep + 1);
         }
 
         if (questionStep === questions.length - 1) {
+            // Send the answers to the backend
+            console.log(answers);
+            axios
+                .post('http://10.0.2.2:5000/Questionnaire', { answers })
+                .then((response) => {
+                    // Handle the response if needed
+                    console.log('Answers saved successfully:', response.data);
+
+                    if (response.status === 308) {
+                        // Follow the redirect
+                        axios
+                            .post(response.headers.location, { answers })
+                            .then((redirectResponse) => {
+                                console.log('Redirected response:', redirectResponse.data);
+                            })
+                            .catch((error) => {
+                                console.log('Error in redirected request:', error);
+                            });
+                    }
+                })
+                .catch((error) => {
+                    // Handle the error if needed
+                    console.log('Error saving answers:', error);
+                });
+
             setQuestionStep(0);
             setProgressInPercent(0);
         }
-
-
     };
 
 
+
+
+
+
     const PickerQuestion = (question: Question) => {
-        const isPickerQuestion = question.type === 2;
+        if (question.id < 5) {
+            return (
+                <View style={styles.questionContainer}>
+                    <View style={styles.center}>
+                    <Text style={styles.questionText}>{question.question}</Text>
 
-        return (
-            <View style={styles.questionContainer}>
-                <Text style={styles.questionText}>{question.question}</Text>
-
-                {isPickerQuestion ? (
-                    <View style={styles.answerContainer}>
-                        <View style={styles.field}>
-                            <View style={styles.picker}>
-                                <Picker>
-                                    <Picker.Item label="Select" value="" />
-                                    <Picker.Item label="Circuit Training" value="circuit_training" />
-                                    <Picker.Item label="Yoga" value="yoga" />
-                                    <Picker.Item label="Jogging" value="jogging" />
-                                    <Picker.Item label="Weight Training" value="weight_training" />
-                                    <Picker.Item label="Swimming" value="swimming" />
-                                    <Picker.Item label="Cycling" value="cycling" />
-                                </Picker>
-                            </View>
-                        </View>
-                    </View>
-                ) : (
                     <View style={styles.answerContainer}>
                         <TextInput
                             placeholder="Type your answer here"
@@ -104,61 +117,128 @@ const Questionnaire = () => {
                             value={answers[question.id] || ''}
                         />
                     </View>
-                )}
+                    </View>
+                </View>
+            );
+        } else if (question.id >= 5 && question.id <= 16 ) {
+            return (
+                <View style={styles.questionContainer}>
+                <View style={styles.center}>
+                    <Text style={styles.questionText}>{question.question}</Text>
+
+                    <View style={styles.answerContainer}>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={answers[question.id] || ''}
+                                onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
+                            >
+                                <Picker.Item label="Select" value="" />
+                                <Picker.Item label="Not during the past month" value="option1" />
+                                <Picker.Item label="Less than once a week" value="option2" />
+                                <Picker.Item label="Once or twice a week" value="option3" />
+                                <Picker.Item label="Three or more times a week" value="option4" />
+                            </Picker>
+                        </View>
+                    </View>
+                </View>
+                </View>
+            );
+        } else if (question.id == 17) {
+            return (
+                <View style={styles.center}>
+                    <View style={styles.questionContainer}>
+                    <Text style={styles.questionText}>{question.question}</Text>
+
+                    <View style={styles.answerContainer}>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={answers[question.id] || ''}
+                                onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
+                            >
+                                <Picker.Item label="Select" value="" />
+                                <Picker.Item label="Very good" value="option1" />
+                                <Picker.Item label="Fairly good" value="option2" />
+                                <Picker.Item label="Fairly bad" value="option3" />
+                                <Picker.Item label="Very bad" value="option3" />
+                            </Picker>
+                        </View>
+                    </View>
+                    </View>
+                </View>
+            );
+        } else if (question.id >= 18 && question.id <= 19) {
+        return (
+            <View style={styles.center}>
+                <View style={styles.questionContainer}>
+                <Text style={styles.questionText}>{question.question}</Text>
+
+                <View style={styles.answerContainer}>
+                    <View style={styles.picker}>
+                        <Picker
+                            selectedValue={answers[question.id] || ''}
+                            onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
+                        >
+                            <Picker.Item label="Select" value="" />
+                            <Picker.Item label="Not during the past month" value="option1" />
+                            <Picker.Item label="Less than once a week" value="option2" />
+                            <Picker.Item label="Once or twice a week" value="option3" />
+                            <Picker.Item label="Three or more times a week" value="option4" />
+                        </Picker>
+                    </View>
+                </View>
+                </View>
             </View>
         );
+        } else if (question.id == 20) {
+            return (
+                <View style={styles.center}>
+                    <View style={styles.questionContainer}>
+                    <Text style={styles.questionText}>{question.question}</Text>
+
+                    <View style={styles.answerContainer}>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={answers[question.id] || ''}
+                                onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
+                            >
+                                <Picker.Item label="Select" value="" />
+                                <Picker.Item label="No Problem at all" value="option1" />
+                                <Picker.Item label="Only a very slight problem" value="option2" />
+                                <Picker.Item label="Somewhat of a problem" value="option3" />
+                                <Picker.Item label="A very big problem" value="option4" />
+                            </Picker>
+                        </View>
+                    </View>
+                    </View>
+                </View>
+            );
+        } else if (question.id >= 21) {
+            return (
+                <View style={styles.center}>
+                    <View style={styles.questionContainer}>
+                    <Text style={styles.questionText}>{question.question}</Text>
+
+                    <View style={styles.answerContainer}>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={answers[question.id] || ''}
+                                onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
+                            >
+                                <Picker.Item label="Select" value="" />
+                                <Picker.Item label="Not during the past month" value="option1" />
+                                <Picker.Item label="Less than once a week" value="option2" />
+                                <Picker.Item label="Once or twice a week" value="option3" />
+                                <Picker.Item label="Three or more times a week" value="option4" />
+                            </Picker>
+                        </View>
+                    </View>
+                    </View>
+                </View>
+            );
+        } else {
+            return null; // Handle other question IDs or conditions if necessary
+        }
     };
-
-
-
-
-
-
-
-
-    {/*<View style={styles.answerContainer}>*/}
-                {/*    <TouchableOpacity*/}
-                {/*        style={*/}
-                {/*            {*/}
-                {/*                backgroundColor: appColorTheme.primaryColor,*/}
-                {/*                borderRadius: 5,*/}
-                {/*                width: 120,*/}
-                {/*                height: 42,*/}
-                {/*                justifyContent: "center",*/}
-                {/*                alignItems: "center"*/}
-                {/*            }*/}
-                {/*        }*/}
-                {/*    >*/}
-                {/*        <Text style={{color: "white", fontSize: 16, fontWeight: "bold"}}>Yes</Text>*/}
-                {/*    </TouchableOpacity>*/}
-                {/*    <TouchableOpacity*/}
-                {/*        style={*/}
-                {/*            {*/}
-                {/*                marginLeft: 12,*/}
-                {/*                borderWidth: 1,*/}
-                {/*                borderColor: appColorTheme.primaryColor,*/}
-                {/*                borderRadius: 5,*/}
-                {/*                width: 120,*/}
-                {/*                height: 42,*/}
-                {/*                justifyContent: "center",*/}
-                {/*                alignItems: "center"*/}
-                {/*            }*/}
-                {/*        }*/}
-                {/*    >*/}
-                {/*        <Text style={{color: appColorTheme.primaryColor, fontSize: 16, fontWeight: "bold"}}>No</Text>*/}
-                {/*    </TouchableOpacity>*/}
-                {/*</View>*/}
-                {/*<View style={styles.center}>*/}
-
-                {/*    <View style={styles.field}>*/}
-                {/*        <Text style={styles.label}>Level of Activity:</Text>*/}
-                {/*        <CustomNumericScale numOfSteps={5} setFun={setActivityLevel}></CustomNumericScale>*/}
-
-                {/*    </View>*/}
-                {/*</View>*/}
-
-
-
 
 
     return (
@@ -204,7 +284,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     questionContainer: {
-        marginTop: 24
+        marginTop: 24,
+        height: "60%",
 
     },
     picker: {
