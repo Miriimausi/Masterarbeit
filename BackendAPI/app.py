@@ -237,6 +237,11 @@ class Questions(Resource):
         db.session.commit()   
 
 
+@question_namespace.route('/answers')
+class QuestionAnswers(Resource):
+    def get(self):
+        answers = Questionnaire.query.filter(Questionnaire.type == '1').with_entities(Questionnaire.question_id, Questionnaire.answer).all()
+        return jsonify([{"questionId": answer[0], "answerText": answer[1]} for answer in answers])
         
                
 # GET and PUT all activities

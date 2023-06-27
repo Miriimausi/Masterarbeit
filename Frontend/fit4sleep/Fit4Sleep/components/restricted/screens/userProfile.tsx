@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import axios from "axios";
 
 const UserProfile = () => {
     const [editMode, setEditMode] = useState(false);
@@ -8,6 +9,7 @@ const UserProfile = () => {
     const [password, setPassword] = useState('password');
     const [email, setEmail] = useState('john.doe@gmail.com');
     const [profilePicture, setProfilePicture] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
 
     const handleEditButtonPress = () => {
         setEditMode(true);
@@ -28,6 +30,18 @@ const UserProfile = () => {
 
 
     };
+
+    useEffect(() => {
+        axios
+            .get('http://10.0.2.2:5000/UserProfile')
+            .then((response) => {
+                setUserProfile(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
 
     return (
         <View style={styles.container}>

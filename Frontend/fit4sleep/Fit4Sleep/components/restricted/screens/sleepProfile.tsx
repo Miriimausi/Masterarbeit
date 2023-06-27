@@ -1,93 +1,134 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground} from 'react-native';
+import axios from 'axios';
+
+interface Question {
+    id: number;
+    question: string;
+    type: number;
+    answer: string | null;
+}
 
 const SleepProfile = () => {
     const [hoursSlept, setHoursSlept] = useState(8);
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [expanded, setExpanded] = useState(false);
 
-    const handleIncreaseHours = () => {
-        setHoursSlept(hoursSlept + 1);
-    };
+    useEffect(() => {
+        axios
+            .get('http://10.0.2.2:5000/Questionnaire')
+            .then((response) => {
+                setQuestions(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 
-    const handleDecreaseHours = () => {
-        if (hoursSlept > 0) {
-            setHoursSlept(hoursSlept - 1);
-        }
+        axios
+            .get('http://10.0.2.2:5000/Questionnaire/answers')
+            .then((response) => {
+                const fetchedAnswers = response.data;
+                const updatedQuestions = questions.map((question) => {
+                    const fetchedAnswer = fetchedAnswers.find((answer: any) => answer.questionId === question.id);
+                    if (fetchedAnswer) {
+                        return { ...question, answer: fetchedAnswer.answerText };
+                    } else {
+                        return question;
+                    }
+                });
+                setQuestions(updatedQuestions);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+
+
+    const toggleExpand = () => {
+        setExpanded(!expanded);
     };
 
     return (
+
         <View style={styles.container}>
             <View style={styles.profileContainer}>
                 <Text style={styles.headerTitle}>My Sleep Profile</Text>
-                <View style={styles.statsContainer}>
-                    <View style={styles.statContainer}>
-                        <Text style={styles.statTitle}>Hours Slept</Text>
-                        <View style={styles.statValueContainer}>
-                            <TouchableOpacity onPress={handleDecreaseHours}>
-                                <Image source={require('../../../assets/minus.png')} style={styles.icon} />
-                            </TouchableOpacity>
-                            <Text style={styles.statValue}>{hoursSlept}</Text>
-                            <TouchableOpacity onPress={handleIncreaseHours}>
-                                <Image source={require('../../../assets/plus.png')} style={styles.icon} />
-                            </TouchableOpacity>
+                <ScrollView style={styles.scrollContainer}>
+                    <TouchableOpacity style={styles.expandButton} onPress={toggleExpand}>
+                        <Text style={styles.expandButtonText}>{expanded ? 'Collapse All' : 'Your Sleepquality Questions'}</Text>
+                    </TouchableOpacity>
+                    {expanded && (
+                        <View style={styles.questionContainer}>
+                            {questions.map((question) => (
+                                <View key={question.id} style={styles.questionContainer}>
+                                    <TouchableOpacity>
+                                        <Text style={styles.questionText}>
+                                            {`Question ${question.id}: ${question.question}`}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles.answerText}>{`Answer: ${question.answer || '-'}`}</Text>
+                                </View>
+                            ))}
                         </View>
-                    </View>
-                    <View style={styles.statContainer}>
-                        <Text style={styles.statTitle}>Sleep Quality</Text>
-                        <View style={styles.statValueContainer}>
-                            <Text style={styles.statValue}>80%</Text>
-                        </View>
-                    </View>
-                    <View style={styles.statContainer}>
-                        <Text style={styles.statTitle}>Sleep Questionnaire Result</Text>
-                        <View style={styles.statValueContainer}>
-                            <Text style={styles.statValue}>85%</Text>
-                        </View>
-                    </View>
-                </View>
+                    )}
+                </ScrollView>
             </View>
         </View>
     );
 };
+
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#eee',
-    },
-    profileContainer: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        margin: 10,
-        padding: 10,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        margin: 10,
-    },
-    statsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginVertical: 10,
-    },
-    statContainer: {
+    background: {
+        resizeMode: 'cover',
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    statTitle: {
-        fontSize: 16,
-        marginBottom: 5,
+        container: {
+            flex: 1,
+            padding: 16,
+            backgroundColor: '#fff',
+        },
+        profileContainer: {
+            flex: 1,
+        },
+        headerTitle: {
+            fontSize: 24,
+            fontWeight: 'bold',
+            marginBottom: 16,
+            textAlign: 'center',
+        },
+        scrollContainer: {
+            flex: 1,
+        },
+        expandButton: {
+            backgroundColor: '#293e7d',
+            paddingVertical: 8,
+            paddingHorizontal: 16,
+            marginVertical: 16,
+            borderRadius: 8,
+            height: 60,
+        },
+        expandButtonText: {
+            fontSize: 16,
+            fontWeight: 'bold',
+            color:'white'
+        },
+    questionContainer: {
+        marginBottom: 16,
+        backgroundColor: '#f5f5f5',
+        padding: 16,
+        borderRadius: 8,
     },
-    statValueContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    statValue: {
+    questionText: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginHorizontal: 10,
+        marginBottom: 4,
     },
-    icon: {
-        width: 20,
-        height: 20,
+    answerText: {
+        fontSize: 14,
+        color: '#555',
     },
 });
 
