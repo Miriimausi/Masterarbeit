@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
     View,
     Text,
@@ -10,6 +10,7 @@ import {
 import {Picker} from '@react-native-picker/picker';
 import Swiper from 'react-native-swiper';
 import CustomNumericScale from "./customNumericScale";
+import {AuthContext, AuthContextType} from "../../../../contexts/auth-context";
 
 
 
@@ -28,6 +29,8 @@ interface SurveyResponse {
 }
 
 const OnboardingSurvey = () => {
+    const { userId, setIsOnBoarded } = useContext(AuthContext) as AuthContextType;
+
     const [response, setResponse] = useState<SurveyResponse>({
         id: 0,
         age: 0,
@@ -42,17 +45,6 @@ const OnboardingSurvey = () => {
 
 
     });
-    const [id, setId] = useState('');
-    const [age, setAge] = useState('');
-    const [height, setHeight] = useState('');
-    const [weight, setWeight] = useState('');
-    const [bmi, setBmi] = useState('');
-    const [gender, setGender] = useState('');
-    const [timeAvailability, setTimeAvailability] = useState('');
-    const [trainingPreference, setTrainingPreference] = useState('');
-    const [favoriteActivities, setFavoriteActivities] = useState('');
-    const [activityLevel, setActivityLevel] = useState(3);
-
 
     const handleAgeChange = (age: string) => {
         setResponse({
@@ -100,7 +92,6 @@ const OnboardingSurvey = () => {
 
     const handleSubmit = async () => {
         const requestBody = {
-            id:69,
             age: response.age,
             height: response.height,
             weight: response.weight,
@@ -109,6 +100,7 @@ const OnboardingSurvey = () => {
             timeAvailability: response.timeAvailability,
             trainingPreference: response.trainingPreference,
             favoriteActivities: response.favoriteActivities,
+            userId: userId
         };
 
         console.log(requestBody);
@@ -124,7 +116,7 @@ const OnboardingSurvey = () => {
 
             const data = await response.json();
             if (response.ok) {
-                console.log(data);  // Success response
+                setIsOnBoarded(data.success);  // Success response
             } else {
                 console.log('No information was submitted');  // Error response
             }

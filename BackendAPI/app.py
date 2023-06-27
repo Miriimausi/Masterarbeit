@@ -23,6 +23,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
+    isOnBoarded = db.Column(db.Boolean, nullable=False, default=False)
 
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -144,7 +145,14 @@ class Authentication(Resource):
         password = request.json.get('password')
         user = User.query.filter_by(username=username, password=password).first()
         if user is not None:
-            return jsonify({'success': True})
+            user_data = {
+                            'id': user.id,
+                            'username': user.username,
+                            'password': user.password,
+                            'email': user.email,
+                            'isOnBoarded': user.isOnBoarded
+                          }
+            return jsonify({'success': True, 'user': user_data})
         else:
             return jsonify({'success': False})
 
@@ -186,14 +194,27 @@ class Antecedents(Resource):
         timeAvailability = request.json.get('timeAvailability')
         trainingPreference = request.json.get('trainingPreference')
         favoriteActivities = request.json.get('favoriteActivities')
+        userId = request.json.get('userId')
 
-        # Add the new antecedents to the database session
-        new_antecedents = UserAntecedents(id=id, age=age, height=height, weight=weight, bmi=bmi, gender =gender, timeAvailability=timeAvailability, trainingPreference= trainingPreference,favoriteActivities=favoriteActivities  )
-        db.session.add(new_antecedents)
-        db.session.commit()
+        user = User.query.get(userId)
 
+        if user is not None:
+                   new_antecedents = UserAntecedents(id=id, age=age, height=height, weight=weight, bmi=bmi,
+                                                     gender=gender, timeAvailability=timeAvailability,
+                                                     trainingPreference=trainingPreference,
+                                                     favoriteActivities=favoriteActivities)
+
+                   if new_antecedents is not None:
+                       # Update the user's isOnBoarded field to True
+                       user.isOnBoarded = True
+
+                       db.session.add(new_antecedents)
+                       db.session.commit()
+
+                       # Return success message
+                       return {'success': True}, 200
         # Return success message
-        return {'success': True}, 200
+        return {'success': False, 'error': 'User not found or invalid antecedents'}, 404
 
 
 
@@ -347,6 +368,8 @@ api.add_namespace(question_namespace)
 api.add_namespace(antecedents_namespace)
 
 if __name__ == '__main__':
+#     with app.app_context():
+#         recreate_db()
     app.run(debug=True)
     #recreate_db()
 
