@@ -42,7 +42,7 @@ const Login = ({navigation}: LoginProps) => {
                         <TextInput
                             placeholder="username"
                             value={username}
-                            onChangeText={setUsername}
+                            onChangeText={newUserName => setUsername(newUserName)}
                         />
                     </View>
                     <View style={styles.inputContainer}>
@@ -50,7 +50,7 @@ const Login = ({navigation}: LoginProps) => {
                         <TextInput
                             placeholder="password"
                             value={password}
-                            onChangeText={setPassword}
+                            onChangeText={newPassword => setPassword(newPassword)}
                             secureTextEntry
                         />
                     </View>

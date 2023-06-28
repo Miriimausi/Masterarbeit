@@ -12,7 +12,7 @@ from flask import redirect, url_for
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost/mydatabase'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/mydatabase'
 db = SQLAlchemy(app)
 
 

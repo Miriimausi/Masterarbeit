@@ -10,24 +10,38 @@ import {appColorTheme} from "../../constants/colors";
 import OnboardingSurvey from "./screens/onboardingSurvey/onboarding";
 import {useContext} from "react";
 import {AuthContext, AuthContextType} from "../../contexts/auth-context";
+import {createStackNavigator} from "@react-navigation/stack";
+import ActivitiesDetails from "./screens/activities/activitiesDetails";
 
 
 const RestrictedTab = createBottomTabNavigator();
+const ActivitiesStack = createStackNavigator();
 
 function RestrictedNavigationParent() {
     const {isOnBoarded} = useContext(AuthContext) as AuthContextType;
+
+
+
+    function ActivitiesStackScreen() {
+        return (
+            <ActivitiesStack.Navigator>
+                <ActivitiesStack.Screen name="Activities" component={Activities} />
+                <ActivitiesStack.Screen name="ActivitiesDetails" component={ActivitiesDetails} />
+            </ActivitiesStack.Navigator>
+        );
+    }
 
     return (
         <>
             {
                 isOnBoarded ?
                     <RestrictedTab.Navigator>
-                        <RestrictedTab.Screen name="Activities" options={{
+                        <RestrictedTab.Screen name="ActivityStack" options={{
                             tabBarShowLabel: false,
                             tabBarIcon: ({focused}) => {
                                 return <FontAwesome5 name="walking" size={24} color={focused ? "#44607c" : "black"}/>
                             },
-                        }} component={Activities}/>
+                        }} component={ActivitiesStackScreen}/>
                         <RestrictedTab.Screen name="Questionnaire" options={{
                             tabBarShowLabel: false,
                             tabBarIcon: ({focused}) => {
