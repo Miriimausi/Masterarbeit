@@ -12,6 +12,7 @@ import {appColorTheme} from "../../../constants/colors";
 import CustomNumericScale from "./onboardingSurvey/customNumericScale";
 import {Picker} from "@react-native-picker/picker";
 import Collapsible from "react-native-collapsible";
+import Swiper from 'react-native-swiper';
 
 
 interface Question {
@@ -27,11 +28,21 @@ const Questionnaire = () => {
     const [questionsThree, setQuestionsThree] = useState<Question[]>([]);
     const [questionsFour, setQuestionsFour] = useState<Question[]>([]);
     const [questionsFive, setQuestionsFive] = useState<Question[]>([]);
+    const [questionsSix, setQuestionsSix] = useState<Question[]>([]);
+    const [questionsSeven, setQuestionsSeven] = useState<Question[]>([]);
+    const [questionsEight, setQuestionsEight] = useState<Question[]>([]);
+    const [questionsNine, setQuestionsNine] = useState<Question[]>([]);
+    const [questionsTen, setQuestionsTen] = useState<Question[]>([]);
     const [isCollapsibleOneOpen, setIsCollapsibleOneOpen] = useState<boolean>(false);
     const [isCollapsibleTwoOpen, setIsCollapsibleTwoOpen] = useState<boolean>(false);
     const [isCollapsibleThreeOpen, setIsCollapsibleThreeOpen] = useState<boolean>(false);
     const [isCollapsibleFourOpen, setIsCollapsibleFourOpen] = useState<boolean>(false);
     const [isCollapsibleFiveOpen, setIsCollapsibleFiveOpen] = useState<boolean>(false);
+    const [isCollapsibleSixOpen, setIsCollapsibleSixOpen] = useState<boolean>(false);
+    const [isCollapsibleSevenOpen, setIsCollapsibleSevenOpen] = useState<boolean>(false);
+    const [isCollapsibleEightOpen, setIsCollapsibleEightOpen] = useState<boolean>(false);
+    const [isCollapsibleNineOpen, setIsCollapsibleNineOpen] = useState<boolean>(false);
+    const [isCollapsibleTenOpen, setIsCollapsibleTenOpen] = useState<boolean>(false);
 
     useEffect(() => {
         axios
@@ -95,95 +106,369 @@ const Questionnaire = () => {
                 console.log(error);
             });
     }, []);
+    useEffect(() => {
+        axios
+            .get('http://10.0.2.2:5000/Questionnaire/typesix')
+            .then((response) => {
+                const newAnswers = new Array(response.data.length).fill(null);
+                setAnswers(newAnswers);
+                setQuestionsSix(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+    useEffect(() => {
+        axios
+            .get('http://10.0.2.2:5000/Questionnaire/typeseven')
+            .then((response) => {
+                const newAnswers = new Array(response.data.length).fill(null);
+                setAnswers(newAnswers);
+                setQuestionsSeven(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+    useEffect(() => {
+        axios
+            .get('http://10.0.2.2:5000/Questionnaire/typeeight')
+            .then((response) => {
+                const newAnswers = new Array(response.data.length).fill(null);
+                setAnswers(newAnswers);
+                setQuestionsEight(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+    useEffect(() => {
+        axios
+            .get('http://10.0.2.2:5000/Questionnaire/typenine')
+            .then((response) => {
+                const newAnswers = new Array(response.data.length).fill(null);
+                setAnswers(newAnswers);
+                setQuestionsNine(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+    useEffect(() => {
+        axios
+            .get('http://10.0.2.2:5000/Questionnaire/typeten')
+            .then((response) => {
+                const newAnswers = new Array(response.data.length).fill(null);
+                setAnswers(newAnswers);
+                setQuestionsTen(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
+
+    const handleAnswer = (question: Question, answer: string) => {
+        setAnswers((prevAnswers) => {
+            const updatedAnswers = [...prevAnswers];
+            updatedAnswers[question.id] = answer;
+            return updatedAnswers;
+        });
+    };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.container}>
-            <TouchableOpacity
-                style={styles.collapsibleHeader}
-                onPress={() => setIsCollapsibleOneOpen(!isCollapsibleOneOpen)}
-            >
-                <Text style={styles.collapsibleHeaderText}>Questions One</Text>
-            </TouchableOpacity>
-            <Collapsible collapsed={!isCollapsibleOneOpen}>
-                <View style={styles.questionContainer}>
-                    {questionsOne.map((question) => (
-                        <View key={question.id}>
-                            <Text style={styles.questionText}>{question.question}</Text>
-                        </View>
-                    ))}
+        <Swiper loop={false}>
+            <View style={styles.slide}>
+                <View style={styles.container}>
+                    <Text style={styles.HeaderText}>Questions One</Text>
+                    <View style={styles.questionContainer}>
+                        {questionsOne.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <TextInput
+                                        placeholder="Type your answer here"
+                                        onChangeText={(answer) => handleAnswer(question, answer)}
+                                        value={answers[question.id] || ''}
+                                    />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
                 </View>
-            </Collapsible>
+            </View>
 
-            <TouchableOpacity
-                style={styles.collapsibleHeader}
-                onPress={() => setIsCollapsibleTwoOpen(!isCollapsibleTwoOpen)}
-            >
-                <Text style={styles.collapsibleHeaderText}>Questions Two</Text>
-            </TouchableOpacity>
-            <Collapsible collapsed={!isCollapsibleTwoOpen}>
-                <View style={styles.questionContainer}>
-                    {questionsTwo.map((question) => (
-                        <View key={question.id}>
-                            <Text style={styles.questionText}>{question.question}</Text>
-                        </View>
-                    ))}
-                </View>
-            </Collapsible>
+            <View style={styles.slide}>
 
-            <TouchableOpacity
-                style={styles.collapsibleHeader}
-                onPress={() => setIsCollapsibleThreeOpen(!isCollapsibleThreeOpen)}
-            >
-                <Text style={styles.collapsibleHeaderText}>Questions Three</Text>
-            </TouchableOpacity>
-            <Collapsible collapsed={!isCollapsibleThreeOpen}>
-                <View style={styles.questionContainer}>
-                    {questionsThree.map((question) => (
-                        <View key={question.id}>
-                            <Text style={styles.questionText}>{question.question}</Text>
-                        </View>
-                    ))}
-                </View>
-            </Collapsible>
-            <TouchableOpacity
-                style={styles.collapsibleHeader}
-                onPress={() => setIsCollapsibleFourOpen(!isCollapsibleFourOpen)}
-            >
-                <Text style={styles.collapsibleHeaderText}>Questions Four</Text>
-            </TouchableOpacity>
-            <Collapsible collapsed={!isCollapsibleFourOpen}>
-                <View style={styles.questionContainer}>
-                    {questionsFour.map((question) => (
-                        <View key={question.id}>
-                            <Text style={styles.questionText}>{question.question}</Text>
-                        </View>
-                    ))}
-                </View>
-            </Collapsible>
+                <View style={styles.container}>
 
-            <TouchableOpacity
-                style={styles.collapsibleHeader}
-                onPress={() => setIsCollapsibleFiveOpen(!isCollapsibleFiveOpen)}
-            >
-                <Text style={styles.collapsibleHeaderText}>Questions Five</Text>
-            </TouchableOpacity>
-            <Collapsible collapsed={!isCollapsibleFiveOpen}>
-                <View style={styles.questionContainer}>
-                    {questionsFive.map((question) => (
-                        <View key={question.id}>
-                            <Text style={styles.questionText}>{question.question}</Text>
-                        </View>
-                    ))}
-                </View>
-            </Collapsible>
 
-        </View>
-        </ScrollView>
-    );
+                    <Text style={styles.HeaderText}>Questions Two</Text>
+
+                    <View style={styles.questionContainer}>
+                        {questionsTwo.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <TextInput
+                                        placeholder="Type your answer here"
+                                        onChangeText={(answer) => handleAnswer(question, answer)}
+                                        value={answers[question.id] || ''}
+                                    />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+
+            </View>
+            <View style={styles.slide}>
+                <View style={styles.container}>
+
+                    <Text style={styles.HeaderText}>Questions Three</Text>
+
+                    <View style={styles.questionContainer}>
+                        {questionsThree.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <TextInput
+                                        placeholder="Type your answer here"
+                                        onChangeText={(answer) => handleAnswer(question, answer)}
+                                        value={answers[question.id] || ''}
+                                    />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+
+            </View>
+            <View style={styles.slide}>
+
+                <View style={styles.container}>
+
+                    <Text style={styles.HeaderText}>Questions Four</Text>
+                    <View style={styles.questionContainer}>
+                        {questionsFour.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <TextInput
+                                        placeholder="Type your answer here"
+                                        onChangeText={(answer) => handleAnswer(question, answer)}
+                                        value={answers[question.id] || ''}
+                                    />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+
+            </View>
+            <View style={styles.slide}>
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <View style={styles.container}>
+
+                        <Text style={styles.HeaderText}>Questions Five</Text>
+
+
+                        <View style={styles.questionContainer}>
+                            {questionsFive.map((question) => (
+                                <View key={question.id}>
+                                    <Text style={styles.questionText}>{question.question}</Text>
+                                    <View style={styles.answerContainer}>
+                                        <View style={styles.picker}>
+                                            <Picker
+                                                selectedValue={answers[question.id] || ''}
+                                                onValueChange={(answer) => handleAnswer(question, answer.toString())}
+                                            >
+                                                <Picker.Item label="Select" value=""/>
+                                                <Picker.Item label="Not during the past month" value="0"/>
+                                                <Picker.Item label="Less than once a week" value="1"/>
+                                                <Picker.Item label="Once or twice a week" value="2"/>
+                                                <Picker.Item label="Three or more times a week" value="3"/>
+                                            </Picker>
+                                        </View>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+
+                    </View>
+                </ScrollView>
+            </View>
+            <View style={styles.slide}>
+
+                <View style={styles.container}>
+                    <Text style={styles.HeaderText}>Questions Six</Text>
+                    <View style={styles.questionContainer}>
+                        {questionsSix.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <View style={styles.picker}>
+                                        <Picker
+                                            selectedValue={answers[question.id] || ''}
+                                            onValueChange={(answer) => handleAnswer(question, answer.toString())}
+                                        >
+                                            <Picker.Item label="Select" value=""/>
+                                            <Picker.Item label="Very good" value="0"/>
+                                            <Picker.Item label="Fairly good" value="1"/>
+                                            <Picker.Item label="Fairly bad" value="2"/>
+                                            <Picker.Item label="Very bad" value="3"/>
+                                        </Picker>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+
+                </View>
+
+            </View>
+            <View style={styles.slide}>
+
+                <View style={styles.container}>
+
+                    <Text style={styles.HeaderText}>Questions Seven</Text>
+                    <View style={styles.questionContainer}>
+                        {questionsSeven.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <View style={styles.picker}>
+                                        <Picker
+                                            selectedValue={answers[question.id] || ''}
+                                            onValueChange={(answer) => handleAnswer(question, answer.toString())}
+                                        >
+                                            <Picker.Item label="Select" value=""/>
+                                            <Picker.Item label="Not during the past month" value="0"/>
+                                            <Picker.Item label="Less than once a week" value="1"/>
+                                            <Picker.Item label="Once or twice a week" value="2"/>
+                                            <Picker.Item label="Three or more times a week" value="3"/>
+                                        </Picker>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+
+                </View>
+
+            </View>
+            <View style={styles.slide}>
+
+                <View style={styles.container}>
+
+                    <Text style={styles.HeaderText}>Questions Eight</Text>
+
+
+                    <View style={styles.questionContainer}>
+                        {questionsEight.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <View style={styles.picker}>
+                                        <Picker
+                                            selectedValue={answers[question.id] || ''}
+                                            onValueChange={(answer) => handleAnswer(question, answer.toString())}
+                                        >
+                                            <Picker.Item label="Select" value=""/>
+                                            <Picker.Item label="Not during the past month" value="0"/>
+                                            <Picker.Item label="Less than once a week" value="1"/>
+                                            <Picker.Item label="Once or twice a week" value="2"/>
+                                            <Picker.Item label="Three or more times a week" value="3"/>
+                                        </Picker>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+
+                </View>
+
+            </View>
+            <View style={styles.slide}>
+
+                <View style={styles.container}>
+
+                    <Text style={styles.HeaderText}>Questions Nine</Text>
+
+
+                    <View style={styles.questionContainer}>
+                        {questionsNine.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <View style={styles.picker}>
+                                        <Picker
+                                            selectedValue={answers[question.id] || ''}
+                                            onValueChange={(answer) => handleAnswer(question, answer.toString())}
+                                        >
+                                            <Picker.Item label="Select" value=""/>
+                                            <Picker.Item label="No Problem at all" value="0"/>
+                                            <Picker.Item label="Only a very slight problem" value="1"/>
+                                            <Picker.Item label="Somewhat of a problem" value="2"/>
+                                            <Picker.Item label="A very big problem" value="3"/>
+                                        </Picker>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+
+                </View>
+
+            </View>
+            <View style={styles.slide}>
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.container}>
+
+                    <Text style={styles.HeaderText}>Questions Ten</Text>
+
+
+                    <View style={styles.questionContainer}>
+                        {questionsTen.map((question) => (
+                            <View key={question.id}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                                <View style={styles.answerContainer}>
+                                    <View style={styles.picker}>
+                                        <Picker
+                                            selectedValue={answers[question.id] || ''}
+                                            onValueChange={(answer) => handleAnswer(question, answer.toString())}
+                                        >
+                                            <Picker.Item label="Select" value=""/>
+                                            <Picker.Item label="Not during the past month" value="0"/>
+                                            <Picker.Item label="Less than once a week" value="1"/>
+                                            <Picker.Item label="Once or twice a week" value="2"/>
+                                            <Picker.Item label="Three or more times a week" value="3"/>
+                                        </Picker>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+
+                </View>
+                </ScrollView>
+            </View>
+            <View style={styles.slide}>
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <View style={styles.container}>
+                        <Text style={styles.HeaderText}>Your Sleep Quality Score</Text>
+                        <View style={styles.questionContainer}>
+                            <Text style={styles.scoreDescription}>
+                                 "0" indicates no difficulty, and "21" indicates severe difficulties in all areas.
+                            </Text>
+                        </View>
+                    </View>
+                </ScrollView>
+            </View>
+        </Swiper>
+    )
+        ;
 };
-
 
 
 //
@@ -392,16 +677,16 @@ const Questionnaire = () => {
 //  };
 
 const styles = StyleSheet.create({
-        collapsibleHeader: {
-            backgroundColor: '#eaeaea',
-            paddingVertical: 10,
-            paddingHorizontal: 16,
-            marginBottom: 8,
-        },
-        collapsibleHeaderText: {
-            fontSize: 16,
-            fontWeight: 'bold',
-        },
+    collapsibleHeader: {
+        backgroundColor: '#eaeaea',
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        marginBottom: 8,
+    },
+    HeaderText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
     scrollContainer: {
         flexGrow: 1,
         backgroundColor: '#F4F4F4',
@@ -423,7 +708,7 @@ const styles = StyleSheet.create({
     },
     questionContainer: {
         marginTop: 24,
-        height: '90%',
+        height: '100%',
 
     },
     picker: {
@@ -433,7 +718,7 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#fff',
     },
-    center:{
+    center: {
         justifyContent: "center",
         alignItems: "center",
     },
@@ -490,6 +775,17 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "500",
         textAlign: 'center',
+    },
+    slide: {
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingHorizontal: 20,
+        paddingTop: 20,
+    },
+    scoreDescription: {
+        fontSize: 16,
+        lineHeight: 24,
+        color: '#555',
     },
 });
 

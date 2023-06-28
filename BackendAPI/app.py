@@ -276,6 +276,29 @@ class Questions(Resource):
         questionnaires = Questionnaire.query.filter(Questionnaire.type == 5).order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
+@question_namespace.route('/typesix')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 6).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+    
+@question_namespace.route('/typeseven')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 7).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+
+@question_namespace.route('/typeeight')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 8).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])     
+
+@question_namespace.route('/typenine')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 9).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])  
     
 @question_namespace.route('/typeten')
 class Questions(Resource):
