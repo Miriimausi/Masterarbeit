@@ -33,16 +33,8 @@ const Questionnaire = () => {
     const [questionsEight, setQuestionsEight] = useState<Question[]>([]);
     const [questionsNine, setQuestionsNine] = useState<Question[]>([]);
     const [questionsTen, setQuestionsTen] = useState<Question[]>([]);
-    const [isCollapsibleOneOpen, setIsCollapsibleOneOpen] = useState<boolean>(false);
-    const [isCollapsibleTwoOpen, setIsCollapsibleTwoOpen] = useState<boolean>(false);
-    const [isCollapsibleThreeOpen, setIsCollapsibleThreeOpen] = useState<boolean>(false);
-    const [isCollapsibleFourOpen, setIsCollapsibleFourOpen] = useState<boolean>(false);
-    const [isCollapsibleFiveOpen, setIsCollapsibleFiveOpen] = useState<boolean>(false);
-    const [isCollapsibleSixOpen, setIsCollapsibleSixOpen] = useState<boolean>(false);
-    const [isCollapsibleSevenOpen, setIsCollapsibleSevenOpen] = useState<boolean>(false);
-    const [isCollapsibleEightOpen, setIsCollapsibleEightOpen] = useState<boolean>(false);
-    const [isCollapsibleNineOpen, setIsCollapsibleNineOpen] = useState<boolean>(false);
-    const [isCollapsibleTenOpen, setIsCollapsibleTenOpen] = useState<boolean>(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [score, setScore] = useState(0);
 
     useEffect(() => {
         axios
@@ -175,6 +167,208 @@ const Questionnaire = () => {
             return updatedAnswers;
         });
     };
+    const handleSubmit = () => {
+        // Question 1
+        const answerOne = answers[1] !== null ? parseInt(answers[1]!) : 0;
+        // Question 2
+        const answerTwo = answers[2];
+        // Question 3
+        const answerThree = answers[3] !== null ? parseInt(answers[3]!) : 0;
+        // Question 4
+        const answerFour = answers[4] !== null ? parseInt(answers[4]!) : 0;
+        // Question 5
+        const answerFive = answers[5] !== null ? parseInt(answers[5]!) : 0;
+        const answerSix = answers[6] !== null ? parseInt(answers[6]!) : 0;
+        const answerSeven = answers[7] !== null ? parseInt(answers[7]!) : 0;
+        const answerEight = answers[8] !== null ? parseInt(answers[8]!) : 0;
+        const answerNine = answers[9] !== null ? parseInt(answers[9]!) : 0;
+        const answerTen = answers[10] !== null ? parseInt(answers[10]!) : 0;
+        const answerEleven = answers[11] !== null ? parseInt(answers[11]!) : 0;
+        const answerTwelve = answers[12] !== null ? parseInt(answers[12]!) : 0;
+        const answerThirteen = answers[13] !== null ? parseInt(answers[13]!) : 0;
+        const answerFourteen = answers[14] !== null ? parseInt(answers[14]!) : 0;
+
+
+        // Question 6 &  Calculation
+        const answerFifteen = answers[15] !== null ? parseInt(answers[15]!) : 0;
+        //Question 7
+        const answerSixteen = answers[16] !== null ? parseInt(answers[16]!) : 0;
+
+        //Question 8
+        const answerSeventeen = answers[17] !== null ? parseInt(answers[17]!) : 0;
+
+        //Question 9
+        const answerEighteen = answers[18] !== null ? parseInt(answers[18]!) : 0;
+
+        //Question 10
+        const answerNineteen = answers[19] !== null ? parseInt(answers[19]!) : 0;
+
+
+        let score1: number;
+        let score2: number;
+        let score3: number;
+        let score4: number;
+        let score5: number = 0;
+
+        let score6: number =0;
+
+        // Calculation of Answer 2
+        if (answerTwo !== null) {
+            const answerTwoValue = parseInt(answerTwo, 10);
+
+            if (answerTwoValue <= 15) {
+                score1 = 0;
+            } else if (answerTwoValue >= 16 && answerTwoValue <= 30) {
+                score1 = 1;
+            } else if (answerTwoValue >= 31 && answerTwoValue <= 60) {
+                score1 = 2;
+            } else {
+                score1 = 3;
+            }
+        } else {
+            score1 = -1; // or any other default score value
+        }
+
+        console.log('the score is', score1);
+
+        // Calculation of Question 5a
+        const sum = answerFive;
+
+
+        //Caluclation of 2 + 5
+        const componentSum = score1 + sum;
+
+            if (componentSum == 0) {
+                score2 = 0;
+            } else if (componentSum >= 1 && componentSum <=2) {
+                score2 = 1;
+            } else if (componentSum >= 3 && componentSum <= 4) {
+                score2 = 2;
+            } else {
+                score2 = 3;
+            }
+
+        // Calculation of Question 4
+        if (answerFour !== null) {
+
+            if (answerFour >= 7) {
+                score3 = 0;
+            } else if (answerFour >= 6 && answerFour <= 7) {
+                score3 = 1;
+            } else if (answerFour >= 5&& answerFour <= 6) {
+                score3 = 2;
+            } else {
+                score3 = 3;
+            }
+        } else {
+            score3 = -1;
+        }
+
+
+        // number of hours spent in bed
+        let hoursInBed = answerThree - answerOne;
+        if (hoursInBed < 0) {
+            hoursInBed += 24;
+        }
+        // HSE (Number of hours slept/ (divided by) Number of hours spent in bed) X (multiplied by) 100 = HSE (%)
+        let result = (answerFour/ hoursInBed) * 100;
+            console.log(result);
+
+        if (result !== null) {
+            if (result >= 85) {
+                score4 = 0;
+            } else if (result >= 75 && result <= 84) {
+                score4 = 1;
+            } else if (result >= 65 && result <= 74) {
+                score4 = 2;
+            } else {
+                score4 = 3;
+            }
+        } else {
+            score4 = -1;
+        }
+
+
+        //Calculation of 5b - 5j
+        const sumOf5 = answerSix + answerSeven + answerEight + answerNine + answerTen + answerEleven + answerTwelve + answerThirteen + answerFourteen ;
+
+        if (sumOf5 !== null) {
+            switch (true) {
+                case sumOf5 === 0:
+                    score5 = 0;
+                    break;
+                case sumOf5 >= 1 && sumOf5 <= 9:
+                    score5 = 1;
+                    break;
+                case sumOf5 >= 10 && sumOf5 <= 18:
+                    score5 = 2;
+                    break;
+                case sumOf5 >= 19 && sumOf5 <= 27:
+                    score5 = 3;
+                    break;
+                default:
+                    console.log('score is false');
+                    break;
+            }
+        } else {
+            score5 = -1;
+        }
+
+
+        //Calculation of Component 7
+        const sumOf8and9 = answerSeventeen + answerEighteen;
+
+
+        if (sumOf8and9 !== null) {
+            switch (sumOf8and9) {
+                case 0:
+                    score6 = 0;
+                    break;
+                case 1:
+                case 2:
+                    score6 = 1;
+                    break;
+                case 3:
+                case 4:
+                    score6 = 2;
+                    break;
+                case 5:
+                case 6:
+                    score6 = 3;
+                    break;
+                default:
+                    score6 = -1;
+                    break;
+            }
+        }
+
+        //Component Scores
+        const component1Score = answerFifteen;
+        const component2Score = score2;
+        const component3Score = score3;
+        const component4Score = score4;
+        const component5Score = score5;
+        const component6Score = answerSixteen;
+        const component7Score = score6;
+
+
+        const allComponentScores= answerFifteen + score2 + score3 +score4 +score5 + answerSixteen + score6;
+
+
+
+        console.log('Component 1 Score is:', component1Score);
+        console.log('Component 2 Score is:', component2Score);
+        console.log('Component 3 Score is:', component3Score);
+        console.log('Component 4 Score is:', component4Score);
+        console.log('Component 5 Score is:', component5Score);
+        console.log('Component 6 Score is:', component6Score);
+        console.log('Component 7 Score is:', component7Score);
+        console.log('Your Score is :', allComponentScores);
+
+        setScore(allComponentScores);
+        setSubmitted(true);
+    };
+
 
     return (
         <Swiper loop={false}>
@@ -197,14 +391,9 @@ const Questionnaire = () => {
                     </View>
                 </View>
             </View>
-
             <View style={styles.slide}>
-
                 <View style={styles.container}>
-
-
                     <Text style={styles.HeaderText}>Questions Two</Text>
-
                     <View style={styles.questionContainer}>
                         {questionsTwo.map((question) => (
                             <View key={question.id}>
@@ -220,13 +409,10 @@ const Questionnaire = () => {
                         ))}
                     </View>
                 </View>
-
             </View>
             <View style={styles.slide}>
                 <View style={styles.container}>
-
                     <Text style={styles.HeaderText}>Questions Three</Text>
-
                     <View style={styles.questionContainer}>
                         {questionsThree.map((question) => (
                             <View key={question.id}>
@@ -245,9 +431,7 @@ const Questionnaire = () => {
 
             </View>
             <View style={styles.slide}>
-
                 <View style={styles.container}>
-
                     <Text style={styles.HeaderText}>Questions Four</Text>
                     <View style={styles.questionContainer}>
                         {questionsFour.map((question) => (
@@ -264,15 +448,11 @@ const Questionnaire = () => {
                         ))}
                     </View>
                 </View>
-
             </View>
             <View style={styles.slide}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.container}>
-
                         <Text style={styles.HeaderText}>Questions Five</Text>
-
-
                         <View style={styles.questionContainer}>
                             {questionsFive.map((question) => (
                                 <View key={question.id}>
@@ -299,7 +479,6 @@ const Questionnaire = () => {
                 </ScrollView>
             </View>
             <View style={styles.slide}>
-
                 <View style={styles.container}>
                     <Text style={styles.HeaderText}>Questions Six</Text>
                     <View style={styles.questionContainer}>
@@ -312,20 +491,18 @@ const Questionnaire = () => {
                                             selectedValue={answers[question.id] || ''}
                                             onValueChange={(answer) => handleAnswer(question, answer.toString())}
                                         >
-                                            <Picker.Item label="Select" value=""/>
-                                            <Picker.Item label="Very good" value="0"/>
-                                            <Picker.Item label="Fairly good" value="1"/>
-                                            <Picker.Item label="Fairly bad" value="2"/>
-                                            <Picker.Item label="Very bad" value="3"/>
+                                            <Picker.Item label="Select" value="" />
+                                            <Picker.Item label="Very good" value="0" />
+                                            <Picker.Item label="Fairly good" value="1" />
+                                            <Picker.Item label="Fairly bad" value="2" />
+                                            <Picker.Item label="Very bad" value="3" />
                                         </Picker>
                                     </View>
                                 </View>
                             </View>
                         ))}
                     </View>
-
                 </View>
-
             </View>
             <View style={styles.slide}>
 
@@ -458,9 +635,21 @@ const Questionnaire = () => {
                     <View style={styles.container}>
                         <Text style={styles.HeaderText}>Your Sleep Quality Score</Text>
                         <View style={styles.questionContainer}>
-                            <Text style={styles.scoreDescription}>
-                                 "0" indicates no difficulty, and "21" indicates severe difficulties in all areas.
-                            </Text>
+                            {submitted ? (
+                                <Text style={styles.submitDescription}>
+                                    Your form has been submitted. Thank you!
+
+                                    Your Score is: {score}
+                                </Text>
+
+                            ) : (
+                                <Text style={styles.submitDescription}>
+                                    If you have finished all your questions please submit them. Your score will be calculated.
+                                </Text>
+                            )}
+                            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                                <Text style={styles.submitButtonText}>Submit</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </ScrollView>
@@ -511,148 +700,7 @@ const Questionnaire = () => {
 //         }
 //     };
 //
-//
-//
-//
-//
-//
-//     const PickerQuestion = (question: Question) => {
-//         if (question.id < 5) {
-//             return (
-//                 <View style={styles.questionContainer}>
-//                     <View style={styles.center}>
-//                     <Text style={styles.questionText}>{question.question}</Text>
-//
-//                     <View style={styles.answerContainer}>
-//                         <TextInput
-//                             placeholder="Type your answer here"
-//                             onChangeText={(answer) => handleAnswer(question.id, answer)}
-//                             value={answers[question.id] || ''}
-//                         />
-//                     </View>
-//                     </View>
-//                 </View>
-//             );
-//         } else if (question.id >= 5 && question.id <= 16 ) {
-//             return (
-//                 <View style={styles.questionContainer}>
-//                 <View style={styles.center}>
-//                     <Text style={styles.questionText}>{question.question}</Text>
-//
-//                     <View style={styles.answerContainer}>
-//                         <View style={styles.picker}>
-//                             <Picker
-//                                 selectedValue={answers[question.id] || ''}
-//                                 onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
-//                             >
-//                                 <Picker.Item label="Select" value="" />
-//                                 <Picker.Item label="Not during the past month" value="0" />
-//                                 <Picker.Item label="Less than once a week" value="1" />
-//                                 <Picker.Item label="Once or twice a week" value="2" />
-//                                 <Picker.Item label="Three or more times a week" value="3" />
-//                             </Picker>
-//                         </View>
-//                     </View>
-//                 </View>
-//                 </View>
-//             );
-//         } else if (question.id == 17) {
-//             return (
-//                 <View style={styles.center}>
-//                     <View style={styles.questionContainer}>
-//                     <Text style={styles.questionText}>{question.question}</Text>
-//
-//                     <View style={styles.answerContainer}>
-//                         <View style={styles.picker}>
-//                             <Picker
-//                                 selectedValue={answers[question.id] || ''}
-//                                 onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
-//                             >
-//                                 <Picker.Item label="Select" value="" />
-//                                 <Picker.Item label="Very good" value="0" />
-//                                 <Picker.Item label="Fairly good" value="1" />
-//                                 <Picker.Item label="Fairly bad" value="2" />
-//                                 <Picker.Item label="Very bad" value="3" />
-//                             </Picker>
-//                         </View>
-//                     </View>
-//                     </View>
-//                 </View>
-//             );
-//         } else if (question.id >= 18 && question.id <= 19) {
-//         return (
-//             <View style={styles.center}>
-//                 <View style={styles.questionContainer}>
-//                 <Text style={styles.questionText}>{question.question}</Text>
-//
-//                 <View style={styles.answerContainer}>
-//                     <View style={styles.picker}>
-//                         <Picker
-//                             selectedValue={answers[question.id] || ''}
-//                             onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
-//                         >
-//                             <Picker.Item label="Select" value="" />
-//                             <Picker.Item label="Not during the past month" value="0" />
-//                             <Picker.Item label="Less than once a week" value="1" />
-//                             <Picker.Item label="Once or twice a week" value="2" />
-//                             <Picker.Item label="Three or more times a week" value="3" />
-//                         </Picker>
-//                     </View>
-//                 </View>
-//                 </View>
-//             </View>
-//         );
-//         } else if (question.id == 20) {
-//             return (
-//                 <View style={styles.center}>
-//                     <View style={styles.questionContainer}>
-//                     <Text style={styles.questionText}>{question.question}</Text>
-//
-//                     <View style={styles.answerContainer}>
-//                         <View style={styles.picker}>
-//                             <Picker
-//                                 selectedValue={answers[question.id] || ''}
-//                                 onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
-//                             >
-//                                 <Picker.Item label="Select" value="" />
-//                                 <Picker.Item label="No Problem at all" value="0" />
-//                                 <Picker.Item label="Only a very slight problem" value="1" />
-//                                 <Picker.Item label="Somewhat of a problem" value="2" />
-//                                 <Picker.Item label="A very big problem" value="3" />
-//                             </Picker>
-//                         </View>
-//                     </View>
-//                     </View>
-//                 </View>
-//             );
-//         } else if (question.id >= 21) {
-//             return (
-//                 <View style={styles.center}>
-//                     <View style={styles.questionContainer}>
-//                     <Text style={styles.questionText}>{question.question}</Text>
-//
-//                     <View style={styles.answerContainer}>
-//                         <View style={styles.picker}>
-//                             <Picker
-//                                 selectedValue={answers[question.id] || ''}
-//                                 onValueChange={(answer) => handleAnswer(question.id, answer.toString())}
-//                             >
-//                                 <Picker.Item label="Select" value="" />
-//                                 <Picker.Item label="Not during the past month" value="0" />
-//                                 <Picker.Item label="Less than once a week" value="1" />
-//                                 <Picker.Item label="Once or twice a week" value="2" />
-//                                 <Picker.Item label="Three or more times a week" value="3" />
-//                             </Picker>
-//                         </View>
-//                     </View>
-//                     </View>
-//                 </View>
-//             );
-//         } else {
-//             return null; // Handle other question IDs or conditions if necessary
-//         }
-//     };
-//
+
 //
 //     return (
 //         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -764,11 +812,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         flex: 1,
         marginHorizontal: 8,
-    },
-    submitButton: {
-        borderRadius: 8,
-        paddingVertical: 16,
-        marginTop: 18,
+        height: '20%',
     },
     nextButtonText: {
         color: appColorTheme.primaryColor,
@@ -776,13 +820,25 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         textAlign: 'center',
     },
+    submitButton: {
+        backgroundColor: appColorTheme.primaryColor,
+        borderRadius: 8,
+        padding: 10,
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    submitButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
     slide: {
         flex: 1,
         backgroundColor: '#fff',
         paddingHorizontal: 20,
         paddingTop: 20,
     },
-    scoreDescription: {
+    submitDescription: {
         fontSize: 16,
         lineHeight: 24,
         color: '#555',
