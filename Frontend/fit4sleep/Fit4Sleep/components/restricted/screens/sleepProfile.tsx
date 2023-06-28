@@ -16,7 +16,7 @@ const SleepProfile = () => {
 
     useEffect(() => {
         axios
-            .get('http://10.0.2.2:5000/Questionnaire')
+            .get('http://10.0.2.2:5000/Questionnaire/all')
             .then((response) => {
                 setQuestions(response.data);
             })

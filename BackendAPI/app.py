@@ -263,7 +263,6 @@ class Questions(Resource):
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
 
-
 @question_namespace.route('/typefour')
 class Questions(Resource):
     def get(self):
@@ -308,11 +307,12 @@ class Questions(Resource):
 
 
 
-@question_namespace.route('/')
+@question_namespace.route('/all')
 class Questions(Resource):
     def get(self):
-        questions = Questions.query.all()
-        return jsonify([question.to_dict() for question in questions])
+        questionnaires = Questionnaire.query.id.asc().all()  
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+
     
     @api.expect(question_model)
     def post(self):
