@@ -12,7 +12,7 @@ from flask import redirect, url_for
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/mydatabase'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost/mydatabase'
 db = SQLAlchemy(app)
 
 
@@ -46,8 +46,9 @@ class Activity(db.Model):
 class Questionnaire(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     question = db.Column(db.String(200), nullable=False)
-    type = db.Column(db.String)
+    type = db.Column(db.Integer)
     answer =db.Column(db.String)
+    score =db.Column(db.String)
 
     def to_dict(self):
         return {
@@ -55,6 +56,7 @@ class Questionnaire(db.Model):
             'question': self.question,
             'type':self.type,
             'answer': self.answer,
+            'score': self.score,
             
             }
     
@@ -119,7 +121,8 @@ question_model = api.model('Questionnaire',{
     'id': fields.Integer,
     'question': fields.String,
     'type': fields.Integer,
-    'answer': fields.String
+    'answer': fields.String,
+    'score': fields.String,
 
 })
 
@@ -240,18 +243,61 @@ class UserProfiles(Resource):
 
 
 #Questions
+@question_namespace.route('/typeone')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 1).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+    
+    #Questions
+@question_namespace.route('/typetwo')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 2).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+    
+@question_namespace.route('/typethree')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 3).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+    
+
+
+@question_namespace.route('/typefour')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 4).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+    
+@question_namespace.route('/typefive')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 5).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+    
+    
+@question_namespace.route('/typeten')
+class Questions(Resource):
+    def get(self):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == 10).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+
+
+
 @question_namespace.route('/')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == '1').order_by(Questionnaire.id.asc()).all()
-        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
-
+        questions = Questions.query.all()
+        return jsonify([question.to_dict() for question in questions])
+    
     @api.expect(question_model)
     def post(self):
         id = request.json.get('id')
         question = request.json.get('question')
         answer =request.json.get('answer')
         type = request.json.get('type')
+        score =request.json.get('score')
 
         new_questions = Questions(id=id, question=question, answer=answer, type=type)
         db.session.add(new_questions)
@@ -261,7 +307,7 @@ class Questions(Resource):
 @question_namespace.route('/answers')
 class QuestionAnswers(Resource):
     def get(self):
-        answers = Questionnaire.query.filter(Questionnaire.type == '1').with_entities(Questionnaire.question_id, Questionnaire.answer).all()
+        answers = Questionnaire.query.with_entities(Questionnaire.question_id, Questionnaire.answer).all()
         return jsonify([{"questionId": answer[0], "answerText": answer[1]} for answer in answers])
         
                
@@ -351,10 +397,6 @@ class ActivityDetail(Resource):
 
 
 
-
-
-
-
 def recreate_db():
     db.drop_all()
     db.create_all()
@@ -368,8 +410,8 @@ api.add_namespace(question_namespace)
 api.add_namespace(antecedents_namespace)
 
 if __name__ == '__main__':
-#     with app.app_context():
-#         recreate_db()
+    #with app.app_context():
+        #recreate_db()
     app.run(debug=True)
-    #recreate_db()
+   # recreate_db()
 
