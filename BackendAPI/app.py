@@ -8,7 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Resource, Api, fields, Namespace
 from flask import Flask, request, jsonify
 from flask import redirect, url_for
-
+from decimal import Decimal
+import json
 
 
 app = Flask(__name__)
@@ -73,7 +74,9 @@ class UserAntecedents(db.Model):
     timeAvailability= db.Column(db.String)
     trainingPreference= db.Column(db.String)
     favoriteActivities= db.Column(db.String)
-    
+    userId =db.Column(db.Integer)
+    sleepScore =db.Column(db.Integer)
+
 
     def to_dict(self):
         return {
@@ -86,6 +89,8 @@ class UserAntecedents(db.Model):
             'timeAvailability': self.timeAvailability,
             'trainingPreference': self.trainingPreference,
             'favoriteActivities': self.favoriteActivities,
+            'userID':self.userId,
+            'sleepScore':self.sleepScore
             
         }
 
@@ -137,6 +142,8 @@ antecedents_model = api.model('Antecedents', {
     'timeAvailability': fields.String,
     'trainingPreference': fields.String,
     'favoriteActivities': fields.String,
+    'userId': fields.Integer,
+    'sleepScore': fields.Integer
 })
 
 # Define API routes
@@ -220,6 +227,32 @@ class Antecedents(Resource):
         return {'success': False, 'error': 'User not found or invalid antecedents'}, 404
 
 
+#Momentan nur für den user mit der userId 1 möglich
+@antecedents_namespace.route('/getScore')
+class Antecedents(Resource):
+    def get(self):
+        user_id = 1
+        antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
+        if antecedent:
+            return {'sleepScore': antecedent.sleepScore}, 200
+        else:
+            return {'message': 'Antecedent not found'}, 404
+
+@antecedents_namespace.route('/putScore')
+class Antecedents(Resource):
+    def put(self):
+        user_id = 1
+        sleep_score = request.json.get('sleepScore', {}).get('allComponentScores')
+        if sleep_score is None:
+            return {'message': 'Invalid sleep score'}, 400
+        
+        antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
+        if antecedent:
+            antecedent.sleepScore = sleep_score
+            db.session.commit()
+            return {'message': 'Sleep score updated successfully'}, 200
+        else:
+            return {'message': 'Antecedent not found'}, 404
 
 
     
@@ -306,14 +339,13 @@ class Questions(Resource):
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
 
 
-
 @question_namespace.route('/all')
 class Questions(Resource):
+    @api.marshal_with(question_model, as_list=True)
     def get(self):
-        questionnaires = Questionnaire.query.id.asc().all()  
-        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+        questionnaires = Questionnaire.query.order_by(Questionnaire.id.asc()).all()
+        return questionnaires
 
-    
     @api.expect(question_model)
     def post(self):
         id = request.json.get('id')
@@ -329,10 +361,10 @@ class Questions(Resource):
 
 @question_namespace.route('/answers')
 class QuestionAnswers(Resource):
+    @api.marshal_with(question_model, as_list=True)
     def get(self):
-        answers = Questionnaire.query.with_entities(Questionnaire.question_id, Questionnaire.answer).all()
-        return jsonify([{"questionId": answer[0], "answerText": answer[1]} for answer in answers])
-        
+        answers = Questionnaire.query.with_entities(Questionnaire.id, Questionnaire.answer).all()
+        return answers
                
 # GET and PUT all activities
 @activity_namespace.route('/')
@@ -347,6 +379,8 @@ class ActivityList(Resource):
         db.session.add(activity)
         db.session.commit()
         return activity.to_dict(), 201
+    
+
 
 # GET, PUT and DELETE single activity by ID
 @activity_namespace.route('/<int:id>')
