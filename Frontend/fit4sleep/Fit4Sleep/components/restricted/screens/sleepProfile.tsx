@@ -1,42 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground} from 'react-native';
 import axios from 'axios';
+import {Icon} from 'react-native-elements';
+import {appColorTheme} from "../../../constants/colors";
 
 interface Question {
     id: number;
     question: string;
     type: number;
     answer: string | null;
+
 }
 
 const SleepProfile = () => {
     const [hoursSlept, setHoursSlept] = useState(8);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [expanded, setExpanded] = useState(false);
+    const [scoreExpanded, setScoreExpanded] = useState(false);
+    const [answers, setAnswers] = useState<(string | null)[]>([]);
+    const [sleepScore, setSleepScore] = useState<number | null>(null);
+
 
     useEffect(() => {
         axios
             .get('http://10.0.2.2:5000/Questionnaire/all')
             .then((response) => {
+                const newAnswers = new Array(response.data.length).fill(null);
+                setAnswers(newAnswers);
                 setQuestions(response.data);
             })
             .catch((error) => {
                 console.log(error);
             });
+    }, []);
 
+    useEffect(() => {
         axios
-            .get('http://10.0.2.2:5000/Questionnaire/answers')
+            .get('http://10.0.2.2:5000/Antecedents/getScore')
             .then((response) => {
-                const fetchedAnswers = response.data;
-                const updatedQuestions = questions.map((question) => {
-                    const fetchedAnswer = fetchedAnswers.find((answer: any) => answer.questionId === question.id);
-                    if (fetchedAnswer) {
-                        return { ...question, answer: fetchedAnswer.answerText };
-                    } else {
-                        return question;
-                    }
-                });
-                setQuestions(updatedQuestions);
+                setSleepScore(response.data.sleepScore);
             })
             .catch((error) => {
                 console.log(error);
@@ -44,92 +46,164 @@ const SleepProfile = () => {
     }, []);
 
 
-
     const toggleExpand = () => {
         setExpanded(!expanded);
     };
 
-    return (
+    const toggleScoreExpand = () => {
+        setScoreExpanded(!scoreExpanded);
+    };
 
-        <View style={styles.container}>
-            <View style={styles.profileContainer}>
-                <Text style={styles.headerTitle}>My Sleep Profile</Text>
-                <ScrollView style={styles.scrollContainer}>
-                    <TouchableOpacity style={styles.expandButton} onPress={toggleExpand}>
-                        <Text style={styles.expandButtonText}>{expanded ? 'Collapse All' : 'Your Sleepquality Questions'}</Text>
-                    </TouchableOpacity>
-                    {expanded && (
-                        <View style={styles.questionContainer}>
-                            {questions.map((question) => (
-                                <View key={question.id} style={styles.questionContainer}>
-                                    <TouchableOpacity>
-                                        <Text style={styles.questionText}>
-                                            {`Question ${question.id}: ${question.question}`}
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <Text style={styles.answerText}>{`Answer: ${question.answer || '-'}`}</Text>
-                                </View>
-                            ))}
-                        </View>
-                    )}
-                </ScrollView>
+
+    return (
+        <ScrollView style={styles.container}>
+            <View style={styles.sectionContainer}>
+                <TouchableOpacity style={styles.headerContainer} onPress={toggleExpand}>
+                    <Text style={styles.headerText}>Questions</Text>
+                    <Icon
+                        name={expanded ? 'minus' : 'plus'}
+                        type="font-awesome"
+                        color="white"
+                        size={16}
+                    />
+                </TouchableOpacity>
+
+                {expanded && (
+                    <View style={styles.contentContainer}>
+                        <Text style={styles.sectionInfoText}>
+                            The Pittsburgh Sleep Quality Index (PSQI) consists of 19 self-rated questions.
+                            The scoring is based only on the self-rated questions.
+                            The 19 self-rated items and 5 adittional questions and are grouped into seven "component" scores, each ranging from 0 to 3
+                            points.
+                        </Text>
+                        {questions.map((question) => (
+                            <View key={question.id} style={styles.questionContainer}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
             </View>
-        </View>
+
+            <View style={styles.sectionContainer}>
+                <TouchableOpacity style={styles.headerContainer} onPress={toggleScoreExpand}>
+                    <Text style={styles.headerText}>Sleep Score</Text>
+                    <Icon
+                        name={scoreExpanded ? 'minus' : 'plus'}
+                        type="font-awesome"
+                        color="white"
+                        size={16}
+                    />
+                </TouchableOpacity>
+
+                {scoreExpanded && (
+
+                    <View style={styles.contentContainer}>
+
+                        <Text style={styles.sectionInfoText}>
+                            The index combines seven component scores to create a global score ranging from 0 to 21.
+                            A global score of 0 represents no difficulties, while a score of 21 indicates severe difficulties across all areas.
+                            </Text>
+                        <Text style={styles.scoreText}>Sleep Score: {sleepScore}</Text>
+                    </View>
+                )}
+            </View>
+        </ScrollView>
     );
 };
 
-
 const styles = StyleSheet.create({
-    background: {
-        resizeMode: 'cover',
-        justifyContent: 'center',
-        alignItems: 'center',
+    container: {
+        flex: 1,
+        padding: 10,
+
     },
-        container: {
-            flex: 1,
-            padding: 16,
-            backgroundColor: '#fff',
+    sectionContainer: {
+        marginBottom: 10,
+        borderRadius: 5,
+        backgroundColor: '#f5f5f5',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
         },
-        profileContainer: {
-            flex: 1,
-        },
-        headerTitle: {
-            fontSize: 24,
-            fontWeight: 'bold',
-            marginBottom: 16,
-            textAlign: 'center',
-        },
-        scrollContainer: {
-            flex: 1,
-        },
-        expandButton: {
-            backgroundColor: '#293e7d',
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            marginVertical: 16,
-            borderRadius: 8,
-            height: 60,
-        },
-        expandButtonText: {
-            fontSize: 16,
-            fontWeight: 'bold',
-            color:'white'
-        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 20,
+        paddingHorizontal: 20,
+        backgroundColor: appColorTheme.primaryColor,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        height: 80
+    },
+    headerText: {
+        flex: 1,
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+    contentContainer: {
+        padding: 16,
+
+    },
+    sectionInfoText: {
+        textAlign: "center",
+        fontSize: 16,
+        lineHeight: 24,
+        color: '#555',
+        marginBottom: 16,
+    },
     questionContainer: {
         marginBottom: 16,
-        backgroundColor: '#f5f5f5',
-        padding: 16,
+        backgroundColor: '#fff',
         borderRadius: 8,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 3,
     },
     questionText: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 4,
     },
+
+    answerContainer: {
+        marginTop: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+    },
     answerText: {
         fontSize: 14,
         color: '#555',
     },
+    scoreText: {
+        fontSize: 18,
+        color: 'white',
+        backgroundColor: appColorTheme.primaryColor,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+        marginBottom: 16,
+        textAlign: 'center',
+    }
 });
+
+
 
 export default SleepProfile;

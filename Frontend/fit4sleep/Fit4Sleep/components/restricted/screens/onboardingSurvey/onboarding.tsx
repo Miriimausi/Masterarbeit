@@ -237,11 +237,6 @@ const OnboardingSurvey = () => {
                         </Picker>
                     </View>
                 </View>
-                {/*<View style={styles.field}>*/}
-                {/*    <Text style={styles.label}>Level of Activity:</Text>*/}
-                {/*    <CustomNumericScale numOfSteps={5} setFun={setActivityLevel}></CustomNumericScale>*/}
-
-                {/*</View>*/}
             </View>
             <View style={styles.slide}>
                 <View style={styles.surveyContainer}>
