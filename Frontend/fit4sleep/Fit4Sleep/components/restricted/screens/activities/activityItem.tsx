@@ -1,6 +1,6 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import {Activity} from "./activities";
+import {Activity} from "./allActivities";
 import axios from "axios";
 
 export interface IActivityItemProps {
@@ -12,28 +12,8 @@ export interface IActivityItemProps {
 
 const ActivityItem = (props: IActivityItemProps) => {
 
-    const likeActivity = async (activityId: number) => {
-        try {
-            console.log(activityId);
-            const response = await axios.put(`http://10.0.2.2:5000/activities/like/${activityId}`);
-            const updatedActivity = response.data;
-            console.log("liked");
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
 
-    const dislikeActivity = async (activityId: number) => {
-        try {
-            console.log(activityId);
-            const response = await axios.put(`http://10.0.2.2:5000/activities/dislike/${activityId}`);
-            const updatedActivity = response.data;
-            console.log("disliked");
-        } catch (error) {
-            console.error(error);
-        }
-    };
     return (
         <TouchableOpacity style={styles.tile}
                           onPress={() => props.navigation.navigate('ActivitiesDetails', {activity: props.activity})}>
@@ -41,14 +21,6 @@ const ActivityItem = (props: IActivityItemProps) => {
             <View style={styles.tileDetails}>
                 <Text style={styles.tileTitle}>{props.activity.name}</Text>
                 <Text style={styles.tileDescription}>{props.activity.description}</Text>
-            </View>
-            <View style={styles.tileActions}>
-                <TouchableOpacity onPress={() => likeActivity(props.activity.id)} style={styles.actionButton}>
-                    <Icon name="thumb-up" size={30} color="#0E9CDA"/>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => dislikeActivity(props.activity.id)} style={styles.actionButton}>
-                    <Icon name="thumb-down" size={30} color="#0E9CDA"/>
-                </TouchableOpacity>
             </View>
         </TouchableOpacity>
     )

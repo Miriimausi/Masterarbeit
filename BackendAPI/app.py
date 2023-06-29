@@ -30,18 +30,18 @@ class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(120), nullable=False)
-    liked = db.Column(db.Integer)
-    tracked =db.Column(db.Integer)
     imageUrl =db.Column(db.String)
+    type = db.Column(db.String)
+    intensity = db.Column(db.String)
 
     def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'liked': self.liked,
-            'tracked':self.tracked,
-            'imageUrl':self.imageUrl}
+            'imageUrl':self.imageUrl,
+            'type':self.type,
+            'intensity':self.intensity}
 
 
 class Questionnaire(db.Model):
@@ -113,13 +113,19 @@ user_model = api.model('User', {
     'password': fields.String,
 })
 
+user_login_model = api.model('UserLogin', {
+    'username': fields.String,
+    'password': fields.String,
+
+})
+
 activity_model = api.model('Activity', {
     'id': fields.Integer,
     'name': fields.String,
     'description': fields.String,
-    'liked': fields.Integer,
-    'tracked': fields.Integer,
     'imageUrl': fields.String,
+    'type': fields.String,
+    'intensity': fields.String
 })
 
 question_model = api.model('Questionnaire',{
@@ -148,8 +154,9 @@ antecedents_model = api.model('Antecedents', {
 
 # Define API routes
 
-@auth_namespace.route('/login')
+@auth_namespace.route('/login', methods=["POST"])
 class Authentication(Resource):
+    @auth_namespace.expect(user_login_model)
     def post(self):
         username = request.json.get('username')
         password = request.json.get('password')
@@ -228,10 +235,10 @@ class Antecedents(Resource):
 
 
 #Momentan nur für den user mit der userId 1 möglich
-@antecedents_namespace.route('/getScore')
+@antecedents_namespace.route('/getScore/<int:user_id>')
 class Antecedents(Resource):
-    def get(self):
-        user_id = 1
+    def get(self, user_id):
+        
         antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
         if antecedent:
             return {'sleepScore': antecedent.sleepScore}, 200
@@ -241,8 +248,8 @@ class Antecedents(Resource):
 @antecedents_namespace.route('/putScore')
 class Antecedents(Resource):
     def put(self):
-        user_id = 1
-        sleep_score = request.json.get('sleepScore', {}).get('allComponentScores')
+        sleep_score = request.json.get('sleepScore')
+        user_id = request.json.get('userId')
         if sleep_score is None:
             return {'message': 'Invalid sleep score'}, 400
         
@@ -400,8 +407,6 @@ class ActivityDetail(Resource):
         else:
             activity.name = request.json.get('name', activity.name)
             activity.description = request.json.get('description', activity.description)
-            activity.liked = request.json.get('liked', activity.liked)
-            activity.tracked =request.json.get('tracked', activity.tracked)
             db.session.commit()
             return activity.to_dict()
         
@@ -417,40 +422,40 @@ class ActivityDetail(Resource):
 
 #like and dislike actvities
 
-@activity_namespace.route('/like/<int:activity_id>')
-class ActivityDetail(Resource): 
-    def put(self,activity_id):
-        activity = Activity.query.get_or_404(activity_id)
-        if activity.liked :
-            activity.liked += 1
-        else:
-            activity.liked = 1
-        db.session.commit()
-        return activity.to_dict()
+#@activity_namespace.route('/like/<int:activity_id>')
+#class ActivityDetail(Resource): 
+#    def put(self,activity_id):
+#        activity = Activity.query.get_or_404(activity_id)
+#        if activity.liked :
+#            activity.liked += 1
+#        else:
+#            activity.liked = 1
+#        db.session.commit()
+#        return activity.to_dict()
 
 
-@activity_namespace.route('/dislike/<int:activity_id>')
-class ActivityDetail(Resource): 
-    def put(self,activity_id):
-        activity = Activity.query.get_or_404(activity_id)
-        if activity.liked :
-            activity.liked -= 1
-        else:
-            activity.liked = -1
-        db.session.commit()
-        return activity.to_dict()
+#@activity_namespace.route('/dislike/<int:activity_id>')
+#class ActivityDetail(Resource): 
+#    def put(self,activity_id):
+#        activity = Activity.query.get_or_404(activity_id)
+#        if activity.liked :
+#            activity.liked -= 1
+#        else:
+#            activity.liked = -1
+#        db.session.commit()
+#        return activity.to_dict()
 
 
-@activity_namespace.route('/tracked/<int:activity_id>')
-class ActivityDetail(Resource): 
-    def put(self,activity_id):
-        activity = Activity.query.get_or_404(activity_id)
-        if activity.tracked :
-            activity.tracked += 1
-        else:
-            activity.tracked = 1
-        db.session.commit()
-        return activity.to_dict()
+#@activity_namespace.route('/tracked/<int:activity_id>')
+#class ActivityDetail(Resource): 
+#    def put(self,activity_id):
+#        activity = Activity.query.get_or_404(activity_id)
+#        if activity.tracked :
+#            activity.tracked += 1
+#        else:
+#            activity.tracked = 1
+#        db.session.commit()
+#        return activity.to_dict()
 
 
 

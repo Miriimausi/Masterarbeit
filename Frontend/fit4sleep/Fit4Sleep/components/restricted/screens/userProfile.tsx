@@ -1,16 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import axios from "axios";
+import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
 
 const UserProfile = () => {
     const [editMode, setEditMode] = useState(false);
-    const [username, setUsername] = useState('JohnDoe');
-    const [password, setPassword] = useState('password');
-    const [email, setEmail] = useState('john.doe@gmail.com');
     const [profilePicture, setProfilePicture] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
-
+    const {userId, username, password, email} = useContext(AuthContext) as AuthContextType;
     const handleEditButtonPress = () => {
         setEditMode(true);
     };
@@ -33,7 +31,7 @@ const UserProfile = () => {
 
     useEffect(() => {
         axios
-            .get('http://10.0.2.2:5000/UserProfile')
+            .get(`http://10.0.2.2:5000/UserProfile/${userId}`)
             .then((response) => {
                 setUserProfile(response.data);
             })
@@ -59,47 +57,29 @@ const UserProfile = () => {
             </View>
             <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={handleSelectImage}>
-                    {profilePicture ? (
-                        <Image style={styles.profilePicture} source={{ uri: profilePicture }} />
-                    ) : (
+
+
                         <View style={styles.profilePicturePlaceholder}>
                             <Text >Select Image</Text>
                         </View>
-                    )}
+
                 </TouchableOpacity>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Username:</Text>
-                    {editMode ? (
-                        <TextInput style={styles.input} value={username} onChangeText={setUsername} />
-                    ) : (
+
+
                         <Text style={styles.value}>{username}</Text>
-                    )}
                 </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Password:</Text>
-                    {editMode ? (
-                        <TextInput
-                            style={styles.input}
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry={true}
-                        />
-                    ) : (
+
                         <Text style={styles.value}>******</Text>
-                    )}
+
                 </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Email:</Text>
-                    {editMode ? (
-                        <TextInput
-                            style={styles.input}
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                        />
-                    ) : (
+
                         <Text style={styles.value}>{email}</Text>
-                    )}
                 </View>
             </View>
         </View>

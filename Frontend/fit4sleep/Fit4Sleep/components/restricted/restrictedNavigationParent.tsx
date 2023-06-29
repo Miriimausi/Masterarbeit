@@ -1,6 +1,6 @@
 import UserProfile from "./screens/userProfile";
 import SleepProfile from "./screens/sleepProfile";
-import Activities from "./screens/activities/activities";
+import AllActivities from "./screens/activities/allActivities";
 import Questionnaire from "./screens/questionnaire";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {FontAwesome5} from '@expo/vector-icons';
@@ -12,6 +12,7 @@ import {useContext} from "react";
 import {AuthContext, AuthContextType} from "../../contexts/auth-context";
 import {createStackNavigator} from "@react-navigation/stack";
 import ActivitiesDetails from "./screens/activities/activitiesDetails";
+import RecommendedActivities from "./screens/activities/recommendedActivities";
 
 
 const RestrictedTab = createBottomTabNavigator();
@@ -25,7 +26,8 @@ function RestrictedNavigationParent() {
     function ActivitiesStackScreen() {
         return (
             <ActivitiesStack.Navigator>
-                <ActivitiesStack.Screen name="Activities" component={Activities} />
+                <ActivitiesStack.Screen name="RecommendedActivities" component={RecommendedActivities} />
+                <ActivitiesStack.Screen name="AllActivities" component={AllActivities} />
                 <ActivitiesStack.Screen name="ActivitiesDetails" component={ActivitiesDetails} />
             </ActivitiesStack.Navigator>
         );

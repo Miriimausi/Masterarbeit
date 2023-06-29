@@ -4,22 +4,24 @@ import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../../navigator";
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import ActivityItem from "./activityItem";
+import Swiper from "react-native-swiper";
 
 export type Activity = {
     id: number,
     name: string,
     description: string,
-    liked: number,
-    tracked: number,
+    type: string,
+
+    intensity: string,
     imageUrl?: string
 }
 
 type ActivitiesProps = {
-    navigation: NavigationProp<RootStackParamList, 'Activities'>
+    navigation: NavigationProp<RootStackParamList, 'AllActivities'>
 }
 
 
-const Activities = ({navigation}: ActivitiesProps) => {
+const AllActivities = ({navigation}: ActivitiesProps) => {
     const [activities, setActivities] = useState<Activity[]>([]);
 
 
@@ -36,63 +38,53 @@ const Activities = ({navigation}: ActivitiesProps) => {
         fetchActivities();
     }, []);
 
-    const likeActivity = async (activityId: number) => {
-        try {
-            console.log(activityId);
-            const response = await axios.put(`http://10.0.2.2:5000/activities/like/${activityId}`);
-            const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(a => a.id === updatedActivity.id ? updatedActivity : a));
-            console.log("liked");
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-
-    const dislikeActivity = async (activityId: number) => {
-        try {
-            console.log(activityId);
-            const response = await axios.put(`http://10.0.2.2:5000/activities/dislike/${activityId}`);
-            const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(a => a.id === updatedActivity.id ? updatedActivity : a));
-            console.log("disliked");
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     return (
-        <ScrollView style={styles.ActivitiesContainer}>
-            <View style={styles.container}>
-                <Text style={styles.title}>Activities</Text>
-                <View style={styles.tilesContainer}>
-                    {activities.map((activity: Activity, index: number) => (
-                       <ActivityItem
-                           key={index}
-                           navigation={navigation}
-                           activity={activity}
-                       ></ActivityItem>
-                    ))}
-                </View>
+
+            <View style={styles.slide}>
+                <ScrollView style={styles.ActivitiesContainer}>
+                    <View style={styles.container}>
+                        <Text style={styles.title}>All Activities</Text>
+                        <View style={styles.tilesContainer}>
+                            {activities.map((activity: Activity, index: number) => (
+                                <ActivityItem
+                                    key={index}
+                                    navigation={navigation}
+                                    activity={activity}
+                                ></ActivityItem>
+                            ))}
+                        </View>
+                    </View>
+                </ScrollView>
             </View>
-        </ScrollView>
+
     );
 };
 const styles = StyleSheet.create({
+    slide: {
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingHorizontal: 2,
+        paddingTop: 2,
+    },
     ActivitiesContainer: {
         flex: 1,
         backgroundColor: '#eee',
     },
+
+
     container: {
         flex: 1,
         alignItems: 'center',
         paddingTop: 20,
         paddingHorizontal: 20,
     },
+
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        marginTop: 20,
     },
     tilesContainer: {
         flex: 1,
@@ -100,8 +92,16 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-between',
     },
+    tileContainerRecommended: {
+        flex: 1,
+        flexDirection: 'column',
+        width: 400,
+        alignItems: 'center',
+        alignSelf: 'center', // Zentrierung der Aktivitäten
+    },
     tile: {
-        width: '48%',
+        width: '90%', // Breite der Tiles anpassen
+        height: 150, // Höhe der Tiles anpassen
         backgroundColor: '#fff',
         marginBottom: 10,
         borderRadius: 10,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     },
     tileImage: {
         width: '100%',
-        height: 150,
+        height: 100,
     },
     tileDetails: {
         padding: 10,
@@ -136,4 +136,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Activities;
+export default AllActivities;

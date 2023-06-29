@@ -7,6 +7,12 @@ export type AuthContextType = {
     userId: number | null,
     login: (username: string, password: string) => any,
     logout: () => void,
+
+    username: string | null,
+
+    password: string| null,
+
+    email: string | null
 }
 
 const AuthContext = createContext<AuthContextType | null>( {
@@ -14,6 +20,9 @@ const AuthContext = createContext<AuthContextType | null>( {
     isOnBoarded: false,
     setIsOnBoarded: () => {},
     userId: null,
+    username: null,
+    password: null,
+    email: null,
     login: () => {},
     logout: () => {}
 })
@@ -22,6 +31,9 @@ const AuthProvider = ({children}: any) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [isOnBoarded, setIsOnBoarded] = useState<boolean>(false);
     const [userId, setUserId] = useState<number | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
+    const [password, setPassword] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
 
     const login = async (username: string, password: string) => {
         const response = await fetch('http://10.0.2.2:5000/auth/login', {
@@ -36,6 +48,9 @@ const AuthProvider = ({children}: any) => {
             setIsLoggedIn(data.success);
             setUserId(data.user.id)
             setIsOnBoarded(data.user.isOnBoarded);
+            setEmail(data.user.email);
+            setPassword(data.user.password);
+            setUsername(data.user.username)
         } else {
             console.log('You could not log in');
         }
@@ -53,7 +68,10 @@ const AuthProvider = ({children}: any) => {
             logout: logout,
             isOnBoarded: isOnBoarded,
             setIsOnBoarded: setIsOnBoarded,
-            userId: userId
+            userId: userId,
+            username: username,
+            email: email,
+            password: password
         }}>
             {children}
         </AuthContext.Provider>

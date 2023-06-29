@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     StyleSheet,
     Text,
@@ -13,6 +13,7 @@ import CustomNumericScale from "./onboardingSurvey/customNumericScale";
 import {Picker} from "@react-native-picker/picker";
 import Collapsible from "react-native-collapsible";
 import Swiper from 'react-native-swiper';
+import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
 
 
 interface Question {
@@ -35,6 +36,9 @@ const Questionnaire = () => {
     const [questionsTen, setQuestionsTen] = useState<Question[]>([]);
     const [submitted, setSubmitted] = useState(false);
     const [score, setScore] = useState(0);
+
+    const {userId} = useContext(AuthContext) as AuthContextType;
+
 
     useEffect(() => {
         axios
@@ -394,9 +398,10 @@ const Questionnaire = () => {
             component6Score +
             component7Score;
 
-
+        console.log(userId);
+        console.log('USer id ist:', userId);
         axios
-            .put('http://10.0.2.2:5000/Antecedents/putScore', {sleepScore: allComponentScores, userId: 1})
+            .put('http://10.0.2.2:5000/Antecedents/putScore', {sleepScore: allComponentScores, userId: userId ?? 1})
             .then((response) => {
                 console.log(response.data);  // Success message
             })

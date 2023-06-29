@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground} from 'react-native';
 import axios from 'axios';
 import {Icon} from 'react-native-elements';
 import {appColorTheme} from "../../../constants/colors";
+import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
 
 interface Question {
     id: number;
@@ -19,7 +20,7 @@ const SleepProfile = () => {
     const [scoreExpanded, setScoreExpanded] = useState(false);
     const [answers, setAnswers] = useState<(string | null)[]>([]);
     const [sleepScore, setSleepScore] = useState<number | null>(null);
-
+    const {userId} = useContext(AuthContext) as AuthContextType;
 
     useEffect(() => {
         axios
@@ -36,7 +37,7 @@ const SleepProfile = () => {
 
     useEffect(() => {
         axios
-            .get('http://10.0.2.2:5000/Antecedents/getScore')
+            .get(`http://10.0.2.2:5000/Antecedents/getScore/${userId}`)
             .then((response) => {
                 setSleepScore(response.data.sleepScore);
             })

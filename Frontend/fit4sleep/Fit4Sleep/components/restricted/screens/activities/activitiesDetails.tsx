@@ -1,22 +1,22 @@
-import { NavigationProp, RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "../../../navigator";
-import { View, Text, StyleSheet } from 'react-native';
+import {NavigationProp, RouteProp} from "@react-navigation/native";
+import {RootStackParamList} from "../../../navigator";
+import {View, Text, StyleSheet} from 'react-native';
 import Icon from "react-native-vector-icons/MaterialIcons"  ;
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {TouchableOpacity} from "react-native-gesture-handler";
 import Collapsible from 'react-native-collapsible';
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import {  ScrollView } from 'react-native';
-
-
+import {ScrollView} from 'react-native';
+import Swiper from "react-native-swiper";
 
 
 type Activity = {
     id: number,
     name: string,
     description: string,
-    tracked: number,
-    liked: number,
+    type: string,
+
+    intensity: string,
 }
 
 
@@ -25,11 +25,13 @@ type ActivitiesDetailsProps = {
     route: RouteProp<RootStackParamList, 'ActivitiesDetails'>,
 }
 
-const ActivitiesDetails = ({ navigation, route }: {navigation: any, route: any}) => {
-    const { activity } = route.params;
+const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any }) => {
+    const {activity} = route.params;
     const [activities, setActivities] = useState<Activity[]>([]);
     const [isTableCollapsed, setIsTableCollapsed] = useState(true);
     const [trackingCount, setTrackingCount] = useState(0);
+
+
     useEffect(() => {
         const fetchActivities = async () => {
             try {
@@ -42,114 +44,89 @@ const ActivitiesDetails = ({ navigation, route }: {navigation: any, route: any})
         fetchActivities();
     }, []);
 
-    const likeActivity = async (activityId: number) => {
-        try {
-            const response = await axios.put(`http://10.0.2.2:5000/activities/like/${activityId}`);
-            const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity));
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
-    const dislikeActivity = async (activityId: number) => {
-        try {
-            const response = await axios.put(`http://10.0.2.2:5000/activities/dislike/${activityId}`);
-            const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity));
-        } catch (error) {
-            console.error(error);
-        }
+    const toggleTable = () => {
+        setIsTableCollapsed(!isTableCollapsed);
     };
-
-    const trackActivity = async (activityId: number, count: number) => {
-        try {
-            const response = await axios.put(`http://10.0.2.2:5000/activities/tracked/${activityId}`);
-            const updatedActivity = response.data;
-            setActivities(prevActivities => prevActivities.map(activity => activity.id === updatedActivity.id ? updatedActivity : activity));
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-        const toggleTable = () => {
-            setIsTableCollapsed(!isTableCollapsed);
-        };
 
     const showInfo = () => {
-        alert('Heart rate zone limits indicate in which heart rate zone the training is most effective. The values vary from very light to maximum depending on the training intensity.' );
+        alert('Heart rate zone limits indicate in which heart rate zone the training is most effective. The values vary from very light to maximum depending on the training intensity.');
     };
 
 
-    return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View style={styles.detailsContainer}>
-                    <Text style={styles.title}>{activity.name}</Text>
-                    <Text style={styles.description}>{activity.description}</Text>
-                    <View style={styles.actions}>
-                        <TouchableOpacity onPress={() => likeActivity(activity.id)} style={styles.actionButton}>
-                            <Icon name="thumb-up" size={30} color="#0E9CDA" />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => dislikeActivity(activity.id)} style={styles.actionButton}>
-                            <Icon name="thumb-down" size={30} color="#0E9CDA" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={styles.detailsContainer}>
-                    <TouchableOpacity onPress={toggleTable}>
-                        <View style={styles.tableTitleContainer}>
-                            <Text style={styles.tableTitle}>Heart rate zone limits</Text>
-                            <View style={styles.infoButtonContainer}>
-                                <TouchableOpacity onPress={showInfo}>
-                                    <Icon name="info" size={25} color="#0E9CDA" />
-                                </TouchableOpacity>
-                            </View>
-                            <Icon name={isTableCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'} size={30} color="#0E9CDA" />
-                        </View>
-                    </TouchableOpacity>
-                    <Collapsible collapsed={isTableCollapsed}>
-                        <View style={styles.tableContainer}>
-                            <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableHeader]}>Intensity</Text>
-                                <Text style={[styles.tableCell, styles.tableHeader]}>Heart rate zone</Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.red]}>Maximum</Text>
-                                <Text style={[styles.tableCell, styles.tableData]}>177-197</Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.yellow]}>Hard</Text>
-                                <Text style={[styles.tableCell, styles.tableData]}>158-176</Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.green]}>Medium</Text>
-                                <Text style={[styles.tableCell, styles.tableData]}>138-157</Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.lightblue]}>Light</Text>
-                                <Text style={[styles.tableCell, styles.tableData]}>118-137</Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={[styles.tableCell, styles.tableLabel, styles.gray]}>Easy</Text>
-                                <Text style={[styles.tableCell, styles.tableData]}>99-117</Text>
-                            </View>
-                        </View>
-                    </Collapsible>
-                </View>
-                <View style={styles.detailsContainer}>
-                    <View style={styles.trackedCountContainer}>
-                        <Text style={styles.trackedCountText}>Track this activity</Text>
-                        <TouchableOpacity onPress={() => trackActivity(activity.id, trackingCount)}>
-                            <Icon name="add" size={40} color="#0E9CDA" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        </ScrollView>
-    );
 
-};
+        return (
+
+            <ScrollView>
+                <View style={styles.container}>
+                    <View style={styles.detailsContainer}>
+                        <Text style={styles.title}>{activity.name}</Text>
+                        <Text style={styles.description}>{activity.description}</Text>
+
+                    </View>
+                    <View style={styles.detailsContainer}>
+
+                        <Text style={styles.title}>Type: </Text>
+                        <Text style={styles.description}>{activity.type}</Text>
+                    </View>
+                    <View style={styles.detailsContainer}>
+
+                        <Text style={styles.title}>Intensity: </Text>
+                        <Text style={styles.description}>{activity.intensity}</Text>
+                    </View>
+                    <View style={styles.detailsContainer}>
+                        <TouchableOpacity onPress={toggleTable}>
+                            <View style={styles.tableTitleContainer}>
+                                <Text style={styles.tableTitle}>Heart rate zone limits</Text>
+                                <View style={styles.infoButtonContainer}>
+                                    <TouchableOpacity onPress={showInfo}>
+                                        <Icon name="info" size={25} color="#0E9CDA"/>
+                                    </TouchableOpacity>
+                                </View>
+                                <Icon name={isTableCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'} size={30}
+                                      color="#0E9CDA"/>
+                            </View>
+                        </TouchableOpacity>
+
+
+                        <Collapsible collapsed={isTableCollapsed}>
+                            <View style={styles.tableContainer}>
+                                <View style={styles.tableRow}>
+                                    <Text style={[styles.tableCell, styles.tableHeader]}>Intensity</Text>
+                                    <Text style={[styles.tableCell, styles.tableHeader]}>Heart rate zone</Text>
+                                </View>
+                                <View style={styles.tableRow}>
+                                    <Text style={[styles.tableCell, styles.tableLabel, styles.red]}>Maximum</Text>
+                                    <Text style={[styles.tableCell, styles.tableData]}>177-197</Text>
+                                </View>
+                                <View style={styles.tableRow}>
+                                    <Text style={[styles.tableCell, styles.tableLabel, styles.yellow]}>Hard</Text>
+                                    <Text style={[styles.tableCell, styles.tableData]}>158-176</Text>
+                                </View>
+                                <View style={styles.tableRow}>
+                                    <Text style={[styles.tableCell, styles.tableLabel, styles.green]}>Medium</Text>
+                                    <Text style={[styles.tableCell, styles.tableData]}>138-157</Text>
+                                </View>
+                                <View style={styles.tableRow}>
+                                    <Text style={[styles.tableCell, styles.tableLabel, styles.lightblue]}>Light</Text>
+                                    <Text style={[styles.tableCell, styles.tableData]}>118-137</Text>
+                                </View>
+                                <View style={styles.tableRow}>
+                                    <Text style={[styles.tableCell, styles.tableLabel, styles.gray]}>Easy</Text>
+                                    <Text style={[styles.tableCell, styles.tableData]}>99-117</Text>
+                                </View>
+                            </View>
+                        </Collapsible>
+                    </View>
+
+                </View>
+            </ScrollView>
+        );
+
+    };
+
+
+
 
 const styles = StyleSheet.create({
     container: {
@@ -163,17 +140,17 @@ const styles = StyleSheet.create({
         margin: 10,
         overflow: 'hidden',
     },
-
     title: {
         fontSize: 20,
         fontWeight: 'bold',
         margin: 10,
-        backgroundColor:'#EDF2F7'
+        backgroundColor: '#EDF2F7',
+        color: '#000',
     },
     description: {
         fontSize: 16,
         margin: 10,
-
+        color: '#000',
     },
     actions: {
         flexDirection: 'row',
@@ -188,9 +165,8 @@ const styles = StyleSheet.create({
     tableTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-
+        color: '#000',
     },
-
     tableTitleContainer: {
         fontSize: 16,
         fontWeight: 'bold',
@@ -198,9 +174,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         color: 'black',
     },
-
-    infoText:{
-        font:12,
+    infoText: {
+        fontSize: 12,
         color: 'black',
     },
     infoButtonContainer: {
@@ -230,7 +205,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-
     tableHeader: {
         fontWeight: 'bold',
     },
@@ -254,7 +228,7 @@ const styles = StyleSheet.create({
     },
     lightblue: {
         backgroundColor: '#58D3F7',
-        color:'white'
+        color: 'white',
     },
     gray: {
         backgroundColor: '#D8D8D8',
@@ -264,7 +238,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginVertical: 10,
-        margin: 10
+        margin: 10,
     },
     trackedIcon: {
         marginRight: 5,
@@ -273,10 +247,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
-    trackedCountPicker:{
-
-    },
-
+    trackedCountPicker: {},
 });
+
 
 export default ActivitiesDetails;
