@@ -10,6 +10,8 @@ from flask import Flask, request, jsonify
 from flask import redirect, url_for
 from decimal import Decimal
 import json
+from difflib import SequenceMatcher
+
 
 
 app = Flask(__name__)
@@ -33,6 +35,7 @@ class Activity(db.Model):
     imageUrl =db.Column(db.String)
     type = db.Column(db.String)
     intensity = db.Column(db.String)
+    duration = db.Column(db.Integer)
 
     def to_dict(self):
         return {
@@ -41,7 +44,8 @@ class Activity(db.Model):
             'description': self.description,
             'imageUrl':self.imageUrl,
             'type':self.type,
-            'intensity':self.intensity}
+            'intensity':self.intensity,
+            'duration': self.duration}
 
 
 class Questionnaire(db.Model):
@@ -67,13 +71,13 @@ class UserAntecedents(db.Model):
     __tablename__="userAntecedents"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     age = db.Column(db.Integer, nullable=False)
-    height= db.Column (db.Numeric(precision=2, scale=2),nullable= False)
-    weight= db.Column (db.Numeric(precision=2, scale=2),nullable= False)
+    height= db.Column (db.Numeric(precision=5, scale=2),nullable= False)
+    weight= db.Column (db.Numeric(precision=5, scale=2),nullable= False)
     bmi = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
-    gender =db.Column(db.String, nullable=False)
     timeAvailability= db.Column(db.String)
     trainingPreference= db.Column(db.String)
     favoriteActivities= db.Column(db.String)
+    durationPreference= db.Column(db.String)
     userId =db.Column(db.Integer)
     sleepScore =db.Column(db.Integer)
 
@@ -85,9 +89,9 @@ class UserAntecedents(db.Model):
             'height': self.height,
             'weight': self.weight,
             'bmi': self.bmi,
-            'gender': self.gender,
             'timeAvailability': self.timeAvailability,
             'trainingPreference': self.trainingPreference,
+            'durationPreference': self.durationPreference,
             'favoriteActivities': self.favoriteActivities,
             'userID':self.userId,
             'sleepScore':self.sleepScore
@@ -125,7 +129,8 @@ activity_model = api.model('Activity', {
     'description': fields.String,
     'imageUrl': fields.String,
     'type': fields.String,
-    'intensity': fields.String
+    'intensity': fields.String,
+    'duration' : fields.Integer
 })
 
 question_model = api.model('Questionnaire',{
@@ -144,10 +149,10 @@ antecedents_model = api.model('Antecedents', {
     'height': fields.Float,
     'weight': fields.Float,
     'bmi':fields.Float,
-    'gender': fields.String,
     'timeAvailability': fields.String,
     'trainingPreference': fields.String,
     'favoriteActivities': fields.String,
+    'durationPreference': fields.String,
     'userId': fields.Integer,
     'sleepScore': fields.Integer
 })
@@ -195,9 +200,6 @@ class Authentication(Resource):
         return jsonify({'success': True})
     
 
-
-
-
 @antecedents_namespace.route('/')
 class Antecedents(Resource):
     @api.expect(antecedents_model)
@@ -207,19 +209,21 @@ class Antecedents(Resource):
         height = request.json.get('height')
         weight = request.json.get('weight')
         bmi = request.json.get('bmi')
-        gender = request.json.get('gender')
         timeAvailability = request.json.get('timeAvailability')
         trainingPreference = request.json.get('trainingPreference')
+        durationPreference= request.json.get('durationPreference')
         favoriteActivities = request.json.get('favoriteActivities')
+        sleepScore = request.json.get('sleepScore')
         userId = request.json.get('userId')
 
         user = User.query.get(userId)
 
         if user is not None:
                    new_antecedents = UserAntecedents(id=id, age=age, height=height, weight=weight, bmi=bmi,
-                                                     gender=gender, timeAvailability=timeAvailability,
+                                                     timeAvailability=timeAvailability,
                                                      trainingPreference=trainingPreference,
-                                                     favoriteActivities=favoriteActivities)
+                                                     favoriteActivities=favoriteActivities,
+                                                     sleepScore=sleepScore, durationPreference=durationPreference )
 
                    if new_antecedents is not None:
                        # Update the user's isOnBoarded field to True
@@ -365,98 +369,13 @@ class Questions(Resource):
         db.session.add(new_questions)
         db.session.commit()   
 
-
-@question_namespace.route('/answers')
-class QuestionAnswers(Resource):
-    @api.marshal_with(question_model, as_list=True)
-    def get(self):
-        answers = Questionnaire.query.with_entities(Questionnaire.id, Questionnaire.answer).all()
-        return answers
                
-# GET and PUT all activities
 @activity_namespace.route('/')
 class ActivityList(Resource):
     def get(self):
         activities = Activity.query.order_by(Activity.id.asc()).all()
         return jsonify([activity.to_dict() for activity in activities])
     
-    @activity_namespace.expect(activity_model)
-    def post(self):
-        activity = Activity(**request.json)
-        db.session.add(activity)
-        db.session.commit()
-        return activity.to_dict(), 201
-    
-
-
-# GET, PUT and DELETE single activity by ID
-@activity_namespace.route('/<int:id>')
-class ActivityDetail(Resource):
-    def get(self, id):
-        activity = Activity.query.filter_by(id=id).first()
-        if activity is None:
-            return {'message': 'Activity not found'}, 404
-        else:
-            return activity.to_dict()
-        
-    @activity_namespace.expect(activity_model)
-    def put(self, id):
-        activity = Activity.query.filter_by(id=id).first()
-        if activity is None:
-            return {'message': 'Activity not found'}, 404
-        else:
-            activity.name = request.json.get('name', activity.name)
-            activity.description = request.json.get('description', activity.description)
-            db.session.commit()
-            return activity.to_dict()
-        
-    def delete(self, id):
-        activity = Activity.query.filter_by(id=id).first()
-        if activity is None:
-            return {'message': 'Activity not found'}, 404
-        else:
-            db.session.delete(activity)
-            db.session.commit()
-            return {'message': 'Activity deleted'} 
-
-
-#like and dislike actvities
-
-#@activity_namespace.route('/like/<int:activity_id>')
-#class ActivityDetail(Resource): 
-#    def put(self,activity_id):
-#        activity = Activity.query.get_or_404(activity_id)
-#        if activity.liked :
-#            activity.liked += 1
-#        else:
-#            activity.liked = 1
-#        db.session.commit()
-#        return activity.to_dict()
-
-
-#@activity_namespace.route('/dislike/<int:activity_id>')
-#class ActivityDetail(Resource): 
-#    def put(self,activity_id):
-#        activity = Activity.query.get_or_404(activity_id)
-#        if activity.liked :
-#            activity.liked -= 1
-#        else:
-#            activity.liked = -1
-#        db.session.commit()
-#        return activity.to_dict()
-
-
-#@activity_namespace.route('/tracked/<int:activity_id>')
-#class ActivityDetail(Resource): 
-#    def put(self,activity_id):
-#        activity = Activity.query.get_or_404(activity_id)
-#        if activity.tracked :
-#            activity.tracked += 1
-#        else:
-#            activity.tracked = 1
-#        db.session.commit()
-#        return activity.to_dict()
-
 
 
 def recreate_db():

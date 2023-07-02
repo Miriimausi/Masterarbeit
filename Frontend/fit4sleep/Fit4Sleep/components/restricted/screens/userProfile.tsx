@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native';
-import ImagePicker from 'react-native-image-picker';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import axios from "axios";
 import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
 import {Icon} from "react-native-elements";
@@ -93,19 +92,19 @@ const UserProfile = () => {
         <ScrollView style={styles.container}>
 
             <View style={styles.container}>
-                <View style={styles.profileHeaderContainer}>
-                    <Text style={styles.headerTitle}>My Profile</Text>
-                    {editMode ? (
-                        <TouchableOpacity onPress={handleSaveButtonPress}>
-                            <Text style={styles.headerButton}>Save</Text>
-                        </TouchableOpacity>
-                    ) : (
-                        <TouchableOpacity onPress={handleEditButtonPress}>
-                            <Text style={styles.headerButton}>Edit</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
                 <View style={styles.profileContainer}>
+                    <View style={styles.profileHeaderContainer}>
+                        <Text style={styles.headerTitle}>My Profile</Text>
+                        {editMode ? (
+                            <TouchableOpacity onPress={handleSaveButtonPress}>
+                                <Text style={styles.headerButton}>Save</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity onPress={handleEditButtonPress}>
+                                <Text style={styles.headerButton}>Edit</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
                     <TouchableOpacity onPress={handleSelectImage}>
 
 
@@ -205,11 +204,11 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     headerButton: {
-        fontSize: 18,
+        fontSize: 14,
         color: '#007AFF',
     },
     profileContainer: {

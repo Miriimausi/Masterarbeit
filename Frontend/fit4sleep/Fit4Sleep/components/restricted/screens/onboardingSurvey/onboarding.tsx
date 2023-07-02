@@ -20,8 +20,8 @@ interface SurveyResponse {
     height: number;
     weight: number;
     bmi: number;
-    gender: string;
     timeAvailability: String;
+    durationPreference: String;
     trainingPreference: String;
     activityLevel: number;
     favoriteActivities: String;
@@ -37,8 +37,8 @@ const OnboardingSurvey = () => {
         height: 0,
         weight: 0,
         bmi: 0,
-        gender: '',
         timeAvailability: '',
+        durationPreference: '',
         trainingPreference: '',
         activityLevel: 0,
         favoriteActivities:'',
@@ -52,9 +52,7 @@ const OnboardingSurvey = () => {
             age: parseInt(age),
         });
     };
-    const handleGenderChange = (gender: string) => {
-        setResponse({...response, gender: gender});
-    };
+
     const handleWeightChange = (weight: string) => {
         setResponse({
             ...response,
@@ -89,6 +87,10 @@ const OnboardingSurvey = () => {
         setResponse({...response, favoriteActivities: favoriteActivities});
     };
 
+    const handleDurationChange = (durationPreference: string) => {
+        setResponse({...response, durationPreference: durationPreference});
+    };
+
 
     const handleSubmit = async () => {
         const requestBody = {
@@ -96,10 +98,10 @@ const OnboardingSurvey = () => {
             height: response.height,
             weight: response.weight,
             bmi: response.bmi,
-            gender: response.gender,
             timeAvailability: response.timeAvailability,
             trainingPreference: response.trainingPreference,
             favoriteActivities: response.favoriteActivities,
+            durationPreference: response.durationPreference,
             userId: userId
         };
 
@@ -140,20 +142,6 @@ const OnboardingSurvey = () => {
                         keyboardType="numeric"
                         onChangeText={handleAgeChange}
                     />
-                </View>
-                <View style={styles.field}>
-                    <Text style={styles.label}>Gender:</Text>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={response.gender}
-                            onValueChange={handleGenderChange}
-                        >
-                            <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="Male" value="male"/>
-                            <Picker.Item label="Female" value="female"/>
-                            <Picker.Item label="Other" value="other"/>
-                        </Picker>
-                    </View>
                 </View>
                 <View style={styles.field}>
                     <Text style={styles.label}>Height (cm):</Text>
@@ -199,6 +187,23 @@ const OnboardingSurvey = () => {
                             <Picker.Item label="Midday" value="midday"/>
                             <Picker.Item label="Afternoon" value="afternoon"/>
                             <Picker.Item label="Evening" value="evening"/>
+                        </Picker>
+                    </View>
+                </View>
+                <View style={styles.field}>
+                    <Text style={styles.label}>Duration Availability</Text>
+                    <View style={styles.picker}>
+                        <Picker
+                            selectedValue={response.durationPreference}
+                            onValueChange={(value) =>
+                                setResponse({...response, durationPreference: value})
+                            }
+                        >
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="max. 15 Minutes" value="15"/>
+                            <Picker.Item label="max. 30 Minutes" value="30"/>
+                            <Picker.Item label="max. 60 Minutes" value="60"/>
+                            <Picker.Item label="More than 60 Minutes" value="90"/>
                         </Picker>
                     </View>
                 </View>

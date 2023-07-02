@@ -17,6 +17,8 @@ type Activity = {
     type: string,
 
     intensity: string,
+
+    duration: number,
 }
 
 
@@ -53,201 +55,146 @@ const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any })
         alert('Heart rate zone limits indicate in which heart rate zone the training is most effective. The values vary from very light to maximum depending on the training intensity.');
     };
 
-
-
-        return (
-
-            <ScrollView>
-                <View style={styles.container}>
-                    <View style={styles.detailsContainer}>
-                        <Text style={styles.title}>{activity.name}</Text>
-                        <Text style={styles.description}>{activity.description}</Text>
-
-                    </View>
-                    <View style={styles.detailsContainer}>
-
-                        <Text style={styles.title}>Type: </Text>
-                        <Text style={styles.description}>{activity.type}</Text>
-                    </View>
-                    <View style={styles.detailsContainer}>
-
-                        <Text style={styles.title}>Intensity: </Text>
-                        <Text style={styles.description}>{activity.intensity}</Text>
-                    </View>
-                    <View style={styles.detailsContainer}>
-                        <TouchableOpacity onPress={toggleTable}>
-                            <View style={styles.tableTitleContainer}>
-                                <Text style={styles.tableTitle}>Heart rate zone limits</Text>
-                                <View style={styles.infoButtonContainer}>
-                                    <TouchableOpacity onPress={showInfo}>
-                                        <Icon name="info" size={25} color="#0E9CDA"/>
-                                    </TouchableOpacity>
-                                </View>
-                                <Icon name={isTableCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'} size={30}
-                                      color="#0E9CDA"/>
-                            </View>
+    return (
+        <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.detailsContainer}>
+                <Text style={styles.title}>Circuit training</Text>
+                <Text style={styles.description}>Exercises are performed in sequence with little rest in between.</Text>
+            </View>
+            <View style={styles.detailsContainer}>
+                <Text style={styles.title}>Type:</Text>
+                <Text style={styles.description}>HIIT</Text>
+            </View>
+            <View style={styles.detailsContainer}>
+                <Text style={styles.title}>Intensity:</Text>
+                <Text style={styles.description}>Intensive</Text>
+            </View>
+            <View style={styles.detailsContainer}>
+                <Text style={styles.title}>Duration:</Text>
+                <Text style={styles.description}>30 minutes</Text>
+            </View>
+            <View style={styles.detailsContainer}>
+                <TouchableOpacity onPress={toggleTable}>
+                    <View style={styles.tableTitleContainer}>
+                        <Text style={styles.tableTitle}>Heart rate zone limits</Text>
+                        <TouchableOpacity onPress={showInfo}>
+                            <Icon name="info" size={25} color="#0E9CDA"/>
                         </TouchableOpacity>
-
-
-                        <Collapsible collapsed={isTableCollapsed}>
-                            <View style={styles.tableContainer}>
-                                <View style={styles.tableRow}>
-                                    <Text style={[styles.tableCell, styles.tableHeader]}>Intensity</Text>
-                                    <Text style={[styles.tableCell, styles.tableHeader]}>Heart rate zone</Text>
-                                </View>
-                                <View style={styles.tableRow}>
-                                    <Text style={[styles.tableCell, styles.tableLabel, styles.red]}>Maximum</Text>
-                                    <Text style={[styles.tableCell, styles.tableData]}>177-197</Text>
-                                </View>
-                                <View style={styles.tableRow}>
-                                    <Text style={[styles.tableCell, styles.tableLabel, styles.yellow]}>Hard</Text>
-                                    <Text style={[styles.tableCell, styles.tableData]}>158-176</Text>
-                                </View>
-                                <View style={styles.tableRow}>
-                                    <Text style={[styles.tableCell, styles.tableLabel, styles.green]}>Medium</Text>
-                                    <Text style={[styles.tableCell, styles.tableData]}>138-157</Text>
-                                </View>
-                                <View style={styles.tableRow}>
-                                    <Text style={[styles.tableCell, styles.tableLabel, styles.lightblue]}>Light</Text>
-                                    <Text style={[styles.tableCell, styles.tableData]}>118-137</Text>
-                                </View>
-                                <View style={styles.tableRow}>
-                                    <Text style={[styles.tableCell, styles.tableLabel, styles.gray]}>Easy</Text>
-                                    <Text style={[styles.tableCell, styles.tableData]}>99-117</Text>
-                                </View>
-                            </View>
-                        </Collapsible>
+                        <Icon
+                            name={isTableCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'}
+                            size={30}
+                            color="#0E9CDA"
+                        />
                     </View>
-
-                </View>
-            </ScrollView>
-        );
-
-    };
-
-
-
+                </TouchableOpacity>
+                <Collapsible collapsed={isTableCollapsed}>
+                    <View style={styles.tableContainer}>
+                        <View style={styles.tableRow}>
+                            <Text style={[styles.tableCell, styles.tableHeader]}>Intensity</Text>
+                            <Text style={[styles.tableCell, styles.tableHeader]}>Heart rate zone</Text>
+                        </View>
+                        <View style={styles.tableRow}>
+                            <Text style={[styles.tableCell, styles.tableLabel, styles.red]}>Maximum</Text>
+                            <Text style={[styles.tableCell, styles.tableData]}>177-197</Text>
+                        </View>
+                        <View style={styles.tableRow}>
+                            <Text style={[styles.tableCell, styles.tableLabel, styles.yellow]}>Hard</Text>
+                            <Text style={[styles.tableCell, styles.tableData]}>158-176</Text>
+                        </View>
+                        <View style={styles.tableRow}>
+                            <Text style={[styles.tableCell, styles.tableLabel, styles.green]}>Medium</Text>
+                            <Text style={[styles.tableCell, styles.tableData]}>138-157</Text>
+                        </View>
+                        <View style={styles.tableRow}>
+                            <Text style={[styles.tableCell, styles.tableLabel, styles.lightblue]}>Light</Text>
+                            <Text style={[styles.tableCell, styles.tableData]}>118-137</Text>
+                        </View>
+                        <View style={styles.tableRow}>
+                            <Text style={[styles.tableCell, styles.tableLabel, styles.gray]}>Easy</Text>
+                            <Text style={[styles.tableCell, styles.tableData]}>99-117</Text>
+                        </View>
+                    </View>
+                </Collapsible>
+            </View>
+        </ScrollView>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: '#EDF2F7',
         padding: 20,
     },
     detailsContainer: {
         backgroundColor: 'white',
         borderRadius: 20,
-        margin: 10,
-        overflow: 'hidden',
+        marginBottom: 10,
+        padding: 20,
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        margin: 10,
-        backgroundColor: '#EDF2F7',
+        marginBottom: 10,
         color: '#000',
     },
     description: {
         fontSize: 16,
-        margin: 10,
-        color: '#000',
-    },
-    actions: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
-    actionButton: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 10,
-        marginHorizontal: 10,
-    },
-    tableTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
         color: '#000',
     },
     tableTitleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    tableTitle: {
+        flex: 1,
         fontSize: 16,
         fontWeight: 'bold',
-        padding: 10,
-        backgroundColor: 'white',
-        color: 'black',
-    },
-    infoText: {
-        fontSize: 12,
-        color: 'black',
-    },
-    infoButtonContainer: {
-        position: 'absolute',
-        right: 20,
-        top: 10,
+        color: '#000',
     },
     tableContainer: {
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 10,
         marginBottom: 20,
-        margin: 10,
         overflow: 'hidden',
     },
     tableRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginBottom: 5,
     },
     tableCell: {
         flex: 1,
-        alignItems: 'center',
-        padding: 10,
-    },
-    tableCellText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        padding: 5,
+        textAlign: 'center',
     },
     tableHeader: {
         fontWeight: 'bold',
     },
     tableLabel: {
-        textAlign: 'center',
-    },
-    tableData: {
-        textAlign: 'center',
-    },
-    red: {
-        backgroundColor: '#FF0000',
-        color: 'white',
-    },
-    yellow: {
-        backgroundColor: '#FF8000',
-        color: 'white',
-    },
-    green: {
-        backgroundColor: '#04B404',
-        color: 'white',
-    },
-    lightblue: {
-        backgroundColor: '#58D3F7',
-        color: 'white',
-    },
-    gray: {
         backgroundColor: '#D8D8D8',
         color: 'white',
     },
-    trackedCountContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
-        margin: 10,
+    tableData: {
+        backgroundColor: '#EDF2F7',
     },
-    trackedIcon: {
-        marginRight: 5,
+    red: {
+        backgroundColor: '#FF0000',
     },
-    trackedCountText: {
-        fontWeight: 'bold',
-        fontSize: 16,
+    yellow: {
+        backgroundColor: '#FF8000',
     },
-    trackedCountPicker: {},
+    green: {
+        backgroundColor: '#04B404',
+    },
+    lightblue: {
+        backgroundColor: '#58D3F7',
+    },
+    gray: {
+        backgroundColor: '#D8D8D8',
+    },
 });
 
 
