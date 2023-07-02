@@ -2,9 +2,8 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../../navigator";
-import {View, Text, StyleSheet, ScrollView, Button} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import ActivityItem from "./activityItem";
-import Swiper from "react-native-swiper";
 
 export type Activity = {
     id: number,
@@ -34,18 +33,12 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
 
         fetchActivities();
     }, []);
-
-    const handleGoToAllActivities = () => {
-        navigation.navigate('AllActivities');
-    };
+    
 
     return (
         <View style={styles.slide}>
             <ScrollView style={styles.ActivitiesContainer}>
                 <View style={styles.container}>
-                    <Button title="Go to All Activities"
-                                                                                          onPress={handleGoToAllActivities}/>
-
                     <View style={styles.tileContainerRecommended}>
                         {activities.map((activity: Activity, index: number) => (
                             <ActivityItem

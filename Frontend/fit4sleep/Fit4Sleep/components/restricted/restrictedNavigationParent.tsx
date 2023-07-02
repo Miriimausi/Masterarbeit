@@ -1,5 +1,4 @@
 import UserProfile from "./screens/userProfile";
-import SleepProfile from "./screens/sleepProfile";
 import AllActivities from "./screens/activities/allActivities";
 import Questionnaire from "./screens/questionnaire";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
@@ -41,28 +40,31 @@ function RestrictedNavigationParent() {
                         <RestrictedTab.Screen name="ActivityStack" options={{
                             tabBarShowLabel: false,
                             tabBarIcon: ({focused}) => {
-                                return <FontAwesome5 name="walking" size={24} color={focused ? "#44607c" : "black"}/>
+                                return <MaterialCommunityIcons name="account-heart-outline" size={24}
+                                                               color={focused ? appColorTheme.primaryColor : "black"}/>
                             },
                         }} component={ActivitiesStackScreen}/>
                         <RestrictedTab.Screen name="Questionnaire" options={{
                             tabBarShowLabel: false,
                             tabBarIcon: ({focused}) => {
-                                return <MaterialIcons name="question-answer" size={24}
-                                                      color={focused ? appColorTheme.primaryColor : "black"}/>
+                                return <MaterialCommunityIcons name="basketball" size={24}
+                                                               color={focused ? appColorTheme.primaryColor : "black"}/>
                             },
-                        }} component={Questionnaire}/>
-                        <RestrictedTab.Screen name="Sleepprofile" options={{
+                        }} component={AllActivities}/>
+                        <RestrictedTab.Screen name="AllActivities" options={{
                             tabBarShowLabel: false,
-                            title: "Sleep Profile",
+                            title: "All Activities",
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="power-sleep" size={24}
                                                                color={focused ? appColorTheme.primaryColor : "black"}/>
                             },
-                        }} component={SleepProfile}/>
-                        <RestrictedTab.Screen name="Profile" options={{
+                        }} component={Questionnaire}/>
+                        <RestrictedTab.Screen name="User Profile" options={{
                             tabBarShowLabel: false,
+                            title: "Sleep Profile",
                             tabBarIcon: ({focused}) => {
-                                return <MaterialIcons name="settings" size={24} color={focused ? appColorTheme.primaryColor : "black"}/>
+                                return <MaterialCommunityIcons name="account-circle" size={24}
+                                                               color={focused ? appColorTheme.primaryColor : "black"}/>
                             },
                         }} component={UserProfile}/>
                     </RestrictedTab.Navigator> : <OnboardingSurvey></OnboardingSurvey>
