@@ -42,6 +42,8 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
                     <View style={styles.tileContainerRecommended}>
                         {activities.map((activity: Activity, index: number) => (
                             <ActivityItem
+                                imageHeight={250}
+                                width={"100%"}
                                 key={index}
                                 navigation={navigation}
                                 activity={activity}

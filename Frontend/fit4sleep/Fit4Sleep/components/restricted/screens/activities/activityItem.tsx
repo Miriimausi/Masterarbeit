@@ -5,6 +5,8 @@ import axios from "axios";
 
 export interface IActivityItemProps {
     navigation: any,
+    width: string,
+    imageHeight: number,
     activity: Activity,
 }
 
@@ -13,11 +15,10 @@ export interface IActivityItemProps {
 const ActivityItem = (props: IActivityItemProps) => {
 
 
-
     return (
-        <TouchableOpacity style={styles.tile}
+        <TouchableOpacity style={[styles.tile, {width: props.width}]}
                           onPress={() => props.navigation.navigate('ActivitiesDetails', {activity: props.activity})}>
-            <Image source={{uri: props.activity.imageUrl}} style={styles.tileImage}/>
+            <Image source={{uri: props.activity.imageUrl}} style={[styles.tileImage, {height: props.imageHeight}]}/>
             <View style={styles.tileDetails}>
                 <Text style={styles.tileTitle}>{props.activity.name}</Text>
                 <Text style={styles.tileDescription}>{props.activity.description}</Text>
@@ -52,15 +53,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     tile: {
-        width: '48%',
         backgroundColor: '#fff',
         marginBottom: 10,
+        marginHorizontal: 5,
         borderRadius: 10,
         overflow: 'hidden',
     },
     tileImage: {
         width: '100%',
-        height: 150,
     },
     tileDetails: {
         padding: 10,

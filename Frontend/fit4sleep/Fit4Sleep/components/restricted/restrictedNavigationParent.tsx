@@ -25,7 +25,7 @@ function RestrictedNavigationParent() {
     function ActivitiesStackScreen() {
         return (
             <ActivitiesStack.Navigator>
-                <ActivitiesStack.Screen name="RecommendedActivities" component={RecommendedActivities} />
+                <ActivitiesStack.Screen name="RecommendedActivities" options={{title: 'Your Activities'}} component={RecommendedActivities} />
                 <ActivitiesStack.Screen name="AllActivities" component={AllActivities} />
                 <ActivitiesStack.Screen name="ActivitiesDetails" component={ActivitiesDetails} />
             </ActivitiesStack.Navigator>
@@ -39,21 +39,23 @@ function RestrictedNavigationParent() {
                     <RestrictedTab.Navigator>
                         <RestrictedTab.Screen name="ActivityStack" options={{
                             tabBarShowLabel: false,
+                            headerShown: false,
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="account-heart-outline" size={24}
                                                                color={focused ? appColorTheme.primaryColor : "black"}/>
                             },
                         }} component={ActivitiesStackScreen}/>
-                        <RestrictedTab.Screen name="Questionnaire" options={{
+                        <RestrictedTab.Screen name="AllActivities" options={{
                             tabBarShowLabel: false,
+                            title: "Explore",
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="basketball" size={24}
                                                                color={focused ? appColorTheme.primaryColor : "black"}/>
                             },
                         }} component={AllActivities}/>
-                        <RestrictedTab.Screen name="AllActivities" options={{
+                        <RestrictedTab.Screen name="Questionnaire" options={{
                             tabBarShowLabel: false,
-                            title: "All Activities",
+                            title: "Questionnaire",
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="power-sleep" size={24}
                                                                color={focused ? appColorTheme.primaryColor : "black"}/>

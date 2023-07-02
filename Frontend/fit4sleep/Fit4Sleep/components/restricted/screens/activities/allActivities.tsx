@@ -44,10 +44,11 @@ const AllActivities = ({navigation}: ActivitiesProps) => {
             <View style={styles.slide}>
                 <ScrollView style={styles.ActivitiesContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.title}>All Activities</Text>
                         <View style={styles.tilesContainer}>
                             {activities.map((activity: Activity, index: number) => (
                                 <ActivityItem
+                                    imageHeight={150}
+                                    width={"47.0%"}
                                     key={index}
                                     navigation={navigation}
                                     activity={activity}
@@ -64,7 +65,6 @@ const styles = StyleSheet.create({
     slide: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingHorizontal: 2,
         paddingTop: 2,
     },
     ActivitiesContainer: {
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingTop: 20,
-        paddingHorizontal: 20,
+        paddingHorizontal: 3
     },
 
     title: {
