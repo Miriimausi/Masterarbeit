@@ -239,20 +239,6 @@ class Antecedents(Resource):
 
 
 
-# def calculate_dice_coefficient(str1, str2):
-#     # Convert the strings to sets of characters
-#     set1 = set(str1)
-#     set2 = set(str2)
-
-#     # Calculate the intersection and union of the sets
-#     intersection = len(set1 & set2)
-#     union = len(set1) + len(set2)
-
-#     # Calculate the Dice coefficient
-#     dice_coefficient = (2 * intersection) / union
-
-#     return dice_coefficient
-
 def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list[dict]:
     # Calculate the Dice coefficient for each item in the list
     dice_coefficients = []
@@ -276,58 +262,12 @@ def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list
             'activity_id': other_item.id,
             'similarity_score': dice_coefficient
         })
+
+        # sort the list by similarity score in descending order
+        dice_coefficients.sort(key=lambda x: x['similarity_score'], reverse=True)
+
     return dice_coefficients
 
-
-# @antecedents_namespace.route('/calculateSimilarity')
-# class Antecedents(Resource):
-#     @api.expect(antecedents_model)
-#     def post(self):
-#         trainingPreference = request.json.get('trainingPreference')
-#         timeAvailability = request.json.get('timeAvailability')
-#         durationPreference = request.json.get('durationPreference')
-#         intensityPreference = request.json.get('intensityPreference')
-        
-#         activities = Activity.query.all()
-#         similarity_score_training = []
-#         similarity_score_time = []
-#         similarity_score_duration = []
-#         similarity_score_intensity =[]
-        
-#         for activity in activities:
-#             activity_type = activity.type
-            
-#             # Calculate similarity score for trainingPreference
-#             similarity_score_training.append({
-#                 'activity_id': activity.id,
-#                 'similarity_score': calculate_dice_coefficient(activity_type, trainingPreference)
-#             })
-            
-#             # Calculate similarity score for timeAvailability
-#             similarity_score_time.append({
-#                 'activity_id': activity.id,
-#                 'similarity_score': calculate_dice_coefficient(activity_type, timeAvailability)
-#             })
-            
-#             # Calculate similarity score for durationPreference
-#             similarity_score_duration.append({
-#                 'activity_id': activity.id,
-#                 'similarity_score': calculate_dice_coefficient(activity_type, durationPreference)
-#             })
-#              # Calculate similarity score for intensityPrefernce
-#             similarity_score_intensity.append({
-#                 'activity_id': activity.id,
-#                 'similarity_score': calculate_dice_coefficient(activity_type, intensityPreference)
-#             })
-
-
-#         return {
-#             'success': True,
-#             'similarity_scores_training': similarity_score_training,
-#             'similarity_scores_time': similarity_score_time,
-#             'similarity_scores_duration': similarity_score_duration,
-#             'similarity_scores_intensity': similarity_score_intensity
-#         }, 200
 
 
 @antecedents_namespace.route('/calculateSimilarity')
@@ -353,24 +293,6 @@ class Antecedents(Resource):
             'success': True,
             'similarity_scores': similarity_scores
         }, 200
-
-
-# def fetch_activity_details(sorted_activity_ids):
-#     activity_details = []
-#     base_url = 'http://10.0.2.2:5000/Antecedents/getActivityDetails/'
-    
-#     for activity_id in sorted_activity_ids:
-#         activity_url = base_url + str(activity_id)
-#         try:
-#             response = requests.get(activity_url)
-#             data = response.json()
-#             if data['success'] and data['activity']:
-#                 activity_details.append(data['activity'])
-#         except requests.exceptions.RequestException as error:
-#             print(f"Error fetching activity details for ID {activity_id}: {error}")
-    
-#     return activity_details
-
 
 
 @antecedents_namespace.route('/getPreferences/<int:user_id>')
