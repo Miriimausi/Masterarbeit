@@ -207,6 +207,10 @@ class Antecedents(Resource):
 
         
         user = User.query.get(userId)
+        userAntecedents = UserAntecedents.query.filter_by(userId=user.id).first()
+
+        if userAntecedents is not None:
+            return {'success': False, 'error': 'User already has related antecedents'}, 404
 
         if user is not None:
             new_antecedents = UserAntecedents(
@@ -214,6 +218,7 @@ class Antecedents(Resource):
                 timeAvailability=timeAvailability,
                 trainingPreference=trainingPreference,
                 intensityPreference=intensityPreference,
+                userId = user.id,
                 sleepScore=sleepScore, durationPreference=durationPreference
             )
 
@@ -222,6 +227,8 @@ class Antecedents(Resource):
                 user.isOnBoarded = True
                 db.session.add(new_antecedents)
                 db.session.commit()
+
+                return {'success': True}, 200
 
         # Return error message
         return {'success': False, 'error': 'User not found or invalid antecedents'}, 404
@@ -454,8 +461,8 @@ api.add_namespace(question_namespace)
 api.add_namespace(antecedents_namespace)
 
 if __name__ == '__main__':
-    #with app.app_context():
-        #recreate_db()
+#     with app.app_context():
+#         recreate_db()
     app.run(debug=True)
    # recreate_db()
 

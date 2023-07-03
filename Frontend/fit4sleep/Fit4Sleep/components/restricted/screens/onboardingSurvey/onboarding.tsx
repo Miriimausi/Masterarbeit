@@ -115,7 +115,7 @@ const OnboardingSurvey = () => {
             if (response.ok) {
                 setIsOnBoarded(data.success);  // Success response
             } else {
-                console.log('No information was submitted');  // Error response
+                console.log(`[ERROR]: ${data.error}`);
             }
         } catch (error) {
             console.log('An error occurred:', error);  // Error handling
