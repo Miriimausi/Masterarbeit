@@ -258,7 +258,8 @@ def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list
     dice_coefficients = []
     for other_item in other_items:
         # only use type, intensity and duration for now
-        item_attributes = [item.type, item.intensity, item.duration]
+        item_attributes = [item['type'], item['intensity'], item['duration']]
+        
         other_item_attributes = [other_item.type, other_item.intensity, other_item.duration]
 
         set1 = set(item_attributes)
@@ -341,9 +342,9 @@ class Antecedents(Resource):
         activities = Activity.query.all()
 
         current_item = {
-            'type': trainingPreference,
-            'intensity': intensityPreference,
-            'duration': durationPreference
+            'type': trainingPreference if trainingPreference else '',
+            'intensity': intensityPreference if intensityPreference else '',
+            'duration': durationPreference if durationPreference else ''
         }
 
         similarity_scores = calculate_dice_coefficients(current_item, activities)
