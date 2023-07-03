@@ -15,15 +15,19 @@ interface Question {
 
 const UserProfile = () => {
     const [editMode, setEditMode] = useState(false);
-    const [profilePicture, setProfilePicture] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
     const {userId, username, password, email} = useContext(AuthContext) as AuthContextType;
-    const [hoursSlept, setHoursSlept] = useState(8);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [expanded, setExpanded] = useState(false);
     const [scoreExpanded, setScoreExpanded] = useState(false);
+    const [preferencesExpanded, setPreferencesExpanded] = useState(false);
     const [answers, setAnswers] = useState<(string | null)[]>([]);
     const [sleepScore, setSleepScore] = useState<number | null>(null);
+    const [timeAvailability, setTimeAvailability] = useState<number | null>(null);
+    const [trainingPreference, setTrainingPreference] = useState<number | null>(null);
+    const [intensityPreference, setIntensityPreference] = useState<number | null>(null);
+    const [durationPreference, setDurationPreference] = useState<number | null>(null);
+
     const handleEditButtonPress = () => {
         setEditMode(true);
     };
@@ -49,6 +53,20 @@ const UserProfile = () => {
             .get(`http://10.0.2.2:5000/UserProfile/${userId}`)
             .then((response) => {
                 setUserProfile(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
+    useEffect(() => {
+        axios
+            .get(`http://10.0.2.2:5000/Antecedents/getPreferences/${userId}`)
+            .then((response) => {
+                setIntensityPreference(response.data.intensityPreference);
+                setTrainingPreference(response.data.trainingPreference);
+                setTimeAvailability(response.data.timeAvailability);
+                setDurationPreference(response.data.durationPreference);
             })
             .catch((error) => {
                 console.log(error);
@@ -85,6 +103,10 @@ const UserProfile = () => {
     const toggleScoreExpand = () => {
         setScoreExpanded(!scoreExpanded);
     };
+    const togglePreferencesExpand = () => {
+        setPreferencesExpanded(!preferencesExpanded);
+    };
+
 
     return (
 
@@ -131,6 +153,7 @@ const UserProfile = () => {
                         <Text style={styles.value}>{email}</Text>
                     </View>
 
+
                         <TouchableOpacity style={styles.headerContainer} onPress={toggleScoreExpand}>
                             <Text style={styles.headerText}>Sleep Score</Text>
                             <Icon
@@ -144,16 +167,36 @@ const UserProfile = () => {
                         {scoreExpanded && (
 
                             <View style={styles.contentContainer}>
-
+                                <Text  style={styles.scoreText}> Your Score {sleepScore}</Text>
                                 <Text style={styles.sectionInfoText}>
                                     The index combines seven component scores to create a global score ranging from 0 to 21.
                                     A global score of 0 represents no difficulties, while a score of 21 indicates severe
                                     difficulties across all areas.
                                 </Text>
-                                <Text  style={styles.scoreText}> Your Score {sleepScore}</Text>
+
 
                             </View>
                         )}
+
+                    <TouchableOpacity style={styles.headerContainer} onPress={togglePreferencesExpand}>
+                        <Text style={styles.headerText}>Your Preferences</Text>
+                        <Icon
+                            name={scoreExpanded ? 'minus' : 'plus'}
+                            type="font-awesome"
+                            color="white"
+                            size={16}
+                        />
+                    </TouchableOpacity>
+
+                    {preferencesExpanded && (
+                        <View style={styles.contentContainer}>
+                            <Text  style={styles.preferencesText}> Time Availabilty: {timeAvailability}</Text>
+                            <Text  style={styles.preferencesText}> Training Preference: {trainingPreference}</Text>
+                            <Text  style={styles.preferencesText}> Intensity Preference: {intensityPreference}</Text>
+                            <Text  style={styles.preferencesText}> Duration Preference: {durationPreference}</Text>
+
+                        </View>
+                    )}
 
                         <TouchableOpacity style={styles.headerContainer} onPress={toggleExpand}>
                             <Text style={styles.headerText}>Questions</Text>
@@ -392,6 +435,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 16,
         textAlign: 'center',
+    },
+
+    preferencesText: {
+        fontSize: 18,
+        color: 'white',
+        backgroundColor: appColorTheme.primaryColor,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+        marginBottom: 16,
+        textAlign: 'left',
     }
 });
 

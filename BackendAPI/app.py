@@ -1,10 +1,6 @@
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-#from flask_migrate import Migrate
-#from flask_wtf import FlaskForm
-#from wtforms import StringField, TextAreaField, SubmitField
-#from wtforms.validators import DataRequired, Length, Email
 from flask_restx import Resource, Api, fields, Namespace
 from flask import Flask, request, jsonify
 from flask import redirect, url_for
@@ -12,12 +8,9 @@ from decimal import Decimal
 import json
 from difflib import SequenceMatcher
 
-
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost/mydatabase'
 db = SQLAlchemy(app)
-
 
 
 # Define data models
@@ -35,7 +28,7 @@ class Activity(db.Model):
     imageUrl =db.Column(db.String)
     type = db.Column(db.String)
     intensity = db.Column(db.String)
-    duration = db.Column(db.Integer)
+    duration = db.Column(db.String)
 
     def to_dict(self):
         return {
@@ -64,7 +57,6 @@ class Questionnaire(db.Model):
             'score': self.score,
             
             }
-    
 
 class UserAntecedents(db.Model):
 
@@ -76,8 +68,8 @@ class UserAntecedents(db.Model):
     bmi = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
     timeAvailability= db.Column(db.String)
     trainingPreference= db.Column(db.String)
-    favoriteActivities= db.Column(db.String)
     durationPreference= db.Column(db.String)
+    intensityPreference= db.Column(db.String)
     userId =db.Column(db.Integer)
     sleepScore =db.Column(db.Integer)
 
@@ -92,14 +84,14 @@ class UserAntecedents(db.Model):
             'timeAvailability': self.timeAvailability,
             'trainingPreference': self.trainingPreference,
             'durationPreference': self.durationPreference,
-            'favoriteActivities': self.favoriteActivities,
+            'intensityPreference': self.intensityPreference,
             'userID':self.userId,
             'sleepScore':self.sleepScore
             
         }
 
 
-# Initialize Flask-RestX API
+#Initialize Flask-RestX API
 api = Api(app, version='1.0', title='My App API',
           description='API for my app')
 
@@ -130,7 +122,7 @@ activity_model = api.model('Activity', {
     'imageUrl': fields.String,
     'type': fields.String,
     'intensity': fields.String,
-    'duration' : fields.Integer
+    'duration' : fields.String
 })
 
 question_model = api.model('Questionnaire',{
@@ -142,7 +134,6 @@ question_model = api.model('Questionnaire',{
 
 })
 
-
 antecedents_model = api.model('Antecedents', {
     'id': fields.Integer,
     'age': fields.Integer,
@@ -151,14 +142,13 @@ antecedents_model = api.model('Antecedents', {
     'bmi':fields.Float,
     'timeAvailability': fields.String,
     'trainingPreference': fields.String,
-    'favoriteActivities': fields.String,
     'durationPreference': fields.String,
+    'intensityPreference':fields.String,
     'userId': fields.Integer,
     'sleepScore': fields.Integer
 })
 
 # Define API routes
-
 @auth_namespace.route('/login', methods=["POST"])
 class Authentication(Resource):
     @auth_namespace.expect(user_login_model)
@@ -199,46 +189,122 @@ class Authentication(Resource):
         
         return jsonify({'success': True})
     
-
-@antecedents_namespace.route('/')
+@antecedents_namespace.route('/onboarding')
 class Antecedents(Resource):
     @api.expect(antecedents_model)
     def post(self):
-        id =request.json.get('id')
+        id = request.json.get('id')
         age = request.json.get('age')
         height = request.json.get('height')
         weight = request.json.get('weight')
         bmi = request.json.get('bmi')
         timeAvailability = request.json.get('timeAvailability')
         trainingPreference = request.json.get('trainingPreference')
-        durationPreference= request.json.get('durationPreference')
-        favoriteActivities = request.json.get('favoriteActivities')
+        durationPreference = request.json.get('durationPreference')
+        intensityPreference = request.json.get('intensityPreference')
         sleepScore = request.json.get('sleepScore')
         userId = request.json.get('userId')
 
+        
         user = User.query.get(userId)
 
         if user is not None:
-                   new_antecedents = UserAntecedents(id=id, age=age, height=height, weight=weight, bmi=bmi,
-                                                     timeAvailability=timeAvailability,
-                                                     trainingPreference=trainingPreference,
-                                                     favoriteActivities=favoriteActivities,
-                                                     sleepScore=sleepScore, durationPreference=durationPreference )
+            new_antecedents = UserAntecedents(
+                id=id, age=age, height=height, weight=weight, bmi=bmi,
+                timeAvailability=timeAvailability,
+                trainingPreference=trainingPreference,
+                intensityPreference=intensityPreference,
+                sleepScore=sleepScore, durationPreference=durationPreference
+            )
 
-                   if new_antecedents is not None:
-                       # Update the user's isOnBoarded field to True
-                       user.isOnBoarded = True
+            if new_antecedents is not None:
+                # Update the user's isOnBoarded field to True
+                user.isOnBoarded = True
+                db.session.add(new_antecedents)
+                db.session.commit()
 
-                       db.session.add(new_antecedents)
-                       db.session.commit()
-
-                       # Return success message
-                       return {'success': True}, 200
-        # Return success message
+        # Return error message
         return {'success': False, 'error': 'User not found or invalid antecedents'}, 404
 
 
-#Momentan nur für den user mit der userId 1 möglich
+
+def calculate_dice_coefficient(str1, str2):
+    # Convert the strings to sets of characters
+    set1 = set(str1)
+    set2 = set(str2)
+
+    # Calculate the intersection and union of the sets
+    intersection = len(set1 & set2)
+    union = len(set1) + len(set2)
+
+    # Calculate the Dice coefficient
+    dice_coefficient = (2 * intersection) / union
+
+    return dice_coefficient
+
+@antecedents_namespace.route('/calculateSimilarity')
+class Antecedents(Resource):
+    @api.expect(antecedents_model)
+    def post(self):
+        trainingPreference = request.json.get('trainingPreference')
+        timeAvailability = request.json.get('timeAvailability')
+        durationPreference = request.json.get('durationPreference')
+        intensityPreference = request.json.get('intensityPreference')
+        
+        activities = Activity.query.all()
+        similarity_score_training = []
+        similarity_score_time = []
+        similarity_score_duration = []
+        similarity_score_intensity =[]
+        
+        for activity in activities:
+            activity_type = activity.type
+            
+            # Calculate similarity score for trainingPreference
+            similarity_score_training.append({
+                'activity_id': activity.id,
+                'similarity_score': calculate_dice_coefficient(activity_type, trainingPreference)
+            })
+            
+            # Calculate similarity score for timeAvailability
+            similarity_score_time.append({
+                'activity_id': activity.id,
+                'similarity_score': calculate_dice_coefficient(activity_type, timeAvailability)
+            })
+            
+            # Calculate similarity score for durationPreference
+            similarity_score_duration.append({
+                'activity_id': activity.id,
+                'similarity_score': calculate_dice_coefficient(activity_type, durationPreference)
+            })
+             # Calculate similarity score for intensityPrefernce
+            similarity_score_intensity.append({
+                'activity_id': activity.id,
+                'similarity_score': calculate_dice_coefficient(activity_type, intensityPreference)
+            })
+
+
+        return {
+            'success': True,
+            'similarity_scores_training': similarity_score_training,
+            'similarity_scores_time': similarity_score_time,
+            'similarity_scores_duration': similarity_score_duration,
+            'similarity_scores_intensity': similarity_score_intensity
+        }, 200
+
+
+@antecedents_namespace.route('/getPreferences/<int:user_id>')
+class Antecedents(Resource):
+    def get(self, user_id):
+        
+        antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
+        if antecedent:
+            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference}, 200
+        else:
+            return {'message': 'Antecedent not found'}, 404
+        
+
+
 @antecedents_namespace.route('/getScore/<int:user_id>')
 class Antecedents(Resource):
     def get(self, user_id):
@@ -248,6 +314,8 @@ class Antecedents(Resource):
             return {'sleepScore': antecedent.sleepScore}, 200
         else:
             return {'message': 'Antecedent not found'}, 404
+        
+    
 
 @antecedents_namespace.route('/putScore')
 class Antecedents(Resource):
@@ -265,8 +333,7 @@ class Antecedents(Resource):
         else:
             return {'message': 'Antecedent not found'}, 404
 
-
-    
+ 
 @userProfile_namespace.route('/')
 class UserProfiles(Resource):
     def get(self):
@@ -285,7 +352,6 @@ class UserProfiles(Resource):
             return jsonify({'success': False})
 
 
-
 #Questions
 @question_namespace.route('/typeone')
 class Questions(Resource):
@@ -293,7 +359,6 @@ class Questions(Resource):
         questionnaires = Questionnaire.query.filter(Questionnaire.type == 1).order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
-    #Questions
 @question_namespace.route('/typetwo')
 class Questions(Resource):
     def get(self):
@@ -306,7 +371,6 @@ class Questions(Resource):
         questionnaires = Questionnaire.query.filter(Questionnaire.type == 3).order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
-
 @question_namespace.route('/typefour')
 class Questions(Resource):
     def get(self):
@@ -348,7 +412,6 @@ class Questions(Resource):
     def get(self):
         questionnaires = Questionnaire.query.filter(Questionnaire.type == 10).order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
-
 
 @question_namespace.route('/all')
 class Questions(Resource):

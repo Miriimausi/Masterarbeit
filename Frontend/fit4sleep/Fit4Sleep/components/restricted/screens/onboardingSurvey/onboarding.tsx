@@ -13,7 +13,6 @@ import CustomNumericScale from "./customNumericScale";
 import {AuthContext, AuthContextType} from "../../../../contexts/auth-context";
 
 
-
 interface SurveyResponse {
     id: number;
     age: number;
@@ -23,13 +22,12 @@ interface SurveyResponse {
     timeAvailability: String;
     durationPreference: String;
     trainingPreference: String;
-    activityLevel: number;
-    favoriteActivities: String;
+    intensityPreference: String;
 
 }
 
 const OnboardingSurvey = () => {
-    const { userId, setIsOnBoarded } = useContext(AuthContext) as AuthContextType;
+    const {userId, setIsOnBoarded} = useContext(AuthContext) as AuthContextType;
 
     const [response, setResponse] = useState<SurveyResponse>({
         id: 0,
@@ -40,8 +38,7 @@ const OnboardingSurvey = () => {
         timeAvailability: '',
         durationPreference: '',
         trainingPreference: '',
-        activityLevel: 0,
-        favoriteActivities:'',
+        intensityPreference: '',
 
 
     });
@@ -83,12 +80,11 @@ const OnboardingSurvey = () => {
         setResponse({...response, trainingPreference: trainingPreference});
     };
 
-    const handleFavouriteActivitiesChange = (favoriteActivities: string) => {
-        setResponse({...response, favoriteActivities: favoriteActivities});
-    };
-
     const handleDurationChange = (durationPreference: string) => {
         setResponse({...response, durationPreference: durationPreference});
+    };
+    const handleIntensityChange = (intensityPreference: string) => {
+        setResponse({...response, intensityPreference: intensityPreference});
     };
 
 
@@ -100,22 +96,21 @@ const OnboardingSurvey = () => {
             bmi: response.bmi,
             timeAvailability: response.timeAvailability,
             trainingPreference: response.trainingPreference,
-            favoriteActivities: response.favoriteActivities,
             durationPreference: response.durationPreference,
-            userId: userId
+            intensityPreference: response.intensityPreference,
+            userId: userId,
         };
 
         console.log(requestBody);
 
         try {
-            const response = await fetch('http://10.0.2.2:5000/Antecedents', {
+            const response = await fetch('http://10.0.2.2:5000/Antecedents/onboarding', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestBody)
             });
-
             const data = await response.json();
             if (response.ok) {
                 setIsOnBoarded(data.success);  // Success response
@@ -125,11 +120,11 @@ const OnboardingSurvey = () => {
         } catch (error) {
             console.log('An error occurred:', error);  // Error handling
         }
+
     };
 
 
     return (
-
         <Swiper showsButtons={true} loop={false}>
 
             <View style={styles.slide}>
@@ -191,6 +186,21 @@ const OnboardingSurvey = () => {
                     </View>
                 </View>
                 <View style={styles.field}>
+                    <Text style={styles.label}>Workout Intensity Preference</Text>
+                    <View style={styles.picker}>
+                        <Picker
+                            selectedValue={response.intensityPreference}
+                            onValueChange={(value) =>
+                                setResponse({...response, intensityPreference: value})
+                            }
+                        >
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="Moderate" value="Moderate"/>
+                            <Picker.Item label="Intensive" value="Itensive"/>
+                        </Picker>
+                    </View>
+                </View>
+                <View style={styles.field}>
                     <Text style={styles.label}>Duration Availability</Text>
                     <View style={styles.picker}>
                         <Picker
@@ -200,10 +210,10 @@ const OnboardingSurvey = () => {
                             }
                         >
                             <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="max. 15 Minutes" value="15"/>
-                            <Picker.Item label="max. 30 Minutes" value="30"/>
-                            <Picker.Item label="max. 60 Minutes" value="60"/>
-                            <Picker.Item label="More than 60 Minutes" value="90"/>
+                            <Picker.Item label="max. 15 Minutes" value="15 minutes"/>
+                            <Picker.Item label="max. 30 Minutes" value="30 minutes"/>
+                            <Picker.Item label="max. 60 Minutes" value="60 minutes"/>
+                            <Picker.Item label="More than 60 Minutes" value="90 minutes"/>
                         </Picker>
                     </View>
                 </View>
@@ -220,25 +230,6 @@ const OnboardingSurvey = () => {
                             <Picker.Item label="HIIT" value="hiit"/>
                             <Picker.Item label="Endurance Training" value="endurance"/>
                             <Picker.Item label="Strength Training " value="strength"/>
-                        </Picker>
-                    </View>
-                </View>
-
-
-                <View style={styles.field}>
-                    <Text style={styles.label}>Favourite Activity</Text>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={response.favoriteActivities}
-                            onValueChange={(value) => setResponse({...response, favoriteActivities: value})}
-                        >
-                            <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="Circuit Training" value="circuit_training"/>
-                            <Picker.Item label="Yoga" value="yoga"/>
-                            <Picker.Item label="Jogging" value="jogging"/>
-                            <Picker.Item label="Weight Training" value="weight_training"/>
-                            <Picker.Item label="Swimming" value="swimming"/>
-                            <Picker.Item label="Cycling" value="cycling"/>
                         </Picker>
                     </View>
                 </View>
