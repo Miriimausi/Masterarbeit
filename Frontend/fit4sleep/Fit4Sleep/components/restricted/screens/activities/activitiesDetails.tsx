@@ -45,8 +45,7 @@ const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any })
         };
         fetchActivities();
     }, []);
-
-
+   
     const toggleTable = () => {
         setIsTableCollapsed(!isTableCollapsed);
     };
@@ -63,7 +62,7 @@ const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any })
             </View>
             <View style={styles.detailsContainer}>
                 <Text style={styles.title}>Type:</Text>
-                <Text style={styles.description}>HIIT</Text>
+                <Text style={styles.description}></Text>
             </View>
             <View style={styles.detailsContainer}>
                 <Text style={styles.title}>Intensity:</Text>

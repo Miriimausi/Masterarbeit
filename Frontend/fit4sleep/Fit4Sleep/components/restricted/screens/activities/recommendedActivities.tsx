@@ -23,7 +23,10 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
     const [topScoresTraining, setTopScoresTraining] = useState([]);
     const [topScoresTime, setTopScoresTime] = useState([]);
     const [topScoresDuration, setTopScoresDuration] = useState([]);
-    const [topScoresIntensity, setTopScoresItensity] = useState([]);
+    const [topScoresIntensity, setTopScoresIntensity] = useState([]);
+    const [activityDetails, setActivityDetails] = useState<any[]>([]);
+    const [sortedActivityIds, setSortedActivityIds] = useState([]);
+
 
     useEffect(() => {
         const fetchActivities = async () => {
@@ -87,55 +90,57 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
                 console.log('Duration scores:', topActivitiesDuration);
                 console.log('Intensity scores:', topActivitiesIntensity);
 
-                const combinedActivities = [...topActivitiesTraining, ...topActivitiesTime, ...topActivitiesDuration, ...topActivitiesIntensity];
+                // Combine all the top activity IDs
+                const combinedActivities = [
+                    ...topActivitiesTraining,
+                    ...topActivitiesTime,
+                    ...topActivitiesDuration,
+                    ...topActivitiesIntensity,
+                ];
 
                 // Get the unique set of activity IDs
-                const uniqueActivityIds = new Set(combinedActivities);
+                const uniqueActivityIds = [...new Set(combinedActivities)];
+                console.log('Scores:', combinedActivities);
 
-                // Define a function to fetch the overall similarity score for an activity
-                const fetchOverallSimilarityScore = async (activityId:number) => {
-                    const scoreUrl = `http://10.0.2.2:5000/Antecedents/getOverallSimilarityScore/${activityId}`;
-                    try {
-                        const scoreResponse = await fetch(scoreUrl);
-                        const scoreData = await scoreResponse.json();
-                        if (scoreData.success && scoreData.score) {
-                            return scoreData.score;
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    }
-                    return 0; // Return a default score if fetching fails or no score is available
-                };
+                // Count the occurrences of each activity ID
+                const activityIdCounts = uniqueActivityIds.reduce(
+                    (counts, activityId) => {
+                        counts[activityId] = (counts[activityId] || 0) + 1;
+                        return counts;
+                    },
+                    {}
+                );
 
-                // Sort the unique activity IDs based on the overall similarity score
-                const sortedActivityIds = await Promise.all(Array.from(uniqueActivityIds))
-                    .then(async (activityIds) => {
-                        const scores = await Promise.all(activityIds.map((id) => fetchOverallSimilarityScore(id)));
-                        return activityIds.sort((a, b) => scores[activityIds.indexOf(b)] - scores[activityIds.indexOf(a)]);
-                    });
+                // Sort the activity IDs based on their occurrence count in descending order
+                const sortedActivityIds = Object.keys(activityIdCounts).sort(
+                    (a, b) => activityIdCounts[b] - activityIdCounts[a]
+                );
 
+                console.log('Sorted Activity IDs:', sortedActivityIds);
 
-
-                // Define a function to fetch the details of an activity
-                const getActivityDetails = async (activityId:number) => {
-                    const activityUrl = `http://10.0.2.2:5000/Antecedents/getActivityDetails/${activityId}`;
-                    try {
-                        const activityResponse = await fetch(activityUrl);
-                        const activityData = await activityResponse.json();
-                        if (activityData.success && activityData.activity) {
-                            return activityData.activity;
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    }
-                    return null; // Return null if fetching fails or activity not found
-                };
-
-                // Fetch the details of sorted activities asynchronously
-                const sortedActivities = await Promise.all(sortedActivityIds.map(activityId => getActivityDetails(activityId)));
-
-                // Display the sorted activities to the user
-                console.log(sortedActivities);
+                // // Fetch activity details for the sorted activity IDs
+                // const fetchActivityDetails = async () => {
+                //     const activityDetails = [];
+                //     for (const activityId of sortedActivityIds) {
+                //         const activityUrl = `http://10.0.2.2:5000/Antecedents/getActivityDetails/${activityId}`;
+                //         try {
+                //             const activityResponse = await fetch(activityUrl);
+                //             const activityData = await activityResponse.json();
+                //             if (activityData.success && activityData.activity) {
+                //                 activityDetails.push(activityData.activity);
+                //             }
+                //         } catch (error) {
+                //             console.error(error);
+                //         }
+                //     }
+                //     return activityDetails;
+                // };
+                //
+                // const fetchedActivityDetails = await fetchActivityDetails();
+                // setActivityDetails(fetchedActivityDetails);
+                //
+                //
+                // console.log('Activity Details:', fetchedActivityDetails);
             }
         } catch (error) {
             // Handle the error
@@ -143,9 +148,7 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
         }
     };
 
-
     useEffect(() => {
-        // Initial calculation when the component mounts
         calculate();
     }, []);
 
@@ -172,6 +175,7 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     slide: {
