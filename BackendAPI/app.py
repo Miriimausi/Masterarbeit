@@ -131,7 +131,6 @@ question_model = api.model('Questionnaire',{
     'type': fields.Integer,
     'answer': fields.String,
     'score': fields.String,
-
 })
 
 antecedents_model = api.model('Antecedents', {
@@ -235,19 +234,95 @@ class Antecedents(Resource):
 
 
 
-def calculate_dice_coefficient(str1, str2):
-    # Convert the strings to sets of characters
-    set1 = set(str1)
-    set2 = set(str2)
+# def calculate_dice_coefficient(str1, str2):
+#     # Convert the strings to sets of characters
+#     set1 = set(str1)
+#     set2 = set(str2)
 
-    # Calculate the intersection and union of the sets
-    intersection = len(set1 & set2)
-    union = len(set1) + len(set2)
+#     # Calculate the intersection and union of the sets
+#     intersection = len(set1 & set2)
+#     union = len(set1) + len(set2)
 
-    # Calculate the Dice coefficient
-    dice_coefficient = (2 * intersection) / union
+#     # Calculate the Dice coefficient
+#     dice_coefficient = (2 * intersection) / union
 
-    return dice_coefficient
+#     return dice_coefficient
+
+def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list[dict]:
+    # Calculate the Dice coefficient for each item in the list
+    dice_coefficients = []
+    for other_item in other_items:
+        # only use type, intensity and duration for now
+        item_attributes = [item.type, item.intensity, item.duration]
+        other_item_attributes = [other_item.type, other_item.intensity, other_item.duration]
+
+        set1 = set(item_attributes)
+        set2 = set(other_item_attributes)
+
+        # Calculate the intersection and union of the sets
+        intersection = len(set1 & set2)
+        union = len(set1) + len(set2)
+
+        # Calculate the Dice coefficient
+        dice_coefficient = (2 * intersection) / union
+
+        dice_coefficients.append({
+            'activity_id': other_item.id,
+            'similarity_score': dice_coefficient
+        })
+    return dice_coefficients
+
+
+# @antecedents_namespace.route('/calculateSimilarity')
+# class Antecedents(Resource):
+#     @api.expect(antecedents_model)
+#     def post(self):
+#         trainingPreference = request.json.get('trainingPreference')
+#         timeAvailability = request.json.get('timeAvailability')
+#         durationPreference = request.json.get('durationPreference')
+#         intensityPreference = request.json.get('intensityPreference')
+        
+#         activities = Activity.query.all()
+#         similarity_score_training = []
+#         similarity_score_time = []
+#         similarity_score_duration = []
+#         similarity_score_intensity =[]
+        
+#         for activity in activities:
+#             activity_type = activity.type
+            
+#             # Calculate similarity score for trainingPreference
+#             similarity_score_training.append({
+#                 'activity_id': activity.id,
+#                 'similarity_score': calculate_dice_coefficient(activity_type, trainingPreference)
+#             })
+            
+#             # Calculate similarity score for timeAvailability
+#             similarity_score_time.append({
+#                 'activity_id': activity.id,
+#                 'similarity_score': calculate_dice_coefficient(activity_type, timeAvailability)
+#             })
+            
+#             # Calculate similarity score for durationPreference
+#             similarity_score_duration.append({
+#                 'activity_id': activity.id,
+#                 'similarity_score': calculate_dice_coefficient(activity_type, durationPreference)
+#             })
+#              # Calculate similarity score for intensityPrefernce
+#             similarity_score_intensity.append({
+#                 'activity_id': activity.id,
+#                 'similarity_score': calculate_dice_coefficient(activity_type, intensityPreference)
+#             })
+
+
+#         return {
+#             'success': True,
+#             'similarity_scores_training': similarity_score_training,
+#             'similarity_scores_time': similarity_score_time,
+#             'similarity_scores_duration': similarity_score_duration,
+#             'similarity_scores_intensity': similarity_score_intensity
+#         }, 200
+
 
 @antecedents_namespace.route('/calculateSimilarity')
 class Antecedents(Resource):
@@ -259,44 +334,18 @@ class Antecedents(Resource):
         intensityPreference = request.json.get('intensityPreference')
         
         activities = Activity.query.all()
-        similarity_score_training = []
-        similarity_score_time = []
-        similarity_score_duration = []
-        similarity_score_intensity =[]
-        
-        for activity in activities:
-            activity_type = activity.type
-            
-            # Calculate similarity score for trainingPreference
-            similarity_score_training.append({
-                'activity_id': activity.id,
-                'similarity_score': calculate_dice_coefficient(activity_type, trainingPreference)
-            })
-            
-            # Calculate similarity score for timeAvailability
-            similarity_score_time.append({
-                'activity_id': activity.id,
-                'similarity_score': calculate_dice_coefficient(activity_type, timeAvailability)
-            })
-            
-            # Calculate similarity score for durationPreference
-            similarity_score_duration.append({
-                'activity_id': activity.id,
-                'similarity_score': calculate_dice_coefficient(activity_type, durationPreference)
-            })
-             # Calculate similarity score for intensityPrefernce
-            similarity_score_intensity.append({
-                'activity_id': activity.id,
-                'similarity_score': calculate_dice_coefficient(activity_type, intensityPreference)
-            })
 
+        current_item = {
+            'type': trainingPreference,
+            'intensity': intensityPreference,
+            'duration': durationPreference
+        }
+
+        similarity_scores = calculate_dice_coefficients(current_item, activities)
 
         return {
             'success': True,
-            'similarity_scores_training': similarity_score_training,
-            'similarity_scores_time': similarity_score_time,
-            'similarity_scores_duration': similarity_score_duration,
-            'similarity_scores_intensity': similarity_score_intensity
+            'similarity_scores': similarity_scores
         }, 200
 
 
