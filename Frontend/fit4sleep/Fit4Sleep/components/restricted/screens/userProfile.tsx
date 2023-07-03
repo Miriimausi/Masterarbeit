@@ -213,7 +213,7 @@ const UserProfile = () => {
                                 <Text style={styles.sectionInfoText}>
                                     The Pittsburgh Sleep Quality Index (PSQI) consists of 19 self-rated questions.
                                     The scoring is based only on the self-rated questions.
-                                    The 19 self-rated items and 5 adittional questions and are grouped into seven "component"
+                                    The 19 self-rated items and 5 adittional questions are grouped into seven "component"
                                     scores, each ranging from 0 to 3
                                     points.
                                 </Text>
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     },
     label: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
     },
     input: {

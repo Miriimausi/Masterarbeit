@@ -7,6 +7,11 @@ from flask import redirect, url_for
 from decimal import Decimal
 import json
 from difflib import SequenceMatcher
+from flask import Flask, request
+from flask_restx import Resource
+import requests
+
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost/mydatabase'
@@ -347,6 +352,24 @@ class Antecedents(Resource):
             'success': True,
             'similarity_scores': similarity_scores
         }, 200
+
+
+# def fetch_activity_details(sorted_activity_ids):
+#     activity_details = []
+#     base_url = 'http://10.0.2.2:5000/Antecedents/getActivityDetails/'
+    
+#     for activity_id in sorted_activity_ids:
+#         activity_url = base_url + str(activity_id)
+#         try:
+#             response = requests.get(activity_url)
+#             data = response.json()
+#             if data['success'] and data['activity']:
+#                 activity_details.append(data['activity'])
+#         except requests.exceptions.RequestException as error:
+#             print(f"Error fetching activity details for ID {activity_id}: {error}")
+    
+#     return activity_details
+
 
 
 @antecedents_namespace.route('/getPreferences/<int:user_id>')
