@@ -294,6 +294,31 @@ class Antecedents(Resource):
             'similarity_scores': similarity_scores
         }, 200
 
+@antecedents_namespace.route('/calculateSimilarity/<int:user_id>')
+class Antecedents(Resource):
+    def get(self, user_id):
+
+        user = UserAntecedents.query.filter_by(userId=user_id).first()
+        activites = Activity.query.all()
+
+        if user is None:
+            return {'success': False, 'error': 'User not found'}, 404
+        
+        current_prefs = {
+            'type': user.trainingPreference if user.trainingPreference else '',
+            'intensity': user.intensityPreference if user.intensityPreference else '',
+            'duration': user.durationPreference if user.durationPreference else ''
+        }
+        
+        similarity_scores = calculate_dice_coefficients(current_prefs, activites)
+
+        return {
+            'success': True,
+            'similarity_scores': similarity_scores
+        }, 200
+
+
+
 
 @antecedents_namespace.route('/getPreferences/<int:user_id>')
 class Antecedents(Resource):
