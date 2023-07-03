@@ -269,31 +269,6 @@ def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list
     return dice_coefficients
 
 
-
-@antecedents_namespace.route('/calculateSimilarity')
-class Antecedents(Resource):
-    @api.expect(antecedents_model)
-    def post(self):
-        trainingPreference = request.json.get('trainingPreference')
-        timeAvailability = request.json.get('timeAvailability')
-        durationPreference = request.json.get('durationPreference')
-        intensityPreference = request.json.get('intensityPreference')
-        
-        activities = Activity.query.all()
-
-        current_item = {
-            'type': trainingPreference if trainingPreference else '',
-            'intensity': intensityPreference if intensityPreference else '',
-            'duration': durationPreference if durationPreference else ''
-        }
-
-        similarity_scores = calculate_dice_coefficients(current_item, activities)
-
-        return {
-            'success': True,
-            'similarity_scores': similarity_scores
-        }, 200
-
 @antecedents_namespace.route('/calculateSimilarity/<int:user_id>')
 class Antecedents(Resource):
     def get(self, user_id):
@@ -316,8 +291,6 @@ class Antecedents(Resource):
             'success': True,
             'similarity_scores': similarity_scores
         }, 200
-
-
 
 
 @antecedents_namespace.route('/getPreferences/<int:user_id>')

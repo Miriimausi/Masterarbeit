@@ -45,7 +45,20 @@ const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any })
         };
         fetchActivities();
     }, []);
-   
+
+
+    useEffect(() => {
+        const fetchActivities = async () => {
+            try {
+                const response = await axios.get('http://10.0.2.2:5000/activities/${activitiesId}');
+                setActivities(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchActivities();
+    }, []);
+
     const toggleTable = () => {
         setIsTableCollapsed(!isTableCollapsed);
     };
