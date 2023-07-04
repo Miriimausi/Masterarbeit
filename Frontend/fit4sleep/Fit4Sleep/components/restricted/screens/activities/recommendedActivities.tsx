@@ -101,6 +101,8 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         marginBottom: 20,
+        color: '#0E9CDA'
+
         // Add your desired styles here
     },
     topScoresContainer: {

@@ -241,7 +241,7 @@ class Antecedents(Resource):
         userAntecedents = UserAntecedents.query.filter_by(userId=user.id).first()
 
         if userAntecedents is not None:
-            return {'success': False, 'error': 'User already has related antecedents'}, 404
+            return {'success': False, 'error': 'User already has related antecedents'}, 409
 
         if user is not None:
             new_antecedents = UserAntecedents(
@@ -266,37 +266,8 @@ class Antecedents(Resource):
 
         # Return error message
         return {'success': False, 'error': 'User not found or invalid antecedents'}, 404
+    
 
-
-
-def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list[dict]:
-    # Calculate the Dice coefficient for each item in the list
-    dice_coefficients = []
-    for other_item in other_items:
-        # only use type, intensity and duration for now
-        item_attributes = [item['type'], item['intensity'], item['duration'], item['skill'],  item['social'],  item['location'],  item['emotional']]
-        
-        other_item_attributes = [other_item.type, other_item.intensity, other_item.duration, other_item.social, other_item.skill,  other_item.location, other_item.emotional]
-
-        set1 = set(item_attributes)
-        set2 = set(other_item_attributes)
-
-        # Calculate the intersection and union of the sets
-        intersection = len(set1 & set2)
-        union = len(set1) + len(set2)
-
-        # Calculate the Dice coefficient
-        dice_coefficient = (2 * intersection) / union
-
-        dice_coefficients.append({
-            'activity_id': other_item.id,
-            'similarity_score': dice_coefficient
-        })
-
-        # sort the list by similarity score in descending order
-    dice_coefficients.sort(key=lambda x: x['similarity_score'], reverse=True)
-
-    return dice_coefficients
 
 
 def calculate_modified_dice_coefficients(item: dict, other_items: list[Activity], modified_weights: dict = None):
@@ -364,8 +335,6 @@ class Antecedents(Resource):
 
         }
         
-        # similarity_scores = calculate_dice_coefficients(current_prefs, activities)
-
         modified_weights = {
             'type': 1.5,
         }
@@ -409,7 +378,7 @@ class Antecedents(Resource):
         
         antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
         if antecedent:
-            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference,'durationPreference': antecedent.durationPreference, 'social': antecedent.socialPreference, 'skillPreference': antecedent.skillPreference, 'locationPreference': antecedent.locationPreference, 'emotionalPreference': antecedent.emotionalPreference}, 200
+            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference,'durationPreference': antecedent.durationPreference, 'socialPreference': antecedent.socialPreference, 'skillPreference': antecedent.skillPreference, 'locationPreference': antecedent.locationPreference, 'emotionalPreference': antecedent.emotionalPreference}, 200
         else:
             return {'message': 'Antecedent not found'}, 404
         

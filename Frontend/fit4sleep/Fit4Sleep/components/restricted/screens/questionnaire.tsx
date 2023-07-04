@@ -714,71 +714,6 @@ const Questionnaire = () => {
         ;
 };
 
-
-//
-//     const handleSubmit = () => {
-//         const progress: number = 1 / (questions.length - 1);
-//         setProgressInPercent(progressInPercent + progress);
-//
-//         if (questionStep < questions.length - 1) {
-//             setQuestionStep(questionStep + 1);
-//         }
-//
-//         if (questionStep === questions.length - 1) {
-//             // Send the answers to the backend
-//             console.log(answers);
-//             axios
-//                 .post('http://10.0.2.2:5000/Questionnaire/typeone', { answers })
-//                 .then((response) => {
-//                     // Handle the response if needed
-//                     console.log('Answers saved successfully:', response.data);
-//
-//                     if (response.status === 308) {
-//                         // Follow the redirect
-//                         axios
-//                             .post(response.headers.location, { answers })
-//                             .then((redirectResponse) => {
-//                                 console.log('Redirected response:', redirectResponse.data);
-//                             })
-//                             .catch((error) => {
-//                                 console.log('Error in redirected request:', error);
-//                             });
-//                     }
-//                 })
-//                 .catch((error) => {
-//                     // Handle the error if needed
-//                     console.log('Error saving answers:', error);
-//                 });
-//
-//             setQuestionStep(0);
-//             setProgressInPercent(0);
-//         }
-//     };
-//
-
-//
-//     return (
-//         <ScrollView contentContainerStyle={styles.scrollContainer}>
-//             <View style={styles.container}>
-//                 <Text style={{fontWeight: "bold", fontSize: 16, marginBottom: 9}}>Question: <Text
-//                     style={{fontSize: 15}}>{questionStep + 1} / {questions.length}</Text></Text>
-//                 <Progress.Bar color={appColorTheme.primaryColor} borderWidth={0} unfilledColor={"#f1efef"}
-//                               progress={progressInPercent}
-//                               width={320}/>
-//                 {
-//                     currentQuestion &&
-//                     <PickerQuestion id={currentQuestion.id} question={currentQuestion.question}/>
-//                 }
-//
-//                 <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-//                     <Text
-//                         style={styles.submitButtonText}>{questionStep === questions.length - 1 ? "Done" : "Next"}</Text>
-//                 </TouchableOpacity>
-//             </View>
-//         </ScrollView>
-//     );
-//  };
-
 const styles = StyleSheet.create({
     collapsibleHeader: {
         backgroundColor: '#eaeaea',
@@ -793,7 +728,7 @@ const styles = StyleSheet.create({
 
     scrollContainer: {
         flexGrow: 1,
-        backgroundColor: '#F4F4F4',
+        backgroundColor: 'white',
         alignItems: "center",
     },
     container: {
@@ -814,10 +749,10 @@ const styles = StyleSheet.create({
 
         fontSize: 18,
         color: 'white',
-        backgroundColor: appColorTheme.primaryColor,
+        backgroundColor: '#0E9CDA',
         paddingVertical: 2,
         paddingHorizontal: 12,
-        borderRadius: 15,
+        borderRadius:5,
         marginBottom: 30,
         textAlign: 'center',
 
@@ -889,7 +824,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     submitButton: {
-        backgroundColor: appColorTheme.primaryColor,
+        backgroundColor: '#0E9CDA',
         borderRadius: 8,
         padding: 10,
         alignItems: 'center',

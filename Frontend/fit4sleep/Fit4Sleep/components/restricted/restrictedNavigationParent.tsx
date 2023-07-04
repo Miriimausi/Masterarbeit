@@ -12,6 +12,7 @@ import {AuthContext, AuthContextType} from "../../contexts/auth-context";
 import {createStackNavigator} from "@react-navigation/stack";
 import ActivitiesDetails from "./screens/activities/activitiesDetails";
 import RecommendedActivities from "./screens/activities/recommendedActivities";
+import Calender from "./screens/calender";
 
 
 const RestrictedTab = createBottomTabNavigator();
@@ -42,7 +43,7 @@ function RestrictedNavigationParent() {
                             headerShown: false,
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="account-heart-outline" size={24}
-                                                               color={focused ? appColorTheme.primaryColor : "black"}/>
+                                                               color={focused ? '#0E9CDA' : "black"}/>
                             },
                         }} component={ActivitiesStackScreen}/>
                         <RestrictedTab.Screen name="AllActivities" options={{
@@ -50,23 +51,32 @@ function RestrictedNavigationParent() {
                             title: "Explore",
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="basketball" size={24}
-                                                               color={focused ? appColorTheme.primaryColor : "black"}/>
+                                                               color={focused ? '#0E9CDA' : "black"}/>
                             },
                         }} component={AllActivities}/>
+                        <RestrictedTab.Screen name="Calender" options={{
+                            tabBarShowLabel: false,
+                            title: "Calender",
+                            tabBarIcon: ({focused}) => {
+                                return <MaterialCommunityIcons name="calendar-month" size={24}
+                                                               color={focused ? '#0E9CDA' : "black"}/>
+                            },
+                        }} component={Calender}/>
                         <RestrictedTab.Screen name="Questionnaire" options={{
                             tabBarShowLabel: false,
                             title: "Questionnaire",
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="power-sleep" size={24}
-                                                               color={focused ? appColorTheme.primaryColor : "black"}/>
+                                                               color={focused ? '#0E9CDA' : "black"}/>
                             },
                         }} component={Questionnaire}/>
+
                         <RestrictedTab.Screen name="User Profile" options={{
                             tabBarShowLabel: false,
                             title: "Sleep Profile",
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="account-circle" size={24}
-                                                               color={focused ? appColorTheme.primaryColor : "black"}/>
+                                                               color={focused ?'#0E9CDA' : "black"}/>
                             },
                         }} component={UserProfile}/>
                     </RestrictedTab.Navigator> : <OnboardingSurvey></OnboardingSurvey>

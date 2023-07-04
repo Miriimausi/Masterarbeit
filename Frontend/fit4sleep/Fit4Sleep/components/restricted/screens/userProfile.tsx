@@ -2,8 +2,8 @@ import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import axios from "axios";
 import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
-import {Icon} from "react-native-elements";
 import {appColorTheme} from "../../../constants/colors";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface Question {
     id: number;
@@ -115,133 +115,149 @@ const UserProfile = () => {
     const togglePreferencesExpand = () => {
         setPreferencesExpanded(!preferencesExpanded);
     };
-
+    const showInfo = () => {
+        alert('Heart rate zone limits indicate in which heart rate zone the training is most effective. The values vary from very light to maximum depending on the training intensity.');
+    };
 
     return (
 
 
         <ScrollView style={styles.container}>
-
-            <View style={styles.container}>
-                <View style={styles.profileContainer}>
-                    <View style={styles.profileHeaderContainer}>
-                        <Text style={styles.headerTitle}>My Profile</Text>
-                        {editMode ? (
-                            <TouchableOpacity onPress={handleSaveButtonPress}>
-                                <Text style={styles.headerButton}>Save</Text>
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity onPress={handleEditButtonPress}>
-                                <Text style={styles.headerButton}>Edit</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                    <TouchableOpacity onPress={handleSelectImage}>
-
-
-                        <View style={styles.profilePicturePlaceholder}>
-                            <Text>Select Image</Text>
-                        </View>
-
-                    </TouchableOpacity>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Username:</Text>
-
-
-                        <Text style={styles.value}>{username}</Text>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Password:</Text>
-
-                        <Text style={styles.value}>******</Text>
-
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Email:</Text>
-
-                        <Text style={styles.value}>{email}</Text>
-                    </View>
-
-
-                        <TouchableOpacity style={styles.headerContainer} onPress={toggleScoreExpand}>
-                            <Text style={styles.headerText}>Sleep Score</Text>
-                            <Icon
-                                name={scoreExpanded ? 'minus' : 'plus'}
-                                type="font-awesome"
-                                color="white"
-                                size={16}
-                            />
+            <View style={styles.profileContainer}>
+                <View style={styles.profileHeaderContainer}>
+                    <Text style={styles.headerTitle}>My Profile</Text>
+                    {editMode ? (
+                        <TouchableOpacity onPress={handleSaveButtonPress}>
+                            <Text style={styles.headerButton}>Save</Text>
                         </TouchableOpacity>
-
-                        {scoreExpanded && (
-
-                            <View style={styles.contentContainer}>
-                                <Text  style={styles.scoreText}> Your Score {sleepScore}</Text>
-                                <Text style={styles.sectionInfoText}>
-                                    The index combines seven component scores to create a global score ranging from 0 to 21.
-                                    A global score of 0 represents no difficulties, while a score of 21 indicates severe
-                                    difficulties across all areas.
-                                </Text>
-
-
-                            </View>
-                        )}
-
-                    <TouchableOpacity style={styles.headerContainer} onPress={togglePreferencesExpand}>
-                        <Text style={styles.headerText}>Your Preferences</Text>
-                        <Icon
-                            name={scoreExpanded ? 'minus' : 'plus'}
-                            type="font-awesome"
-                            color="white"
-                            size={16}
-                        />
-                    </TouchableOpacity>
-
-                    {preferencesExpanded && (
-                        <View style={styles.contentContainer}>
-                            <Text  style={styles.preferencesText}> Time Availabilty: {timeAvailability}</Text>
-                            <Text  style={styles.preferencesText}> Training Preference: {trainingPreference}</Text>
-                            <Text  style={styles.preferencesText}> Intensity Preference: {intensityPreference}</Text>
-                            <Text  style={styles.preferencesText}> Duration Preference: {durationPreference}</Text>
-                            <Text  style={styles.preferencesText}> Social Preference: {socialPreference}</Text>
-                            <Text  style={styles.preferencesText}> Skill Preference: {skillPreference}</Text>
-                            <Text  style={styles.preferencesText}> Location Preference: {locationPreference}</Text>
-                            <Text  style={styles.preferencesText}> Emotional Preference: {emotionalPreference}</Text>
-
-                        </View>
+                    ) : (
+                        <TouchableOpacity onPress={handleEditButtonPress}>
+                            <Text style={styles.headerButton}>Edit</Text>
+                        </TouchableOpacity>
                     )}
 
-                        <TouchableOpacity style={styles.headerContainer} onPress={toggleExpand}>
-                            <Text style={styles.headerText}>Questions</Text>
-                            <Icon
-                                name={expanded ? 'minus' : 'plus'}
-                                type="font-awesome"
-                                color="white"
-                                size={16}
-                            />
-                        </TouchableOpacity>
+                </View>
 
-                        {expanded && (
-                            <View style={styles.contentContainer}>
-                                <Text style={styles.sectionInfoText}>
-                                    The Pittsburgh Sleep Quality Index (PSQI) consists of 19 self-rated questions.
-                                    The scoring is based only on the self-rated questions.
-                                    The 19 self-rated items and 5 adittional questions are grouped into seven "component"
-                                    scores, each ranging from 0 to 3
-                                    points.
-                                </Text>
-                                {questions.map((question) => (
-                                    <View key={question.id} style={styles.questionContainer}>
-                                        <Text style={styles.questionText}>{question.question}</Text>
-                                    </View>
-                                ))}
-                            </View>
-                        )}
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Username:</Text>
+
+
+                    <Text style={styles.value}>{username}</Text>
+                </View>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Password:</Text>
+
+                    <Text style={styles.value}>******</Text>
+
+                </View>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Email:</Text>
+
+                    <Text style={styles.value}>{email}</Text>
+                </View>
+
+                <View style={styles.contentContainer}>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="schedule" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{timeAvailability}</Text>
+                        </View>
                     </View>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="directions-run" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{trainingPreference}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="bolt" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{intensityPreference}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="more-time" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{durationPreference}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="call-made" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{skillPreference}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="groups" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{socialPreference}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="person-pin" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{locationPreference}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.preferencesContainer}>
+                        <View style={styles.preferenceItem}>
+                            <Icon name="sentiment-satisfied" size={30} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{emotionalPreference}</Text>
+                        </View>
+                    </View>
+                </View>
 
 
+                <TouchableOpacity style={styles.headerContainer} onPress={toggleScoreExpand}>
+                    <Text style={styles.headerText}>Sleep Score</Text>
+                    <Icon
+                        name={scoreExpanded ? 'close' : 'add'}
+                        color="white"
+                        size={16}
+                    />
+                </TouchableOpacity>
+
+                {scoreExpanded && (
+
+                    <View style={styles.contentContainer}>
+                        <Text style={styles.scoreText}> Your Score {sleepScore}</Text>
+                        <Text style={styles.preferenceText}>
+                            The index combines seven component scores to create a global score ranging from 0 to 21.
+                            A global score of 0 represents no difficulties, while a score of 21 indicates severe
+                            difficulties across all areas.
+                        </Text>
+
+
+                    </View>
+                )}
+
+
+                <TouchableOpacity style={styles.headerContainer} onPress={toggleExpand}>
+                    <Text style={styles.headerText}>Questions</Text>
+                    <Icon
+                        name={scoreExpanded ? 'close' : 'add'}
+                        color="white"
+                        size={16}
+                    />
+                </TouchableOpacity>
+
+                {expanded && (
+                    <View style={styles.contentContainer}>
+                        <Text style={styles.preferenceText}>
+                            The Pittsburgh Sleep Quality Index (PSQI) consists of 19 self-rated questions.
+                            The scoring is based only on the self-rated questions.
+                            The 19 self-rated items and 5 adittional questions are grouped into seven "component"
+                            scores, each ranging from 0 to 3
+                            points.
+                        </Text>
+                        {questions.map((question) => (
+                            <View key={question.id} style={styles.questionContainer}>
+                                <Text style={styles.questionText}>{question.question}</Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
             </View>
-
 
 
         </ScrollView>
@@ -252,12 +268,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F2F2F2',
+        width: '100%',
     },
     profileHeaderContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
+        marginBottom: 20,
     },
     headerTitle: {
         fontSize: 18,
@@ -265,7 +282,7 @@ const styles = StyleSheet.create({
     },
     headerButton: {
         fontSize: 14,
-        color: '#007AFF',
+        color: '#0E9CDA',
     },
     profileContainer: {
         backgroundColor: 'white',
@@ -278,15 +295,19 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 5,
     },
+
+
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
+
     },
     label: {
         flex: 1,
         fontSize: 16,
         fontWeight: 'bold',
+
     },
     input: {
         flex: 2,
@@ -307,67 +328,7 @@ const styles = StyleSheet.create({
         maxWidth: 200,
     },
 
-    progressBar: {
-        height: 50,
-        backgroundColor: '#0E9CDA',
-        borderRadius: 5,
-        overflow: 'hidden',
-        marginTop: 10,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20
-    },
-    progressBarFill: {
-        height: '100%',
-        backgroundColor: '#0E9CDA',
-        borderRadius: 5
-    },
-    imageContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    imageLabel: {
-        flex: 1,
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    imagePickerButton: {
-        flex: 2,
-        backgroundColor: '#007AFF',
-        borderRadius: 5,
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 20,
-    },
-    imagePickerButtonText: {
-        color: 'white',
-        fontSize: 18,
-    },
-    profilePicture: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginTop: 20,
-        alignSelf: 'center',
-        borderWidth: 1,
-        borderColor: '#ccc',
-    },
 
-    profilePicturePlaceholder: {
-        width: 120,
-        height: 120,
-        backgroundColor: '#b3f0ff',
-        borderRadius: 60,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 20,
-    },
-    profilePicturePlaceholderIcon: {
-        fontSize: 50,
-        color: 'white',
-    },
     sectionContainer: {
         backgroundColor: 'white',
         padding: 20,
@@ -383,23 +344,29 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 5,
         paddingHorizontal: 20,
-        marginBottom: 20,
-        backgroundColor: appColorTheme.primaryColor,
+        marginBottom: 10,
+        backgroundColor: '#0E9CDA',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
-        height: 50
+        height: 50,
+        elevation: 2,
     },
     headerText: {
         flex: 1,
         fontSize: 16,
         fontWeight: 'bold',
         color: 'white',
+
+
     },
     contentContainer: {
-        padding: 16,
-
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        marginTop: 10,
+        marginBottom:50,
     },
     sectionInfoText: {
         textAlign: "center",
@@ -424,7 +391,6 @@ const styles = StyleSheet.create({
     },
     questionText: {
         fontSize: 16,
-        fontWeight: 'bold',
         marginBottom: 4,
     },
 
@@ -441,25 +407,41 @@ const styles = StyleSheet.create({
     },
     scoreText: {
         fontSize: 18,
-        color: 'white',
-        backgroundColor: appColorTheme.primaryColor,
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 10,
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-
-    preferencesText: {
-        fontSize: 18,
-        color: 'white',
-        backgroundColor: appColorTheme.primaryColor,
+        color: 'black',
+        backgroundColor: 'white',
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 10,
         marginBottom: 16,
         textAlign: 'left',
-    }
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        height: 50,
+        elevation: 5,
+    },
+
+
+    preferencesContainer: {
+        width: '45%', // Adjust the width as needed
+        backgroundColor: 'white',
+        height: '25%',
+        padding: 10,
+        borderRadius: 5,
+        elevation: 5, // Add elevation for a light shadow effect
+        marginBottom: 10, // Add margin bottom to create space between rows
+    },
+
+    preferenceItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+
+    },
+    preferenceText: {
+        marginLeft: 15,
+
+    },
 });
 
 export default UserProfile;
