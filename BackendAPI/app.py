@@ -321,15 +321,16 @@ def calculate_modified_dice_coefficients(item: dict, other_items: list[Activity]
             modified_weights[attr] = 1
 
     for other_item in other_items:
-        other_item_attributes = [getattr(other_item, attr) for attr in attributes_to_use]
+        other_item_attributes = {attr: getattr(other_item, attr) for attr in attributes_to_use}
 
-        oa_set = set(other_item_attributes)
-        ia_set = set(item[attr] for attr in attributes_to_use)
+        oa_set = set(other_item_attributes.items())
+        ia_set = set((attr, item[attr]) for attr in attributes_to_use)
 
         intersection = oa_set.intersection(ia_set)
 
-        dice_coefficient = (2.0 * sum(modified_weights[attr] for attr in intersection)) / (
-            sum(modified_weights[attr] for attr in oa_set) + sum(modified_weights[attr] for attr in ia_set))
+        dice_coefficient = (2.0 * sum(modified_weights[attr] for attr, _ in intersection)) / (
+            sum(modified_weights[attr] for attr, _ in oa_set) + 
+            sum(modified_weights[attr] for attr, _ in ia_set))
 
         dice_coefficients.append({
             'activity_id': other_item.id, 
@@ -363,12 +364,12 @@ class Antecedents(Resource):
 
         }
         
-        similarity_scores = calculate_dice_coefficients(current_prefs, activities)
+        # similarity_scores = calculate_dice_coefficients(current_prefs, activities)
 
-        # modified_weights = {
-        #     'type': 1.5,
-        # }
-        # similarity_scores = calculate_modified_dice_coefficients(current_prefs, activities, modified_weights)
+        modified_weights = {
+            'type': 1.5,
+        }
+        similarity_scores = calculate_modified_dice_coefficients(current_prefs, activities, modified_weights)
 
 
         # Create a dictionary to map activity IDs to their corresponding similarity scores
