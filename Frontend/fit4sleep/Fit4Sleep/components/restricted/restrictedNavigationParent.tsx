@@ -12,7 +12,7 @@ import {AuthContext, AuthContextType} from "../../contexts/auth-context";
 import {createStackNavigator} from "@react-navigation/stack";
 import ActivitiesDetails from "./screens/activities/activitiesDetails";
 import RecommendedActivities from "./screens/activities/recommendedActivities";
-import Calender from "./screens/calender";
+
 
 
 const RestrictedTab = createBottomTabNavigator();
@@ -54,14 +54,7 @@ function RestrictedNavigationParent() {
                                                                color={focused ? '#0E9CDA' : "black"}/>
                             },
                         }} component={AllActivities}/>
-                        <RestrictedTab.Screen name="Calender" options={{
-                            tabBarShowLabel: false,
-                            title: "Calender",
-                            tabBarIcon: ({focused}) => {
-                                return <MaterialCommunityIcons name="calendar-month" size={24}
-                                                               color={focused ? '#0E9CDA' : "black"}/>
-                            },
-                        }} component={Calender}/>
+
                         <RestrictedTab.Screen name="Questionnaire" options={{
                             tabBarShowLabel: false,
                             title: "Questionnaire",

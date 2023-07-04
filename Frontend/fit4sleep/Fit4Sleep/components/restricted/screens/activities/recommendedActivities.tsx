@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         // Add your desired styles here
     },
     ActivitiesContainer: {
-        // Add your desired styles here
+       padding:20
     },
     container: {
         // Add your desired styles here
