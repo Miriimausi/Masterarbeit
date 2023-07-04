@@ -49,9 +49,8 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
             });
 
             const data = await response.json();
-
+            setActivities(data.activities); // Update the state with 'data.activities' instead
             console.log(data);
-
         } catch (error) {
             // Handle the error
             console.error(error);

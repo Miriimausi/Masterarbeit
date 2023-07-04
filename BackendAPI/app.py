@@ -34,6 +34,11 @@ class Activity(db.Model):
     type = db.Column(db.String)
     intensity = db.Column(db.String)
     duration = db.Column(db.String)
+    social = db.Column(db.String)
+    skill = db.Column(db.String)
+    location = db.Column(db.String)
+    emotional = db.Column(db.String)
+
 
     def to_dict(self):
         return {
@@ -75,6 +80,10 @@ class UserAntecedents(db.Model):
     trainingPreference= db.Column(db.String)
     durationPreference= db.Column(db.String)
     intensityPreference= db.Column(db.String)
+    socialPreference= db.Column(db.String)
+    skillPreference= db.Column(db.String)
+    locationPreference= db.Column(db.String)
+    emotionalPreference= db.Column(db.String)
     userId =db.Column(db.Integer)
     sleepScore =db.Column(db.Integer)
 
@@ -90,6 +99,11 @@ class UserAntecedents(db.Model):
             'trainingPreference': self.trainingPreference,
             'durationPreference': self.durationPreference,
             'intensityPreference': self.intensityPreference,
+            'socialPreference':self.socialPreference,
+            'skillPreference':self.skillPreference,
+            'locationPreference':self.locationPreference,
+            'emotionalPreference':self.emotionalPreference,
+
             'userID':self.userId,
             'sleepScore':self.sleepScore
             
@@ -127,7 +141,11 @@ activity_model = api.model('Activity', {
     'imageUrl': fields.String,
     'type': fields.String,
     'intensity': fields.String,
-    'duration' : fields.String
+    'duration' : fields.String,
+    'social': fields.String,
+    'skill': fields.String,
+    'location':fields.String,
+    'emotional':fields.String
 })
 
 question_model = api.model('Questionnaire',{
@@ -148,6 +166,10 @@ antecedents_model = api.model('Antecedents', {
     'trainingPreference': fields.String,
     'durationPreference': fields.String,
     'intensityPreference':fields.String,
+    'socialPreference':fields.String,
+    'skillPreference':fields.String,
+    'locationPreference':fields.String,
+    'emotionalPreference':fields.String,
     'userId': fields.Integer,
     'sleepScore': fields.Integer
 })
@@ -203,9 +225,13 @@ class Antecedents(Resource):
         weight = request.json.get('weight')
         bmi = request.json.get('bmi')
         timeAvailability = request.json.get('timeAvailability')
-        trainingPreference = request.json.get('trainingPreference')
         durationPreference = request.json.get('durationPreference')
         intensityPreference = request.json.get('intensityPreference')
+        trainingPreference = request.json.get('trainingPreference')
+        socialPreference = request.json.get('socialPreference')
+        skillPreference = request.json.get('skillPreference')
+        locationPreference = request.json.get('locationPreference')
+        emotionalPreference = request.json.get('emotionalPreference')
         sleepScore = request.json.get('sleepScore')
         userId = request.json.get('userId')
 
@@ -223,7 +249,10 @@ class Antecedents(Resource):
                 trainingPreference=trainingPreference,
                 intensityPreference=intensityPreference,
                 userId = user.id,
-                sleepScore=sleepScore, durationPreference=durationPreference
+                sleepScore=sleepScore, durationPreference=durationPreference, socialPreference=socialPreference,
+                skillPreference= skillPreference,
+                locationPreference=locationPreference,
+                emotionalPreference=emotionalPreference
             )
 
             if new_antecedents is not None:
@@ -244,9 +273,9 @@ def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list
     dice_coefficients = []
     for other_item in other_items:
         # only use type, intensity and duration for now
-        item_attributes = [item['type'], item['intensity'], item['duration']]
+        item_attributes = [item['type'], item['intensity'], item['duration'], item['skill'],  item['social'],  item['location'],  item['emotional']]
         
-        other_item_attributes = [other_item.type, other_item.intensity, other_item.duration]
+        other_item_attributes = [other_item.type, other_item.intensity, other_item.duration, other_item.social, other_item.skill,  other_item.location, other_item.emotional]
 
         set1 = set(item_attributes)
         set2 = set(other_item_attributes)
@@ -274,7 +303,7 @@ class Antecedents(Resource):
     def get(self, user_id):
 
         user = UserAntecedents.query.filter_by(userId=user_id).first()
-        activites = Activity.query.all()
+        activities = Activity.query.all()
 
         if user is None:
             return {'success': False, 'error': 'User not found'}, 404
@@ -282,14 +311,43 @@ class Antecedents(Resource):
         current_prefs = {
             'type': user.trainingPreference if user.trainingPreference else '',
             'intensity': user.intensityPreference if user.intensityPreference else '',
-            'duration': user.durationPreference if user.durationPreference else ''
+            'duration': user.durationPreference if user.durationPreference else '',
+            'social': user.socialPreference if user.socialPreference else '',
+            'skill': user.skillPreference if user.skillPreference else '',
+            'location': user.locationPreference if user.locationPreference else '',
+            'emotional': user.emotionalPreference if user.emotionalPreference else '',
+
         }
         
-        similarity_scores = calculate_dice_coefficients(current_prefs, activites)
+        similarity_scores = calculate_dice_coefficients(current_prefs, activities)
+        # Create a dictionary to map activity IDs to their corresponding similarity scores
+        similarity_dict = {item['activity_id']: item['similarity_score'] for item in similarity_scores}
+
+        # Sort the activities based on the similarity scores
+        activities.sort(key=lambda activity: similarity_dict.get(activity.id, 0), reverse=True)
+
+        response_data = []
+        for activity in activities:
+            activity_data = {
+                'id': activity.id,
+                'name': activity.name,
+                'imageUrl': activity.imageUrl,
+                'description': activity.description,
+                'similarity_score': similarity_dict.get(activity.id, 0),
+                'type': activity.type,
+                'intensity':activity.intensity,
+                'duration': activity.duration,
+                'social':activity.social,
+                'skill':activity.skill,
+                'location':activity.location,
+                'emotional':activity.emotional
+
+            }
+            response_data.append(activity_data)
 
         return {
             'success': True,
-            'similarity_scores': similarity_scores
+            'activities': response_data
         }, 200
 
 
@@ -299,7 +357,7 @@ class Antecedents(Resource):
         
         antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
         if antecedent:
-            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference}, 200
+            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference,'durationPreference': antecedent.durationPreference, 'social': antecedent.socialPreference, 'skillPreference': antecedent.skillPreference, 'locationPreference': antecedent.locationPreference, 'emotionalPreference': antecedent.emotionalPreference}, 200
         else:
             return {'message': 'Antecedent not found'}, 404
         

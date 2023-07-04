@@ -31,8 +31,6 @@ const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any })
     const {activity} = route.params;
     const [activities, setActivities] = useState<Activity[]>([]);
     const [isTableCollapsed, setIsTableCollapsed] = useState(true);
-    const [trackingCount, setTrackingCount] = useState(0);
-
 
     useEffect(() => {
         const fetchActivities = async () => {
@@ -46,51 +44,36 @@ const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any })
         fetchActivities();
     }, []);
 
-
-    useEffect(() => {
-        const fetchActivities = async () => {
-            try {
-                const response = await axios.get('http://10.0.2.2:5000/activities/${activitiesId}');
-                setActivities(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        fetchActivities();
-    }, []);
-
     const toggleTable = () => {
         setIsTableCollapsed(!isTableCollapsed);
     };
-
     const showInfo = () => {
         alert('Heart rate zone limits indicate in which heart rate zone the training is most effective. The values vary from very light to maximum depending on the training intensity.');
     };
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.detailsContainer}>
-                <Text style={styles.title}>Circuit training</Text>
-                <Text style={styles.description}>Exercises are performed in sequence with little rest in between.</Text>
+                <Text style={styles.title}>{activity.name}</Text>
+                <Text style={styles.description}>{activity.description}</Text>
             </View>
             <View style={styles.detailsContainer}>
                 <Text style={styles.title}>Type:</Text>
-                <Text style={styles.description}></Text>
+                <Text style={styles.description}>{activity.type}</Text>
             </View>
             <View style={styles.detailsContainer}>
                 <Text style={styles.title}>Intensity:</Text>
-                <Text style={styles.description}>Intensive</Text>
+                <Text style={styles.description}>{activity.intensity}</Text>
             </View>
             <View style={styles.detailsContainer}>
                 <Text style={styles.title}>Duration:</Text>
-                <Text style={styles.description}>30 minutes</Text>
+                <Text style={styles.description}>{activity.duration}</Text>
             </View>
             <View style={styles.detailsContainer}>
                 <TouchableOpacity onPress={toggleTable}>
                     <View style={styles.tableTitleContainer}>
                         <Text style={styles.tableTitle}>Heart rate zone limits</Text>
                         <TouchableOpacity onPress={showInfo}>
-                            <Icon name="info" size={25} color="#0E9CDA"/>
+                            <Icon name="info" size={25} color="#0E9CDA" />
                         </TouchableOpacity>
                         <Icon
                             name={isTableCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'}

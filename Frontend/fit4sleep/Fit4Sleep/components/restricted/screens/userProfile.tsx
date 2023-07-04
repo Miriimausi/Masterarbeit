@@ -27,6 +27,10 @@ const UserProfile = () => {
     const [trainingPreference, setTrainingPreference] = useState<number | null>(null);
     const [intensityPreference, setIntensityPreference] = useState<number | null>(null);
     const [durationPreference, setDurationPreference] = useState<number | null>(null);
+    const [skillPreference, setSkillPreference] = useState<number | null>(null);
+    const [socialPreference, setSocialPreference] = useState<number | null>(null);
+    const [locationPreference, setLocationPreference] = useState<number | null>(null);
+    const [emotionalPreference, setEmotionalPreference] = useState<number | null>(null);
 
     const handleEditButtonPress = () => {
         setEditMode(true);
@@ -67,6 +71,11 @@ const UserProfile = () => {
                 setTrainingPreference(response.data.trainingPreference);
                 setTimeAvailability(response.data.timeAvailability);
                 setDurationPreference(response.data.durationPreference);
+                setSkillPreference(response.data.skillPreference);
+                setSocialPreference(response.data.socialPreference);
+                setLocationPreference(response.data.locationPreference);
+                setEmotionalPreference(response.data.emotionalPreference);
+
             })
             .catch((error) => {
                 console.log(error);
@@ -194,6 +203,10 @@ const UserProfile = () => {
                             <Text  style={styles.preferencesText}> Training Preference: {trainingPreference}</Text>
                             <Text  style={styles.preferencesText}> Intensity Preference: {intensityPreference}</Text>
                             <Text  style={styles.preferencesText}> Duration Preference: {durationPreference}</Text>
+                            <Text  style={styles.preferencesText}> Social Preference: {socialPreference}</Text>
+                            <Text  style={styles.preferencesText}> Skill Preference: {skillPreference}</Text>
+                            <Text  style={styles.preferencesText}> Location Preference: {locationPreference}</Text>
+                            <Text  style={styles.preferencesText}> Emotional Preference: {emotionalPreference}</Text>
 
                         </View>
                     )}

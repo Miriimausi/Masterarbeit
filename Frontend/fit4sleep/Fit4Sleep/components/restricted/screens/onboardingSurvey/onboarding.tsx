@@ -23,6 +23,10 @@ interface SurveyResponse {
     durationPreference: String;
     trainingPreference: String;
     intensityPreference: String;
+    socialPreference: String;
+    skillPreference: String;
+    locationPreference: String;
+    emotionalPreference: String;
 
 }
 
@@ -39,6 +43,10 @@ const OnboardingSurvey = () => {
         durationPreference: '',
         trainingPreference: '',
         intensityPreference: '',
+        socialPreference: '',
+        skillPreference: '',
+        locationPreference: '',
+        emotionalPreference: '',
 
 
     });
@@ -98,6 +106,11 @@ const OnboardingSurvey = () => {
             trainingPreference: response.trainingPreference,
             durationPreference: response.durationPreference,
             intensityPreference: response.intensityPreference,
+            skillPreference: response.skillPreference,
+            socialPreference: response.socialPreference,
+            locationPreference: response.locationPreference,
+            emotionalPreference: response.emotionalPreference,
+
             userId: userId,
         };
 
@@ -210,10 +223,9 @@ const OnboardingSurvey = () => {
                             }
                         >
                             <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="max. 15 Minutes" value="15 minutes"/>
-                            <Picker.Item label="max. 30 Minutes" value="30 minutes"/>
-                            <Picker.Item label="max. 60 Minutes" value="60 minutes"/>
-                            <Picker.Item label="More than 60 Minutes" value="90 minutes"/>
+                            <Picker.Item label="between 15-30 Minutes" value="short_duration"/>
+                            <Picker.Item label="between 30-60 Minutes" value="medium_duration"/>
+                            <Picker.Item label="more than 60 Minutes" value="long_duration"/>
                         </Picker>
                     </View>
                 </View>
@@ -232,6 +244,78 @@ const OnboardingSurvey = () => {
                             <Picker.Item label="Strength Training " value="strength"/>
                         </Picker>
                     </View>
+                </View>
+            </View>
+            < View style={styles.slide}>
+                <Text style={styles.headerText}>Activity Assessment</Text>
+
+                <View style={styles.field}>
+                    <Text style={styles.label}>Social Preference</Text>
+                    <View style={styles.picker}>
+                        <Picker
+                            selectedValue={response.socialPreference}
+                            onValueChange={(value) =>
+                                setResponse({...response, socialPreference: value})
+                            }
+                        >
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="I want to workout alone" value="single"/>
+                            <Picker.Item label="I want to workout in a group" value="group"/>
+
+                        </Picker>
+                    </View>
+
+                    <View style={styles.field}>
+                        <Text style={styles.label}>Your Skill Level</Text>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={response.skillPreference}
+                                onValueChange={(value) =>
+                                    setResponse({...response, skillPreference: value})
+                                }
+                            >
+                                <Picker.Item label="Select" value=""/>
+                                <Picker.Item label="I'm at a beginner level" value="beginner"/>
+                                <Picker.Item label="I'm at a intermediate level" value="intermediate"/>
+
+                            </Picker>
+                        </View>
+                    </View>
+
+
+                    <View style={styles.field}>
+                        <Text style={styles.label}>Location Preference</Text>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={response.locationPreference}
+                                onValueChange={(value) =>
+                                    setResponse({...response, locationPreference: value})
+                                }
+                            >
+                                <Picker.Item label="Select" value=""/>
+                                <Picker.Item label="I like to workout outdoors" value="outdoor"/>
+                                <Picker.Item label="I like to workout indoors" value="indoor"/>
+
+                            </Picker>
+                        </View>
+                    </View>
+                    <View style={styles.field}>
+                        <Text style={styles.label}>Emotional Preference</Text>
+                        <View style={styles.picker}>
+                            <Picker
+                                selectedValue={response.emotionalPreference}
+                                onValueChange={(value) =>
+                                    setResponse({...response, emotionalPreference: value})
+                                }
+                            >
+                                <Picker.Item label="Select" value=""/>
+                                <Picker.Item label="I like workouts that relax me" value="relaxing"/>
+                                <Picker.Item label="I like workouts that make me sweat!" value="exciting"/>
+
+                            </Picker>
+                        </View>
+                    </View>
+
                 </View>
             </View>
             <View style={styles.slide}>
