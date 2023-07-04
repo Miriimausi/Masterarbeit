@@ -174,6 +174,7 @@ antecedents_model = api.model('Antecedents', {
     'sleepScore': fields.Integer
 })
 
+
 # Define API routes
 @auth_namespace.route('/login', methods=["POST"])
 class Authentication(Resource):
@@ -293,9 +294,52 @@ def calculate_dice_coefficients(item: dict, other_items: list[Activity]) -> list
         })
 
         # sort the list by similarity score in descending order
-        dice_coefficients.sort(key=lambda x: x['similarity_score'], reverse=True)
+    dice_coefficients.sort(key=lambda x: x['similarity_score'], reverse=True)
 
     return dice_coefficients
+
+
+def calculate_modified_dice_coefficients(item: dict, other_items: list[Activity], modified_weights: dict = None):
+    """
+    Calculates the Dice coefficient for each item in the list, using the modified weights
+    
+    :param item: The item to compare against
+    :param other_items: The list of items to compare against
+    :param modified_weights: The modified weights to use for each attribute (optional) E.g. {'type': 1.5, 'intensity': 1.2}
+    :return: A list of dictionaries containing the activity ID and similarity score
+    """
+
+    dice_coefficients = []
+
+    attributes_to_use = ['type', 'intensity', 'duration', 'social', 'skill', 'location', 'emotional']
+
+    if modified_weights is None:
+        modified_weights = {}
+
+    for attr in attributes_to_use:
+        if attr not in modified_weights:
+            modified_weights[attr] = 1
+
+    for other_item in other_items:
+        other_item_attributes = [getattr(other_item, attr) for attr in attributes_to_use]
+
+        oa_set = set(other_item_attributes)
+        ia_set = set(item[attr] for attr in attributes_to_use)
+
+        intersection = oa_set.intersection(ia_set)
+
+        dice_coefficient = (2.0 * sum(modified_weights[attr] for attr in intersection)) / (
+            sum(modified_weights[attr] for attr in oa_set) + sum(modified_weights[attr] for attr in ia_set))
+
+        dice_coefficients.append({
+            'activity_id': other_item.id, 
+            'similarity_score': dice_coefficient}
+        )
+
+    dice_coefficients.sort(key=lambda x: x['similarity_score'], reverse=True)
+
+    return dice_coefficients
+
 
 
 @antecedents_namespace.route('/calculateSimilarity/<int:user_id>')
@@ -320,6 +364,13 @@ class Antecedents(Resource):
         }
         
         similarity_scores = calculate_dice_coefficients(current_prefs, activities)
+
+        # modified_weights = {
+        #     'type': 1.5,
+        # }
+        # similarity_scores = calculate_modified_dice_coefficients(current_prefs, activities, modified_weights)
+
+
         # Create a dictionary to map activity IDs to their corresponding similarity scores
         similarity_dict = {item['activity_id']: item['similarity_score'] for item in similarity_scores}
 
