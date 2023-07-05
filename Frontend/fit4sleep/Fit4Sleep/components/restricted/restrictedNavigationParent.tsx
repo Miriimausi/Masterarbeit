@@ -12,6 +12,7 @@ import {AuthContext, AuthContextType} from "../../contexts/auth-context";
 import {createStackNavigator} from "@react-navigation/stack";
 import ActivitiesDetails from "./screens/activities/activitiesDetails";
 import RecommendedActivities from "./screens/activities/recommendedActivities";
+import Recommender from "./screens/recommender";
 
 
 
@@ -54,7 +55,14 @@ function RestrictedNavigationParent() {
                                                                color={focused ? '#0E9CDA' : "black"}/>
                             },
                         }} component={AllActivities}/>
-
+                        <RestrictedTab.Screen name="Recommender" options={{
+                            tabBarShowLabel: false,
+                            title: "Recommender",
+                            tabBarIcon: ({focused}) => {
+                                return <MaterialCommunityIcons name="assistant" size={24}
+                                                               color={focused ? '#0E9CDA' : "black"}/>
+                            },
+                        }} component={Recommender}/>
                         <RestrictedTab.Screen name="Questionnaire" options={{
                             tabBarShowLabel: false,
                             title: "Questionnaire",

@@ -339,7 +339,6 @@ const OnboardingSurvey = () => {
 
 };
 
-
 const styles = StyleSheet.create({
     imageBackground: {
         flex: 1,
@@ -356,26 +355,27 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'white',
 
     },
     headerText: {
         fontWeight: "bold",
         fontSize: 20,
         marginBottom: 9,
-        color: '#293e7d'
+        color: 'black'
     },
 
     field: {
         width: '80%',
         marginTop: 5,
         marginBottom: 5,
+        elevation: 2
 
     },
     label: {
         fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#293e7d'
+        marginBottom: 5,
+        color: 'black',
     },
     input: {
         borderWidth: 1,
@@ -386,6 +386,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: '#fff',
         paddingHorizontal: 10,
+        elevation: 2
     },
     picker: {
         borderWidth: 1,
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
     },
     button: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#0E9CDA',
         borderRadius: 4,
         paddingHorizontal: 20,
         paddingVertical: 10,

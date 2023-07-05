@@ -370,6 +370,73 @@ class Antecedents(Resource):
             'success': True,
             'activities': response_data
         }, 200
+    
+    @antecedents_namespace.route('/calculateRecommendation/<int:user_id>')
+    class Antecedents(Resource):
+        def post(self, user_id):
+            user = UserAntecedents.query.filter_by(userId=user_id).first()
+            activities = Activity.query.all()
+
+            if user is None:
+                return {'success': False, 'error': 'User not found'}, 404
+
+            # Update user's preferences with the received data
+            user.trainingPreference = request.json.get('trainingPreference')
+            user.durationPreference = request.json.get('durationPreference')
+            user.intensityPreference = request.json.get('intensityPreference')
+            user.socialPreference = request.json.get('socialPreference')
+            user.skillPreference = request.json.get('skillPreference')
+            user.locationPreference = request.json.get('locationPreference')
+            user.emotionalPreference = request.json.get('emotionalPreference')
+
+            db.session.commit()
+
+            current_prefs = {
+                'type': user.trainingPreference if user.trainingPreference else '',
+                'intensity': user.intensityPreference if user.intensityPreference else '',
+                'duration': user.durationPreference if user.durationPreference else '',
+                'social': user.socialPreference if user.socialPreference else '',
+                'skill': user.skillPreference if user.skillPreference else '',
+                'location': user.locationPreference if user.locationPreference else '',
+                'emotional': user.emotionalPreference if user.emotionalPreference else '',
+            }
+            
+            modified_weights = {
+                'type': 1.5,
+            }
+            similarity_scores = calculate_modified_dice_coefficients(current_prefs, activities, modified_weights)
+
+
+            # Create a dictionary to map activity IDs to their corresponding similarity scores
+            similarity_dict = {item['activity_id']: item['similarity_score'] for item in similarity_scores}
+
+            # Sort the activities based on the similarity scores
+            activities.sort(key=lambda activity: similarity_dict.get(activity.id, 0), reverse=True)
+
+            response_data = []
+            for activity in activities:
+                activity_data = {
+                    'id': activity.id,
+                    'name': activity.name,
+                    'imageUrl': activity.imageUrl,
+                    'description': activity.description,
+                    'similarity_score': similarity_dict.get(activity.id, 0),
+                    'type': activity.type,
+                    'intensity':activity.intensity,
+                    'duration': activity.duration,
+                    'social':activity.social,
+                    'skill':activity.skill,
+                    'location':activity.location,
+                    'emotional':activity.emotional
+
+                }
+                response_data.append(activity_data)
+
+            return {
+                'success': True,
+                'activities': response_data
+            }, 200
+
 
 
 @antecedents_namespace.route('/getPreferences/<int:user_id>')

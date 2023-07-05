@@ -40,17 +40,6 @@ const UserProfile = () => {
         setEditMode(false);
     };
 
-    const handleSelectImage = () => {
-        const options = {
-            title: 'Select Profile Picture',
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
-
-
-    };
 
     useEffect(() => {
         axios
@@ -81,6 +70,8 @@ const UserProfile = () => {
                 console.log(error);
             });
     }, []);
+
+
     useEffect(() => {
         axios
             .get('http://10.0.2.2:5000/Questionnaire/all')
@@ -112,16 +103,9 @@ const UserProfile = () => {
     const toggleScoreExpand = () => {
         setScoreExpanded(!scoreExpanded);
     };
-    const togglePreferencesExpand = () => {
-        setPreferencesExpanded(!preferencesExpanded);
-    };
-    const showInfo = () => {
-        alert('Heart rate zone limits indicate in which heart rate zone the training is most effective. The values vary from very light to maximum depending on the training intensity.');
-    };
+
 
     return (
-
-
         <ScrollView style={styles.container}>
             <View style={styles.profileContainer}>
                 <View style={styles.profileHeaderContainer}>

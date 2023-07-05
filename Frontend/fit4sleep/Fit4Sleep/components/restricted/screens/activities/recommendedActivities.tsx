@@ -16,7 +16,7 @@ export type Activity = {
 }
 
 type ActivitiesProps = {
-    navigation: NavigationProp<RootStackParamList, 'RecommendedActivities'>
+    navigation: NavigationProp<RootStackParamList>
 }
 
 const RecommendedActivities = ({navigation}: ActivitiesProps) => {
