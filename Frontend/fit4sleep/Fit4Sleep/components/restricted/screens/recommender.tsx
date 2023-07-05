@@ -3,7 +3,7 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity,
+    TouchableOpacity, Image,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Swiper from 'react-native-swiper';
@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../navigator";
 import {Activity} from "./activities/recommendedActivities";
+import {IActivityItemProps} from "./activities/activityItem";
 
 interface RecommenderInterface {
     id: number;
@@ -29,6 +30,7 @@ interface RecommenderInterface {
     skillPreference: String;
     locationPreference: String;
     emotionalPreference: String;
+    accessories: String;
 
 }
 
@@ -51,11 +53,25 @@ const Recommender = ({navigation}: RecommenderProps) => {
             skillPreference: '',
             locationPreference: '',
             emotionalPreference: '',
+            accessories: '',
         });
+        const ActivityItem = (props: IActivityItemProps) => {
 
 
-        const {userId, username, password, email} = useContext(AuthContext) as AuthContextType;
-        const [answers, setAnswers] = useState<(string | null)[]>([]);
+            return (
+                <TouchableOpacity style={[styles.tile, {width: props.width}]}
+                                  onPress={() => props.navigation.navigate('ActivitiesDetails', {activity: props.activity})}>
+                    <Image source={{uri: props.activity.imageUrl}} style={[styles.tileImage, {height: props.imageHeight}]}/>
+                    <View style={styles.tileDetails}>
+                        <Text style={styles.tileTitle}>{props.activity.name}</Text>
+                        <Text style={styles.tileDescription}>{props.activity.description}</Text>
+                    </View>
+                </TouchableOpacity>
+            )
+
+        }
+
+        const {userId} = useContext(AuthContext) as AuthContextType;
         const [timeAvailability, setTimeAvailability] = useState<number | null>(null);
         const [trainingPreference, setTrainingPreference] = useState<number | null>(null);
         const [intensityPreference, setIntensityPreference] = useState<number | null>(null);
@@ -64,24 +80,9 @@ const Recommender = ({navigation}: RecommenderProps) => {
         const [socialPreference, setSocialPreference] = useState<number | null>(null);
         const [locationPreference, setLocationPreference] = useState<number | null>(null);
         const [emotionalPreference, setEmotionalPreference] = useState<number | null>(null);
+        const [accessories, setAccessories] = useState<number | null>(null);
         const [activities, setActivities] = useState<Activity[]>([]);
         const [showRecommendedActivity, setShowRecommendedActivity] = useState(false);
-
-        const handleTimeChange = (timeAvailability: string) => {
-            setResponse({...response, timeAvailability: timeAvailability});
-        };
-
-        const handleTrainingPreferenceChange = (trainingPreference: string) => {
-            setResponse({...response, trainingPreference: trainingPreference});
-        };
-
-        const handleDurationChange = (durationPreference: string) => {
-            setResponse({...response, durationPreference: durationPreference});
-        };
-        const handleIntensityChange = (intensityPreference: string) => {
-            setResponse({...response, intensityPreference: intensityPreference});
-        };
-
 
         useEffect(() => {
             axios
@@ -95,6 +96,7 @@ const Recommender = ({navigation}: RecommenderProps) => {
                     setSocialPreference(response.data.socialPreference);
                     setLocationPreference(response.data.locationPreference);
                     setEmotionalPreference(response.data.emotionalPreference);
+                    setAccessories(response.data.accessories);
 
                 })
                 .catch((error) => {
@@ -129,11 +131,7 @@ const Recommender = ({navigation}: RecommenderProps) => {
         }, [userId]);
 
         const handleSubmit = async () => {
-            if (response.timeAvailability === 'afternoon' || response.timeAvailability === 'evening') {
-                setResponse({...response, intensityPreference: 'Moderate'});
-            } else {
-                setResponse({...response});
-            }
+
 
 
             const requestBody = {
@@ -149,6 +147,7 @@ const Recommender = ({navigation}: RecommenderProps) => {
                 socialPreference: response.socialPreference,
                 locationPreference: response.locationPreference,
                 emotionalPreference: response.emotionalPreference,
+                accessories: response.accessories
             };
 
             console.log(requestBody);
@@ -196,7 +195,25 @@ const Recommender = ({navigation}: RecommenderProps) => {
                             </Picker>
                         </View>
                     </View>
+                    <View style={styles.field}>
+                        <Text style={styles.label}> <Icon name="trending-up" size={24} color="#0E9CDA"/> Skill
+                            Level: {skillPreference}</Text>
+                        <View style={styles.picker}>
 
+                            <Picker
+                                selectedValue={response.skillPreference}
+                                onValueChange={(value) =>
+                                    setResponse({...response, skillPreference: value})
+                                }
+                            >
+
+                                <Picker.Item label="Select" value=""/>
+                                <Picker.Item label="I am a beginner" value="beginner"/>
+                                <Picker.Item label="I want a challenge" value="intermediate"/>
+
+                            </Picker>
+                        </View>
+                    </View>
                     <View style={styles.field}>
                         <Text style={styles.label}> <Icon name="more-time" size={30} color="#0E9CDA"/> Duration
                             Availability: {durationPreference}</Text>
@@ -249,9 +266,27 @@ const Recommender = ({navigation}: RecommenderProps) => {
 
                             </Picker>
                         </View>
-
                         <View style={styles.field}>
-                            <Text style={styles.label}> <Icon name="person-pin" size={30} color="#0E9CDA"/> Location
+                            <Text style={styles.label}> <Icon name="sports-tennis" size={24}
+                                                              color="#0E9CDA"/> Equipment: {accessories}</Text>
+                            <View style={styles.picker2}>
+
+                                <Picker
+                                    selectedValue={response.accessories}
+                                    onValueChange={(value) =>
+                                        setResponse({...response, accessories: value})
+                                    }
+                                >
+
+                                    <Picker.Item label="Select" value=""/>
+                                    <Picker.Item label="I want to use Equipment" value="with_accessories"/>
+                                    <Picker.Item label="I do not want to use Equipment" value="without_accessories"/>
+
+                                </Picker>
+                            </View>
+                        </View>
+                        <View style={styles.field}>
+                            <Text style={styles.label}> <Icon name="pin-drop" size={30} color="#0E9CDA"/> Location
                                 Preference: {locationPreference}</Text>
                             <View style={styles.picker2}>
                                 <Picker
@@ -288,24 +323,33 @@ const Recommender = ({navigation}: RecommenderProps) => {
 
                     </View>
                 </View>
-
                 <View style={styles.slide}>
                     <View style={styles.surveyContainer}>
                         <Text style={styles.surveyText}>
                             The best Workout for you will be selected.
                         </Text>
-                        {showRecommendedActivity && activities.length > 0 && (
-                            <View>
-                                <Text >{activities[0].name}</Text>
-                            </View>
+                        {activities.length > 0 && (
+                            <ActivityItem
+                                imageHeight={150}
+                                width="50%"
+                                navigation={navigation}
+                                activity={
+                                    response.timeAvailability === 'afternoon' ||
+                                    response.timeAvailability === 'evening'
+                                        ? activities.find(activity => activity.intensity === 'Moderate') || activities[0]
+                                        : activities[0]
+                                }
+                            />
                         )}
                     </View>
+
                     <View style={styles.field}>
                         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                            <Text style={styles.buttonText}>Next</Text>
+                            <Text style={styles.buttonText}>Submit</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
+
 
             </Swiper>
 
@@ -385,8 +429,8 @@ const styles = StyleSheet.create({
     },
     surveyContainer: {
         alignItems: 'center',
+        height: '70%',
         marginBottom: 30,
-        margin: 30,
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
@@ -416,9 +460,8 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         paddingHorizontal: 20,
         paddingVertical: 10,
-        marginBottom: 10,
-        width: '45%',
-        alignSelf: "flex-end"
+        width: '80%',
+        alignSelf: "center"
     },
     buttonText: {
         color: '#fff',
@@ -434,6 +477,28 @@ const styles = StyleSheet.create({
     radioButtonLabel: {
         marginRight: 10,
         fontSize: 16,
+    },
+    tile: {
+        backgroundColor: '#fff',
+        marginBottom: 10,
+        marginHorizontal: 5,
+        borderRadius: 10,
+        overflow: 'hidden',
+    },
+    tileImage: {
+        width: '100%',
+    },
+    tileDetails: {
+        padding: 10,
+    },
+    tileTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    tileDescription: {
+        fontSize: 16,
+        marginBottom: 5,
     },
 });
 export default Recommender;

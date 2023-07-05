@@ -70,14 +70,14 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
                 <View style={styles.container}>
                     <View style={styles.tileContainerRecommended}>
                         {activities.map((activity, index) => (
-                            <ActivityItem
-                                imageHeight={250}
-                                width="100%"
-                                key={index}
-                                navigation={navigation}
-                                activity={activity}
-                            />
-                        ))}
+                        <ActivityItem
+                            imageHeight={250}
+                            width="100%"
+                            key={index}
+                            navigation={navigation}
+                            activity={activity}
+                        />
+                    ))}
                     </View>
                 </View>
             </ScrollView>

@@ -31,6 +31,7 @@ const UserProfile = () => {
     const [socialPreference, setSocialPreference] = useState<number | null>(null);
     const [locationPreference, setLocationPreference] = useState<number | null>(null);
     const [emotionalPreference, setEmotionalPreference] = useState<number | null>(null);
+    const [accessories, setAccessories] = useState<number | null>(null);
 
     const handleEditButtonPress = () => {
         setEditMode(true);
@@ -64,6 +65,7 @@ const UserProfile = () => {
                 setSocialPreference(response.data.socialPreference);
                 setLocationPreference(response.data.locationPreference);
                 setEmotionalPreference(response.data.emotionalPreference);
+                setAccessories(response.data.accessories);
 
             })
             .catch((error) => {
@@ -143,49 +145,49 @@ const UserProfile = () => {
                 <View style={styles.contentContainer}>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="schedule" size={30} color="#0E9CDA"/>
+                            <Icon name="schedule" size={24} color="#0E9CDA"/>
                             <Text style={styles.preferenceText}>{timeAvailability}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="directions-run" size={30} color="#0E9CDA"/>
+                            <Icon name="directions-run" size={24} color="#0E9CDA"/>
                             <Text style={styles.preferenceText}>{trainingPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="bolt" size={30} color="#0E9CDA"/>
-                            <Text style={styles.preferenceText}>{intensityPreference}</Text>
+                            <Icon name="sports-tennis" size={24} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{accessories}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="more-time" size={30} color="#0E9CDA"/>
+                            <Icon name="more-time" size={24} color="#0E9CDA"/>
                             <Text style={styles.preferenceText}>{durationPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="call-made" size={30} color="#0E9CDA"/>
+                            <Icon name="call-made" size={24} color="#0E9CDA"/>
                             <Text style={styles.preferenceText}>{skillPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="groups" size={30} color="#0E9CDA"/>
+                            <Icon name="groups" size={24} color="#0E9CDA"/>
                             <Text style={styles.preferenceText}>{socialPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="person-pin" size={30} color="#0E9CDA"/>
+                            <Icon name="pin-drop" size={24} color="#0E9CDA"/>
                             <Text style={styles.preferenceText}>{locationPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="sentiment-satisfied" size={30} color="#0E9CDA"/>
+                            <Icon name="sentiment-satisfied" size={24} color="#0E9CDA"/>
                             <Text style={styles.preferenceText}>{emotionalPreference}</Text>
                         </View>
                     </View>
@@ -408,22 +410,26 @@ const styles = StyleSheet.create({
 
 
     preferencesContainer: {
-        width: '45%', // Adjust the width as needed
+        width: '50%', // Adjust the width as needed
         backgroundColor: 'white',
         height: '25%',
         padding: 10,
         borderRadius: 5,
         elevation: 5, // Add elevation for a light shadow effect
-        marginBottom: 10, // Add margin bottom to create space between rows
+        marginBottom: 10,
+        alignItems: 'flex-start',// Add margin bottom to create space between rows
     },
 
     preferenceItem: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        textAlign: "left",
 
     },
     preferenceText: {
-        marginLeft: 15,
+        marginLeft: 2,
+        marginTop:5,
+        textAlign: "left",
 
     },
 });
