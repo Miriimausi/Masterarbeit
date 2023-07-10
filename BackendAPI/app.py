@@ -576,6 +576,13 @@ class Questions(Resource):
         questionnaires = Questionnaire.query.filter(Questionnaire.type == 10).order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
 
+@question_namespace.route('/<int:id>')
+class Questions(Resource):
+    def get(self, id):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == id).order_by(Questionnaire.id.asc()).all()
+        return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
+
+
 @question_namespace.route('/all')
 class Questions(Resource):
     @api.marshal_with(question_model, as_list=True)
