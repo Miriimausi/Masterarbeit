@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../navigator";
@@ -17,7 +17,7 @@ const Register = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({username, password})
         });
         const data = await response.json();
         if (data.success) {
@@ -33,26 +33,27 @@ const Register = () => {
             style={styles.background}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-            <Text style={styles.title}>User Registration</Text>
-            <TextInput
-                style={styles.inputContainer}
-                placeholder="username"
-                value={username}
-                onChangeText={setUsername}
-            />
-            <TextInput
-                style={styles.inputContainer}
-                placeholder="password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
+                <Text style={styles.title}>User Registration</Text>
 
-            <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-                <Text style={styles.registerButtonText}>Register</Text>
-            </TouchableOpacity>
+                <TextInput
+                    style={styles.inputContainer}
+                    placeholder="username"
+                    value={username}
+                    onChangeText={setUsername}
+                />
+                <TextInput
+                    style={styles.inputContainer}
+                    placeholder="password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
+
+                <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+                    <Text style={styles.registerButtonText}>Register</Text>
+                </TouchableOpacity>
             </ScrollView>
-    </ImageBackground>
+        </ImageBackground>
     );
 };
 
@@ -79,38 +80,41 @@ const styles = StyleSheet.create({
 
     inputContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        textAlign: 'left',
         height: 50,
         width: '80%',
         borderColor: 'gray',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 30,
         paddingHorizontal: 10,
         marginVertical: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        elevation: 7
     },
 
 
     registerButton: {
-            width: '80%',
-            backgroundColor: '#0E9CDA',
-            borderRadius: 5,
-            paddingVertical: 15,
-            marginVertical: 5,
-            shadowColor: '#104E8B',
-            shadowOffset: {
-                width: 0,
-                height: 5,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-
+        width: '50%',
+        backgroundColor: '#0E9CDA',
+        borderRadius: 5,
+        paddingVertical: 15,
+        marginVertical: 5,
+        marginRight: 35,
+        shadowColor: '#104E8B',
+        shadowOffset: {
+            width: 0,
+            height: 5,
         },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        alignSelf: 'flex-end'
+
+    },
     registerButtonText: {
         color: '#FFF',
         textAlign: 'center',
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold'
     },
 });

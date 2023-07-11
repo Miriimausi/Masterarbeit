@@ -11,6 +11,7 @@ import {Picker} from '@react-native-picker/picker';
 import Swiper from 'react-native-swiper';
 import CustomNumericScale from "./customNumericScale";
 import {AuthContext, AuthContextType} from "../../../../contexts/auth-context";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 
 interface SurveyResponse {
@@ -147,6 +148,7 @@ const OnboardingSurvey = () => {
                     <Text style={styles.label}>Age:</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder="Type your answer here"
                         keyboardType="numeric"
                         onChangeText={handleAgeChange}
                     />
@@ -155,6 +157,7 @@ const OnboardingSurvey = () => {
                     <Text style={styles.label}>Height (cm):</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder="Type your answer here"
                         keyboardType="numeric"
                         onChangeText={handleHeightChange}
                     />
@@ -163,6 +166,7 @@ const OnboardingSurvey = () => {
                     <Text style={styles.label}>Weight (kg):</Text>
                     <TextInput
                         style={styles.input}
+                        placeholder="Type your answer here"
                         keyboardType="numeric"
                         onChangeText={handleWeightChange}
                     />
@@ -182,7 +186,8 @@ const OnboardingSurvey = () => {
                 <Text style={styles.headerText}>Activity Assessment</Text>
 
                 <View style={styles.field}>
-                    <Text style={styles.label}>Time Availability</Text>
+                    <Text style={styles.label}> <Icon name="schedule" size={24} color="#0E9CDA"/> Time
+                        Availability: </Text>
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.timeAvailability}
@@ -199,7 +204,7 @@ const OnboardingSurvey = () => {
                     </View>
                 </View>
                 <View style={styles.field}>
-                    <Text style={styles.label}>Workout Intensity Preference</Text>
+                    <Text style={styles.label}> <Icon name="bolt" size={24} color="#0E9CDA"/> Workout Intensity Preference </Text>
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.intensityPreference}
@@ -214,7 +219,8 @@ const OnboardingSurvey = () => {
                     </View>
                 </View>
                 <View style={styles.field}>
-                    <Text style={styles.label}>Duration Availability</Text>
+                    <Text style={styles.label}> <Icon name="more-time" size={30} color="#0E9CDA"/> Duration
+                        Availability:</Text>
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.durationPreference}
@@ -230,7 +236,8 @@ const OnboardingSurvey = () => {
                     </View>
                 </View>
                 <View style={styles.field}>
-                    <Text style={styles.label}>Activity Preference</Text>
+                    <Text style={styles.label}> <Icon name="directions-run" size={30} color="#0E9CDA"/> Activity
+                        Preference:  </Text>
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.trainingPreference}
@@ -250,7 +257,8 @@ const OnboardingSurvey = () => {
                 <Text style={styles.headerText}>Activity Assessment</Text>
 
                 <View style={styles.field}>
-                    <Text style={styles.label}>Social Preference</Text>
+                    <Text style={styles.label}> <Icon name="groups" size={30} color="#0E9CDA"/> Social
+                        Preference: </Text>
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.socialPreference}
@@ -266,8 +274,9 @@ const OnboardingSurvey = () => {
                     </View>
 
                     <View style={styles.field}>
-                        <Text style={styles.label}>Your Skill Level</Text>
-                        <View style={styles.picker}>
+                        <Text style={styles.label}> <Icon name="trending-up" size={24} color="#0E9CDA"/> Your Skill
+                            Level: </Text>
+                        <View style={styles.picker2}>
                             <Picker
                                 selectedValue={response.skillPreference}
                                 onValueChange={(value) =>
@@ -284,8 +293,9 @@ const OnboardingSurvey = () => {
 
 
                     <View style={styles.field}>
-                        <Text style={styles.label}>Location Preference</Text>
-                        <View style={styles.picker}>
+                        <Text style={styles.label}> <Icon name="pin-drop" size={30} color="#0E9CDA"/> Location
+                            Preference: </Text>
+                        <View style={styles.picker2}>
                             <Picker
                                 selectedValue={response.locationPreference}
                                 onValueChange={(value) =>
@@ -300,8 +310,10 @@ const OnboardingSurvey = () => {
                         </View>
                     </View>
                     <View style={styles.field}>
-                        <Text style={styles.label}>Emotional Preference</Text>
-                        <View style={styles.picker}>
+                        <Text style={styles.label}> <Icon name="sentiment-satisfied" size={30}
+                                                          color="#0E9CDA"/> Emotional
+                            Preference: </Text>
+                        <View style={styles.picker2}>
                             <Picker
                                 selectedValue={response.emotionalPreference}
                                 onValueChange={(value) =>
@@ -359,10 +371,14 @@ const styles = StyleSheet.create({
 
     },
     headerText: {
-        fontWeight: "bold",
         fontSize: 20,
-        marginBottom: 9,
-        color: 'black'
+        fontWeight: 'bold',
+        backgroundColor: '#0E9CDA',
+        borderRadius:20,
+        padding: 10,
+        color:'white',
+        textAlign:"center",
+        width: '80%',
     },
 
     field: {
@@ -378,23 +394,34 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
+        flexDirection: 'row',
+        textAlign: 'center',
+        height: 50,
         width: '100%',
-        fontSize: 16,
-        backgroundColor: '#fff',
+        borderColor: 'gray',
+
+        borderRadius: 30,
         paddingHorizontal: 10,
-        elevation: 2
+        backgroundColor: 'white',
+        elevation: 7
     },
     picker: {
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 5,
+        borderRadius: 30,
         width: '100%',
         backgroundColor: '#fff',
+        elevation:5,
     },
+    picker2: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 30,
+        width: '125%',
+        backgroundColor: '#fff',
+        elevation:5,
+    },
+
     surveyContainer: {
         alignItems: 'center',
         marginBottom: 30,

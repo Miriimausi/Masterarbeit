@@ -9,7 +9,6 @@ interface Question {
     id: number;
     question: string;
     type: number;
-    answer: string | null;
 
 }
 
@@ -20,7 +19,6 @@ const UserProfile = () => {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [expanded, setExpanded] = useState(false);
     const [scoreExpanded, setScoreExpanded] = useState(false);
-    const [preferencesExpanded, setPreferencesExpanded] = useState(false);
     const [answers, setAnswers] = useState<(string | null)[]>([]);
     const [sleepScore, setSleepScore] = useState<number | null>(null);
     const [timeAvailability, setTimeAvailability] = useState<number | null>(null);
@@ -136,11 +134,6 @@ const UserProfile = () => {
                     <Text style={styles.value}>******</Text>
 
                 </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Email:</Text>
-
-                    <Text style={styles.value}>{email}</Text>
-                </View>
 
                 <View style={styles.contentContainer}>
                     <View style={styles.preferencesContainer}>
@@ -206,7 +199,7 @@ const UserProfile = () => {
                 {scoreExpanded && (
 
                     <View style={styles.contentContainer}>
-                        <Text style={styles.scoreText}> Your Score {sleepScore}</Text>
+                        <Text style={styles.scoreText}>                         Your Score: {sleepScore}                           </Text>
                         <Text style={styles.preferenceText}>
                             The index combines seven component scores to create a global score ranging from 0 to 21.
                             A global score of 0 represents no difficulties, while a score of 21 indicates severe
@@ -265,6 +258,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
+        elevation: 5
     },
     headerButton: {
         fontSize: 14,
@@ -330,7 +324,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 5,
         paddingHorizontal: 20,
-        marginBottom: 10,
+        marginTop: 30,
         backgroundColor: '#0E9CDA',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
@@ -347,12 +341,15 @@ const styles = StyleSheet.create({
 
 
     },
+    scoreContainer: {
+        marginTop: 50,
+    },
     contentContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         marginTop: 10,
-        marginBottom:50,
+        marginBottom: 50,
     },
     sectionInfoText: {
         textAlign: "center",
@@ -362,7 +359,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     questionContainer: {
-        marginBottom: 16,
+        marginTop: 10,
+        marginLeft: 10,
         backgroundColor: '#fff',
         borderRadius: 8,
         padding: 16,
@@ -378,6 +376,7 @@ const styles = StyleSheet.create({
     questionText: {
         fontSize: 16,
         marginBottom: 4,
+
     },
 
     answerContainer: {
@@ -397,9 +396,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingVertical: 8,
         paddingHorizontal: 12,
-        borderRadius: 10,
         marginBottom: 16,
-        textAlign: 'left',
+        textAlign: 'center',
+        alignSelf: 'center',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         borderBottomLeftRadius: 30,
@@ -413,8 +412,8 @@ const styles = StyleSheet.create({
         width: '50%', // Adjust the width as needed
         backgroundColor: 'white',
         height: '25%',
-        padding: 10,
-        borderRadius: 5,
+        padding: 12,
+        borderRadius: 10,
         elevation: 5, // Add elevation for a light shadow effect
         marginBottom: 10,
         alignItems: 'flex-start',// Add margin bottom to create space between rows
@@ -427,9 +426,12 @@ const styles = StyleSheet.create({
 
     },
     preferenceText: {
-        marginLeft: 2,
-        marginTop:5,
+        marginLeft: 10,
+        marginRight: 5,
+        marginTop: 5,
         textAlign: "left",
+        color: 'grey',
+        fontSize: 16,
 
     },
 });

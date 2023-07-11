@@ -419,22 +419,21 @@ const Questionnaire = () => {
             <View style={styles.slide}>
                 <View style={styles.container}>
                     <Text style={styles.HeaderText}>Pittsburgh Sleep Quality Index</Text>
-                    <Text>The following questions relate to your usual sleep
+                    <Text style={styles.introText}>The following questions relate to your usual sleep
                         habits during the past month only.
                         Your answers should indicate the most accurate reply
                         for the majority of days and nights in the past month. </Text>
-                    <Text style={styles.sectionInfoText}>Please answer all questions.</Text>
                 </View>
             </View>
             <View style={styles.slide}>
                 <View style={styles.container}>
-                    <Text style={styles.HeaderText}>Component: Habitual sleep efficiency</Text>
+                    <Text style={styles.HeaderText}>Habitual sleep efficiency</Text>
                     <View style={styles.questionContainer}>
                         {questionsOne.map((question) => (
                             <View key={question.id}>
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
-                                    <TextInput
+                                    <TextInput style={styles.InputContainer}
                                         placeholder="Type your answer here"
                                         onChangeText={(answer) => handleAnswer(question, answer)}
                                         value={answers[question.id] || ''}
@@ -447,13 +446,13 @@ const Questionnaire = () => {
             </View>
             <View style={styles.slide}>
                 <View style={styles.container}>
-                    <Text style={styles.HeaderText}>Component: Sleep latency</Text>
+                    <Text style={styles.HeaderText}>Sleep latency</Text>
                     <View style={styles.questionContainer}>
                         {questionsTwo.map((question) => (
                             <View key={question.id}>
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
-                                    <TextInput
+                                    <TextInput style={styles.InputContainer}
                                         placeholder="Type your answer here"
                                         onChangeText={(answer) => handleAnswer(question, answer)}
                                         value={answers[question.id] || ''}
@@ -466,13 +465,13 @@ const Questionnaire = () => {
             </View>
             <View style={styles.slide}>
                 <View style={styles.container}>
-                    <Text style={styles.HeaderText}>Component: Habitual sleep efficiency</Text>
+                    <Text style={styles.HeaderText}>Habitual sleep efficiency</Text>
                     <View style={styles.questionContainer}>
                         {questionsThree.map((question) => (
                             <View key={question.id}>
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
-                                    <TextInput
+                                    <TextInput style={styles.InputContainer}
                                         placeholder="Type your answer here"
                                         onChangeText={(answer) => handleAnswer(question, answer)}
                                         value={answers[question.id] || ''}
@@ -486,13 +485,13 @@ const Questionnaire = () => {
             </View>
             <View style={styles.slide}>
                 <View style={styles.container}>
-                    <Text style={styles.HeaderText}>Component: Sleep duration</Text>
+                    <Text style={styles.HeaderText}>Sleep duration</Text>
                     <View style={styles.questionContainer}>
                         {questionsFour.map((question) => (
                             <View key={question.id}>
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
-                                    <TextInput
+                                    <TextInput style={styles.InputContainer}
                                         placeholder="Type your answer here"
                                         onChangeText={(answer) => handleAnswer(question, answer)}
                                         value={answers[question.id] || ''}
@@ -506,12 +505,13 @@ const Questionnaire = () => {
             <View style={styles.slide}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.container}>
-                        <Text style={styles.HeaderText}>Component: Sleep disturbances</Text>
+                        <Text style={styles.HeaderText}>Sleep disturbances</Text>
                         <View style={styles.questionContainer}>
                             {questionsFive.map((question) => (
                                 <View key={question.id}>
                                     <Text style={styles.questionText}>{question.question}</Text>
                                     <View style={styles.answerContainer}>
+
                                         <View style={styles.picker}>
                                             <Picker
                                                 selectedValue={answers[question.id] || ''}
@@ -534,7 +534,7 @@ const Questionnaire = () => {
             </View>
             <View style={styles.slide}>
                 <View style={styles.container}>
-                    <Text style={styles.HeaderText}>Component: Subjective sleep quality</Text>
+                    <Text style={styles.HeaderText}>Subjective sleep quality</Text>
                     <View style={styles.questionContainer}>
                         {questionsSix.map((question) => (
                             <View key={question.id}>
@@ -562,7 +562,7 @@ const Questionnaire = () => {
 
                 <View style={styles.container}>
 
-                    <Text style={styles.HeaderText}>Component: Use of sleeping medication</Text>
+                    <Text style={styles.HeaderText}>Use of sleeping medication</Text>
                     <View style={styles.questionContainer}>
                         {questionsSeven.map((question) => (
                             <View key={question.id}>
@@ -592,7 +592,7 @@ const Questionnaire = () => {
 
                 <View style={styles.container}>
 
-                    <Text style={styles.HeaderText}>Component: Daytime dysfunction</Text>
+                    <Text style={styles.HeaderText}>Daytime dysfunction</Text>
 
 
                     <View style={styles.questionContainer}>
@@ -624,7 +624,7 @@ const Questionnaire = () => {
 
                 <View style={styles.container}>
 
-                    <Text style={styles.HeaderText}>Component: Daytime dysfunction</Text>
+                    <Text style={styles.HeaderText}>Daytime dysfunction</Text>
 
 
                     <View style={styles.questionContainer}>
@@ -696,6 +696,7 @@ const Questionnaire = () => {
                                     Your Score is: {score}
                                 </Text>
 
+
                             ) : (
                                 <Text style={styles.submitDescription}>
                                     If you have finished all your questions please submit them. Your score will be
@@ -722,8 +723,14 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     HeaderText: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 'bold',
+        backgroundColor: '#0E9CDA',
+        borderRadius:20,
+        padding: 10,
+        color:'white',
+        textAlign:"center",
+
     },
 
     scrollContainer: {
@@ -738,6 +745,7 @@ const styles = StyleSheet.create({
         padding: 24,
         backgroundColor: '#ffffff',
         elevation: 2,
+        height: '90%',
     },
     headerTitle: {
         fontSize: 28,
@@ -745,14 +753,22 @@ const styles = StyleSheet.create({
         marginBottom: 32,
         textAlign: 'center',
     },
-    sectionInfoText: {
+    introText: {
 
+        marginRight: 5,
+        marginTop: 5,
+        marginBottom:30,
+        textAlign: "center",
+        color: 'grey',
+        fontSize: 16,
+    },
+    sectionInfoText: {
         fontSize: 18,
         color: 'white',
         backgroundColor: '#0E9CDA',
         paddingVertical: 2,
         paddingHorizontal: 12,
-        borderRadius:5,
+        borderRadius: 5,
         marginBottom: 30,
         textAlign: 'center',
 
@@ -762,12 +778,15 @@ const styles = StyleSheet.create({
         height: '100%',
 
     },
-    picker: {
+
+    picker:{
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 5,
+        borderRadius: 30,
         width: '100%',
         backgroundColor: '#fff',
+        elevation:5,
+
     },
     center: {
         justifyContent: "center",
@@ -787,9 +806,25 @@ const styles = StyleSheet.create({
     },
 
     questionText: {
-        fontSize: 18,
-        marginBottom: 16,
-        color: '#555',
+        marginRight: 5,
+        marginTop: 5,
+        textAlign: "center",
+        color: 'grey',
+        fontSize: 16,
+    },
+
+    InputContainer:{
+        flexDirection: 'row',
+        textAlign: 'center',
+        height: 50,
+        width: '80%',
+        borderColor: 'gray',
+
+        borderRadius: 30,
+        paddingHorizontal: 10,
+        backgroundColor: 'white',
+        elevation: 7
+
     },
     answerContainer: {
         marginVertical: 12,
@@ -829,6 +864,7 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         marginVertical: 20,
+        marginTop:250,
     },
     submitButtonText: {
         color: 'white',

@@ -38,7 +38,7 @@ const Login = ({navigation}: LoginProps) => {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <Text style={styles.title}>Welcome</Text>
                     <View style={styles.inputContainer}>
-                        <AntDesign name="user" size={24} color="#bfbfbf" />
+                        <AntDesign name="user" size={24} color="#bfbfbf"  style={styles.icon} />
                         <TextInput
                             placeholder="username"
                             value={username}
@@ -46,7 +46,7 @@ const Login = ({navigation}: LoginProps) => {
                         />
                     </View>
                     <View style={styles.inputContainer}>
-                        <AntDesign name="lock" size={24} color="#bfbfbf" />
+                        <AntDesign name="lock" size={24} color="#bfbfbf"  style={styles.icon}/>
                         <TextInput
                             placeholder="password"
                             value={password}
@@ -86,31 +86,35 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         margin: 20,
+        marginTop:20,
         color: 'white',
         width: '90%',
     },
     inputContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        textAlign: 'left',
         height: 50,
         width: '80%',
         borderColor: 'gray',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 30,
         paddingHorizontal: 10,
         marginVertical: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        elevation: 7
     },
+
     registerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     loginButton: {
-        width: '80%',
+        width: '50%',
         backgroundColor: '#0E9CDA',
         borderRadius: 5,
         paddingVertical: 15,
         marginVertical: 5,
+        marginRight: 35,
         shadowColor: '#104E8B',
         shadowOffset: {
             width: 0,
@@ -119,6 +123,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
+        alignSelf: 'flex-end'
 
     },
     registerText: {
@@ -149,6 +154,12 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
 
     },
+
+    icon:{
+        marginLeft: 10,
+        marginTop:10,
+
+    }
 });
 
 export default Login;

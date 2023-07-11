@@ -74,7 +74,7 @@ function RestrictedNavigationParent() {
 
                         <RestrictedTab.Screen name="User Profile" options={{
                             tabBarShowLabel: false,
-                            title: "Sleep Profile",
+                            title: "User Profile",
                             tabBarIcon: ({focused}) => {
                                 return <MaterialCommunityIcons name="account-circle" size={24}
                                                                color={focused ?'#0E9CDA' : "black"}/>

@@ -413,19 +413,19 @@ const styles = StyleSheet.create({
     picker: {
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 5,
+        borderRadius: 30,
         width: '100%',
         backgroundColor: '#fff',
-        elevation: 2
+        elevation:5,
     },
 
     picker2: {
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 5,
+        borderRadius: 30,
         width: '125%',
         backgroundColor: '#fff',
-        elevation: 2
+        elevation:5,
     },
     surveyContainer: {
         alignItems: 'center',
