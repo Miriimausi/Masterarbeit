@@ -576,10 +576,10 @@ class Questions(Resource):
         questionnaires = Questionnaire.query.filter(Questionnaire.type == 10).order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
 
-@question_namespace.route('/<int:id>')
+@question_namespace.route('/<int:typeId>')
 class Questions(Resource):
-    def get(self, id):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == id).order_by(Questionnaire.id.asc()).all()
+    def get(self, typeId):
+        questionnaires = Questionnaire.query.filter(Questionnaire.type == typeId).order_by(Questionnaire.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
 
 
@@ -627,5 +627,5 @@ if __name__ == '__main__':
 #     with app.app_context():
 #         recreate_db()
     app.run(debug=True)
-   # recreate_db()
+ 
 
