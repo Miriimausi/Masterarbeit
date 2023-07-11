@@ -21,7 +21,6 @@ db = SQLAlchemy(app)
 # Define data models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     isOnBoarded = db.Column(db.Boolean, nullable=False, default=False)
@@ -57,16 +56,14 @@ class Questionnaire(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     question = db.Column(db.String(200), nullable=False)
     type = db.Column(db.Integer)
-    answer =db.Column(db.String)
-    score =db.Column(db.String)
+
 
     def to_dict(self):
         return {
             'id': self.id,
             'question': self.question,
             'type':self.type,
-            'answer': self.answer,
-            'score': self.score,
+          
             
             }
 
@@ -86,7 +83,7 @@ class UserAntecedents(db.Model):
     skillPreference= db.Column(db.String)
     locationPreference= db.Column(db.String)
     emotionalPreference= db.Column(db.String)
-    accessories = db.Column(db.String)
+    accessoriesPreference = db.Column(db.String)
     userId =db.Column(db.Integer)
     sleepScore =db.Column(db.Integer)
 
@@ -106,7 +103,7 @@ class UserAntecedents(db.Model):
             'skillPreference':self.skillPreference,
             'locationPreference':self.locationPreference,
             'emotionalPreference':self.emotionalPreference,
-            'accessories':self.accessories,
+            ' accessoriesPreference':self. accessoriesPreference,
 
             'userID':self.userId,
             'sleepScore':self.sleepScore
@@ -128,7 +125,6 @@ antecedents_namespace = Namespace("Antecedents", description="handles the antece
 user_model = api.model('User', {
     'id': fields.Integer,
     'username': fields.String,
-    'email': fields.String,
     'password': fields.String,
 })
 
@@ -157,8 +153,6 @@ question_model = api.model('Questionnaire',{
     'id': fields.Integer,
     'question': fields.String,
     'type': fields.Integer,
-    'answer': fields.String,
-    'score': fields.String,
 })
 
 antecedents_model = api.model('Antecedents', {
@@ -175,7 +169,7 @@ antecedents_model = api.model('Antecedents', {
     'skillPreference':fields.String,
     'locationPreference':fields.String,
     'emotionalPreference':fields.String,
-    'accessories':fields.String,
+    'accessoriesPreference':fields.String,
     'userId': fields.Integer,
     'sleepScore': fields.Integer
 })
@@ -194,7 +188,6 @@ class Authentication(Resource):
                             'id': user.id,
                             'username': user.username,
                             'password': user.password,
-                            'email': user.email,
                             'isOnBoarded': user.isOnBoarded
                           }
             return jsonify({'success': True, 'user': user_data})
@@ -205,18 +198,17 @@ class Authentication(Resource):
 @auth_namespace.route('/register')
 class Authentication(Resource):
     def post(self):
-        email = request.json.get('email')
         username = request.json.get('username')
         password = request.json.get('password')
         
-        if not email or not username or not password:
+        if not username or not password:
             return jsonify({'success': False, 'error': 'Incomplete data'})
         
-        existing_user = User.query.filter_by(email=email, username=username).first()
+        existing_user = User.query.filter_by( username=username).first()
         if existing_user:
             return jsonify({'success': False, 'error': 'User already exists'})
         
-        new_user = User(email=email, username=username, password=password)
+        new_user = User( username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
         
@@ -239,7 +231,7 @@ class Antecedents(Resource):
         skillPreference = request.json.get('skillPreference')
         locationPreference = request.json.get('locationPreference')
         emotionalPreference = request.json.get('emotionalPreference')
-        accessories = request.json.get('accessories')
+        accessoriesPreference = request.json.get('accessoriesPreference')
         sleepScore = request.json.get('sleepScore')
         userId = request.json.get('userId')
 
@@ -260,7 +252,7 @@ class Antecedents(Resource):
                 sleepScore=sleepScore, durationPreference=durationPreference, socialPreference=socialPreference,
                 skillPreference= skillPreference,
                 locationPreference=locationPreference,
-                accessories=accessories,
+                accessoriesPreference=accessoriesPreference,
                 emotionalPreference=emotionalPreference
             )
 
@@ -340,7 +332,7 @@ class Antecedents(Resource):
             'skill': user.skillPreference if user.skillPreference else '',
             'location': user.locationPreference if user.locationPreference else '',
             'emotional': user.emotionalPreference if user.emotionalPreference else '',
-            'accessories': user.accessories if user.accessories else '',
+            'accessories': user.accessoriesPreference if user.accessoriesPreference else '',
         }
         
         modified_weights = {
@@ -399,7 +391,7 @@ class Antecedents(Resource):
             user.skillPreference = request.json.get('skillPreference')
             user.locationPreference = request.json.get('locationPreference')
             user.emotionalPreference = request.json.get('emotionalPreference')
-            user.accessories = request.json.get('accessories')
+            user.accessories = request.json.get('accessoriesPreference')
             db.session.commit()
 
             current_prefs = {
@@ -462,7 +454,7 @@ class Antecedents(Resource):
         
         antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
         if antecedent:
-            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference,'durationPreference': antecedent.durationPreference, 'socialPreference': antecedent.socialPreference, 'skillPreference': antecedent.skillPreference, 'locationPreference': antecedent.locationPreference, 'emotionalPreference': antecedent.emotionalPreference, 'accessories':antecedent.accessories}, 200
+            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference,'durationPreference': antecedent.durationPreference, 'socialPreference': antecedent.socialPreference, 'skillPreference': antecedent.skillPreference, 'locationPreference': antecedent.locationPreference, 'emotionalPreference': antecedent.emotionalPreference, 'accessoriesPreference':antecedent.accessoriesPreference}, 200
         else:
             return {'message': 'Antecedent not found'}, 404
         
@@ -508,7 +500,6 @@ class UserProfiles(Resource):
             user_data = {
             'username': user.username,
             'password': user.password,
-            'email': user.email
         }
             return jsonify({'success': True, 'user_data': user_data})
         else:
@@ -594,11 +585,10 @@ class Questions(Resource):
     def post(self):
         id = request.json.get('id')
         question = request.json.get('question')
-        answer =request.json.get('answer')
         type = request.json.get('type')
-        score =request.json.get('score')
+    
 
-        new_questions = Questions(id=id, question=question, answer=answer, type=type)
+        new_questions = Questions(id=id, question=question, type=type)
         db.session.add(new_questions)
         db.session.commit()   
 

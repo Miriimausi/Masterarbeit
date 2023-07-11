@@ -10,7 +10,6 @@ type RegisterProps = {
 const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
 
     const handleRegister = async () => {
         const response = await fetch('http://10.0.2.2:5000/auth/register', {
@@ -18,7 +17,7 @@ const Register = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password, email })
+            body: JSON.stringify({ username, password })
         });
         const data = await response.json();
         if (data.success) {
@@ -35,12 +34,6 @@ const Register = () => {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
 
             <Text style={styles.title}>User Registration</Text>
-            <TextInput
-                style={styles.inputContainer}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-            />
             <TextInput
                 style={styles.inputContainer}
                 placeholder="username"
@@ -80,7 +73,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         margin: 20,
-        color: '#29448f',
+        color: 'white',
         width: '90%',
     },
 
@@ -100,7 +93,7 @@ const styles = StyleSheet.create({
 
     registerButton: {
             width: '80%',
-            backgroundColor: '#6295c2',
+            backgroundColor: '#0E9CDA',
             borderRadius: 5,
             paddingVertical: 15,
             marginVertical: 5,

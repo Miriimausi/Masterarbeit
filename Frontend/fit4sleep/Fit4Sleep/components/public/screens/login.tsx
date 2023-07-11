@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         margin: 20,
-        color: '#29448f',
+        color: 'white',
         width: '90%',
     },
     inputContainer: {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         width: '80%',
-        backgroundColor: '#6295c2',
+        backgroundColor: '#0E9CDA',
         borderRadius: 5,
         paddingVertical: 15,
         marginVertical: 5,
