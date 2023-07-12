@@ -29,6 +29,8 @@ interface SurveyResponse {
     locationPreference: String;
     emotionalPreference: String;
 
+    accessories: String;
+
 }
 
 const OnboardingSurvey = () => {
@@ -48,7 +50,7 @@ const OnboardingSurvey = () => {
         skillPreference: '',
         locationPreference: '',
         emotionalPreference: '',
-
+        accessories: '',
 
     });
 
@@ -95,7 +97,9 @@ const OnboardingSurvey = () => {
     const handleIntensityChange = (intensityPreference: string) => {
         setResponse({...response, intensityPreference: intensityPreference});
     };
-
+    const handleAccessoriesChange = (accessories: string) => {
+        setResponse({...response, accessories: accessories});
+    };
 
     const handleSubmit = async () => {
         const requestBody = {
@@ -111,6 +115,7 @@ const OnboardingSurvey = () => {
             socialPreference: response.socialPreference,
             locationPreference: response.locationPreference,
             emotionalPreference: response.emotionalPreference,
+            accessories: response.accessories,
 
             userId: userId,
         };
@@ -185,24 +190,7 @@ const OnboardingSurvey = () => {
             < View style={styles.slide}>
                 <Text style={styles.headerText}>Activity Assessment</Text>
 
-                <View style={styles.field}>
-                    <Text style={styles.label}> <Icon name="schedule" size={24} color="#0E9CDA"/> Time
-                        Availability: </Text>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={response.timeAvailability}
-                            onValueChange={(value) =>
-                                setResponse({...response, timeAvailability: value})
-                            }
-                        >
-                            <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="Morning" value="morning"/>
-                            <Picker.Item label="Midday" value="midday"/>
-                            <Picker.Item label="Afternoon" value="afternoon"/>
-                            <Picker.Item label="Evening" value="evening"/>
-                        </Picker>
-                    </View>
-                </View>
+
                 <View style={styles.field}>
                     <Text style={styles.label}> <Icon name="bolt" size={24} color="#0E9CDA"/> Workout Intensity Preference </Text>
                     <View style={styles.picker}>
@@ -249,6 +237,25 @@ const OnboardingSurvey = () => {
                             <Picker.Item label="HIIT" value="hiit"/>
                             <Picker.Item label="Endurance Training" value="endurance"/>
                             <Picker.Item label="Strength Training " value="strength"/>
+                        </Picker>
+                    </View>
+                </View>
+                <View style={styles.field}>
+                    <Text style={styles.label}> <Icon name="sports-tennis" size={24}
+                                                      color="#0E9CDA"/> Equipment:</Text>
+                    <View style={styles.picker}>
+
+                        <Picker
+                            selectedValue={response.accessories}
+                            onValueChange={(value) =>
+                                setResponse({...response, accessories: value})
+                            }
+                        >
+
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="I want to use Equipment" value="with_accessories"/>
+                            <Picker.Item label="I do not want to use Equipment" value="without_accessories"/>
+
                         </Picker>
                     </View>
                 </View>
