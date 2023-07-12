@@ -334,7 +334,6 @@ const Recommender = ({navigation}: RecommenderProps) => {
                                 width="50%"
                                 navigation={navigation}
                                 activity={
-                                    response.timeAvailability === 'afternoon' ||
                                     response.timeAvailability === 'evening'
                                         ? activities.find(activity => activity.intensity === 'Moderate') || activities[0]
                                         : activities[0]
