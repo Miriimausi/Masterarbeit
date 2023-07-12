@@ -56,15 +56,13 @@ const Recommender = ({navigation}: RecommenderProps) => {
             accessories: '',
         });
         const ActivityItem = (props: IActivityItemProps) => {
-
-
             return (
                 <TouchableOpacity style={[styles.tile, {width: props.width}]}
                                   onPress={() => props.navigation.navigate('ActivitiesDetails', {activity: props.activity})}>
-                    <Image source={{uri: props.activity.imageUrl}} style={[styles.tileImage, {height: props.imageHeight}]}/>
+                    <Image source={{uri: props.activity.imageUrl}} style={{width:180, height: 180, marginTop: 24, marginBottom: 6, borderRadius: 10}}/>
                     <View style={styles.tileDetails}>
-                        <Text style={styles.tileTitle}>{props.activity.name}</Text>
-                        <Text style={styles.tileDescription}>{props.activity.description}</Text>
+                        <Text style={[styles.textCentered, styles.tileTitle]}>{props.activity.name}</Text>
+                        <Text style={[styles.textCentered,styles.tileDescription]}>{props.activity.description}</Text>
                     </View>
                 </TouchableOpacity>
             )
@@ -120,7 +118,6 @@ const Recommender = ({navigation}: RecommenderProps) => {
                     const data = await response.json();
                     setActivities(data.activities);
                     setShowRecommendedActivity(true);
-                    console.log(data);
                 } catch (error) {
                     // Handle the error
                     console.error(error);
@@ -331,7 +328,7 @@ const Recommender = ({navigation}: RecommenderProps) => {
                         {activities.length > 0 && (
                             <ActivityItem
                                 imageHeight={150}
-                                width="50%"
+                                width="80%"
                                 navigation={navigation}
                                 activity={
                                     response.timeAvailability === 'afternoon' ||
@@ -432,7 +429,6 @@ const styles = StyleSheet.create({
         height: '70%',
         marginBottom: 30,
         backgroundColor: 'white',
-        borderRadius: 20,
         padding: 20,
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 2},
@@ -479,10 +475,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     tile: {
+        justifyContent:"center",
+        alignItems:"center",
         backgroundColor: '#fff',
         marginBottom: 10,
         marginHorizontal: 5,
-        borderRadius: 10,
         overflow: 'hidden',
     },
     tileImage: {
@@ -500,5 +497,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 5,
     },
+    textCentered: {
+        textAlign:"center"
+    }
 });
 export default Recommender;

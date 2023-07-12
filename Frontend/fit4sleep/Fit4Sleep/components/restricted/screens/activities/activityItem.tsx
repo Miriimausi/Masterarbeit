@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingTop: 20,
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
     },
     title: {
         fontSize: 24,
@@ -55,9 +55,10 @@ const styles = StyleSheet.create({
     tile: {
         backgroundColor: '#fff',
         marginBottom: 10,
-        marginHorizontal: 5,
+        // marginHorizontal: 5,
         borderRadius: 10,
         overflow: 'hidden',
+        elevation: 4
     },
     tileImage: {
         width: '100%',
