@@ -19,13 +19,13 @@ db = SQLAlchemy(app)
 
 
 # Define data models
-class User(db.Model):
+class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     isOnBoarded = db.Column(db.Boolean, nullable=False, default=False)
 
-class Activity(db.Model):
+class Activities(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(120), nullable=False)
@@ -52,7 +52,7 @@ class Activity(db.Model):
             'accessories': self.accessories}
 
 
-class Questionnaire(db.Model):
+class Questionnaires(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     question = db.Column(db.String(200), nullable=False)
     type = db.Column(db.Integer)
@@ -116,13 +116,13 @@ api = Api(app, version='1.0', title='My App API',
           description='API for my app')
 
 auth_namespace= Namespace("auth", description="handles authentication")
-activity_namespace =Namespace("activities", description="handles activities")
+activities_namespace =Namespace("activities", description="handles activities")
 userProfile_namespace =Namespace("UserProfile", description="handles the UserProfile")
 question_namespace = Namespace("Questionnaire", description="handles the questions")
 antecedents_namespace = Namespace("Antecedents", description="handles the antecedents of the users")
 
 # Define data model for API documentation
-user_model = api.model('User', {
+user_model = api.model('Users', {
     'id': fields.Integer,
     'username': fields.String,
     'password': fields.String,
@@ -134,7 +134,7 @@ user_login_model = api.model('UserLogin', {
 
 })
 
-activity_model = api.model('Activity', {
+activity_model = api.model('Activities', {
     'id': fields.Integer,
     'name': fields.String,
     'description': fields.String,
@@ -149,7 +149,7 @@ activity_model = api.model('Activity', {
     'accessories': fields.String
 })
 
-question_model = api.model('Questionnaire',{
+question_model = api.model('Questionnaires',{
     'id': fields.Integer,
     'question': fields.String,
     'type': fields.Integer,
@@ -182,13 +182,13 @@ class Authentication(Resource):
     def post(self):
         username = request.json.get('username')
         password = request.json.get('password')
-        user = User.query.filter_by(username=username, password=password).first()
-        if user is not None:
+        users = Users.query.filter_by(username=username, password=password).first()
+        if users is not None:
             user_data = {
-                            'id': user.id,
-                            'username': user.username,
-                            'password': user.password,
-                            'isOnBoarded': user.isOnBoarded
+                            'id': users.id,
+                            'username': users.username,
+                            'password': users.password,
+                            'isOnBoarded': users.isOnBoarded
                           }
             return jsonify({'success': True, 'user': user_data})
         else:
@@ -204,11 +204,11 @@ class Authentication(Resource):
         if not username or not password:
             return jsonify({'success': False, 'error': 'Incomplete data'})
         
-        existing_user = User.query.filter_by( username=username).first()
+        existing_user = Users.query.filter_by( username=username).first()
         if existing_user:
             return jsonify({'success': False, 'error': 'User already exists'})
         
-        new_user = User( username=username, password=password)
+        new_user = Users( username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
         
@@ -236,19 +236,19 @@ class Antecedents(Resource):
         userId = request.json.get('userId')
 
         
-        user = User.query.get(userId)
-        userAntecedents = UserAntecedents.query.filter_by(userId=user.id).first()
+        users = Users.query.get(userId)
+        userAntecedents = UserAntecedents.query.filter_by(userId=users.id).first()
 
         if userAntecedents is not None:
             return {'success': False, 'error': 'User already has related antecedents'}, 409
 
-        if user is not None:
+        if users is not None:
             new_antecedents = UserAntecedents(
                 id=id, age=age, height=height, weight=weight, bmi=bmi,
                 timeAvailability=timeAvailability,
                 trainingPreference=trainingPreference,
                 intensityPreference=intensityPreference,
-                userId = user.id,
+                userId = users.id,
                 sleepScore=sleepScore, durationPreference=durationPreference, socialPreference=socialPreference,
                 skillPreference= skillPreference,
                 locationPreference=locationPreference,
@@ -258,7 +258,7 @@ class Antecedents(Resource):
 
             if new_antecedents is not None:
                 # Update the user's isOnBoarded field to True
-                user.isOnBoarded = True
+                users.isOnBoarded = True
                 db.session.add(new_antecedents)
                 db.session.commit()
 
@@ -270,7 +270,7 @@ class Antecedents(Resource):
 
 
 
-def calculate_modified_dice_coefficients(item: dict, other_items: list[Activity], modified_weights: dict = None):
+def calculate_modified_dice_coefficients(item: dict, other_items: list[Activities], modified_weights: dict = None):
     """
     Calculates the Dice coefficient for each item in the list, using the modified weights
     
@@ -319,7 +319,7 @@ class Antecedents(Resource):
     def get(self, user_id):
 
         user = UserAntecedents.query.filter_by(userId=user_id).first()
-        activities = Activity.query.all()
+        activities = Activities.query.all()
 
         if user is None:
             return {'success': False, 'error': 'User not found'}, 404
@@ -378,7 +378,7 @@ class Antecedents(Resource):
     class Antecedents(Resource):
         def post(self, user_id):
             user = UserAntecedents.query.filter_by(userId=user_id).first()
-            activities = Activity.query.all()
+            activities = Activities.query.all()
 
             if user is None:
                 return {'success': False, 'error': 'User not found'}, 404
@@ -494,7 +494,7 @@ class UserProfiles(Resource):
     def get(self):
         username = request.json.get('username')
         password = request.json.get('password')
-        user = User.query.filter_by(username=username, password=password).first()
+        user = Users.query.filter_by(username=username, password=password).first()
         if user is not None:
              # get user data
             user_data = {
@@ -510,67 +510,67 @@ class UserProfiles(Resource):
 @question_namespace.route('/typeone')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 1).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 1).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
 @question_namespace.route('/typetwo')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 2).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 2).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
 @question_namespace.route('/typethree')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 3).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 3).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
 @question_namespace.route('/typefour')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 4).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 4).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
 @question_namespace.route('/typefive')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 5).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 5).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
 @question_namespace.route('/typesix')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 6).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 6).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
     
 @question_namespace.route('/typeseven')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 7).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 7).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
 
 @question_namespace.route('/typeeight')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 8).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 8).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])     
 
 @question_namespace.route('/typenine')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 9).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 9).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])  
     
 @question_namespace.route('/typeten')
 class Questions(Resource):
     def get(self):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == 10).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == 10).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
 
 @question_namespace.route('/<int:typeId>')
 class Questions(Resource):
     def get(self, typeId):
-        questionnaires = Questionnaire.query.filter(Questionnaire.type == typeId).order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.filter(Questionnaires.type == typeId).order_by(Questionnaires.id.asc()).all()
         return jsonify([questionnaire.to_dict() for questionnaire in questionnaires])
 
 
@@ -578,7 +578,7 @@ class Questions(Resource):
 class Questions(Resource):
     @api.marshal_with(question_model, as_list=True)
     def get(self):
-        questionnaires = Questionnaire.query.order_by(Questionnaire.id.asc()).all()
+        questionnaires = Questionnaires.query.order_by(Questionnaires.id.asc()).all()
         return questionnaires
 
     @api.expect(question_model)
@@ -593,10 +593,10 @@ class Questions(Resource):
         db.session.commit()   
 
                
-@activity_namespace.route('/')
+@activities_namespace.route('/')
 class ActivityList(Resource):
     def get(self):
-        activities = Activity.query.order_by(Activity.id.asc()).all()
+        activities = Activities.query.order_by(Activities.id.asc()).all()
         return jsonify([activity.to_dict() for activity in activities])
     
 
@@ -608,7 +608,7 @@ def recreate_db():
 
 
 api.add_namespace(auth_namespace)
-api.add_namespace(activity_namespace)
+api.add_namespace(activities_namespace)
 api.add_namespace(userProfile_namespace)
 api.add_namespace(question_namespace)
 api.add_namespace(antecedents_namespace)
