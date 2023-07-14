@@ -3,7 +3,7 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity, Image,
+    TouchableOpacity, Image, SafeAreaView, ScrollView,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Swiper from 'react-native-swiper';
@@ -55,15 +55,12 @@ const Recommender = ({navigation}: RecommenderProps) => {
             emotionalPreference: '',
             accessories: '',
         });
-        const ActivityItem = (props: IActivityItemProps) => {
+        const ActivityItem = (props: any) => {
             return (
-                <TouchableOpacity style={[styles.tile, {width: props.width}]}
+                <TouchableOpacity style={{width: "100%", height: "100%", borderRadius: 15}}
                                   onPress={() => props.navigation.navigate('ActivitiesDetails', {activity: props.activity})}>
-                    <Image source={{uri: props.activity.imageUrl}} style={{width:180, height: 180, marginTop: 24, marginBottom: 6, borderRadius: 10}}/>
-                    <View style={styles.tileDetails}>
-                        <Text style={[styles.textCentered, styles.tileTitle]}>{props.activity.name}</Text>
-                        <Text style={[styles.textCentered,styles.tileDescription]}>{props.activity.description}</Text>
-                    </View>
+                    <Image source={{uri: props.activity.imageUrl}}
+                           style={{width: "100%", height: "100%", resizeMode: "cover", borderRadius: 15}}/>
                 </TouchableOpacity>
             )
 
@@ -81,6 +78,7 @@ const Recommender = ({navigation}: RecommenderProps) => {
         const [accessories, setAccessories] = useState<number | null>(null);
         const [activities, setActivities] = useState<Activity[]>([]);
         const [showRecommendedActivity, setShowRecommendedActivity] = useState(false);
+        const [isEditingPreferences, setIsEditingPreferences] = useState<boolean>(false);
 
         useEffect(() => {
             axios
@@ -130,7 +128,6 @@ const Recommender = ({navigation}: RecommenderProps) => {
         const handleSubmit = async () => {
 
 
-
             const requestBody = {
                 age: response.age,
                 height: response.height,
@@ -168,34 +165,104 @@ const Recommender = ({navigation}: RecommenderProps) => {
 
 
         return (
-            <Swiper showsButtons={true} loop={false}>
+            <>
+                {
+                    !isEditingPreferences &&
+                    <SafeAreaView style={{backgroundColor: "white", height: "100%"}}>
+                        <View
+                            style={{width: "100%", justifyContent: "center", alignItems: "center", marginVertical: 24}}>
+                            <Text style={styles.headerText}>Which workout should we do today?</Text>
+                            <View style={{
+                                height: 280,
+                                width: 280,
+                                backgroundColor: "#e8e3e3",
+                                borderRadius: 15,
+                                borderColor: "#8d8a8a",
+                                elevation: 1
+                            }}>
+                                {
+                                    activities.length > 0 &&
+                                    <ActivityItem activity={activities[0]} navigation={navigation}/>
+                                }
+                                {
+                                    activities.length <= 0 &&
+                                    <View style={{
+                                        width: "100%",
+                                        paddingHorizontal: 18,
+                                        alignSelf: "center",
+                                        height: "100%",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}>
+                                        <Text style={{fontSize: 18, textAlign: "center", color: "#8d8a8a"}}>Press the
+                                            recommend
+                                            button to get an activity recommended based on your
+                                            preferences.</Text>
+                                    </View>
+                                }
 
-                <View style={styles.slide}>
-                    <Text style={styles.headerText}>Which workout should we do today? </Text>
-                    <View style={styles.field}>
-                        <Text style={styles.label}> <Icon name="schedule" size={24} color="#0E9CDA"/> Time
-                            Availability: {timeAvailability}</Text>
-                        <View style={styles.picker}>
+                            </View>
+                            {
+                                activities.length > 0 &&
+                                <View style={styles.tileDetails}>
+                                    <Text style={[styles.tileTitle]}>{activities[0].name}</Text>
+                                    <Text style={[styles.tileDescription]}>{activities[0].description}</Text>
+                                </View>
+                            }
+                        </View>
+                        <View>
+                            <TouchableOpacity style={[styles.button]} onPress={handleSubmit}>
+                                <Text style={styles.buttonText}>Recommend</Text>
+                            </TouchableOpacity>
+                            <View style={{
+                                alignSelf: "center",
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}>
+                                <View style={{backgroundColor: "#9a9898", height: 1, width: 100}}/>
+                                <Text style={{
+                                    marginHorizontal: 15,
+                                    marginVertical: 6,
+                                    color: "#9a9898",
+                                    fontSize: 15
+                                }}>or</Text>
+                                <View style={{backgroundColor: "#9a9898", height: 1, width: 100}}/>
 
+                            </View>
+                            <TouchableOpacity style={[styles.outlinedButton]} onPress={() => {
+                                setIsEditingPreferences(true);
+                            }}>
+                                <Text style={styles.outlinedButtonText}>Change Preferences</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </SafeAreaView>
+                }
+                {
+                    isEditingPreferences &&
+                    <ScrollView style={{paddingHorizontal: "2.5%", height: "100%", backgroundColor: "white"}}>
+                        <Text style={{fontSize: 16, fontWeight: "bold", marginTop: 24, marginBottom: 9}}>Preferred
+                            Time</Text>
+                        <View style={styles.newPicker}>
                             <Picker
+                                placeholder={"Select Time"}
                                 selectedValue={response.timeAvailability}
                                 onValueChange={(value) =>
                                     setResponse({...response, timeAvailability: value})
                                 }
                             >
 
-                                <Picker.Item label="Select" value=""/>
                                 <Picker.Item label="Morning" value="morning"/>
                                 <Picker.Item label="Midday" value="midday"/>
                                 <Picker.Item label="Afternoon" value="afternoon"/>
                                 <Picker.Item label="Evening" value="evening"/>
                             </Picker>
                         </View>
-                    </View>
-                    <View style={styles.field}>
-                        <Text style={styles.label}> <Icon name="trending-up" size={24} color="#0E9CDA"/> Skill
-                            Level: {skillPreference}</Text>
-                        <View style={styles.picker}>
+                        <Text style={{fontSize: 16, fontWeight: "bold", marginTop: 18, marginBottom: 9}}>Skill
+                            Level</Text>
+                        <View style={styles.newPicker}>
 
                             <Picker
                                 selectedValue={response.skillPreference}
@@ -203,151 +270,257 @@ const Recommender = ({navigation}: RecommenderProps) => {
                                     setResponse({...response, skillPreference: value})
                                 }
                             >
-
-                                <Picker.Item label="Select" value=""/>
                                 <Picker.Item label="I am a beginner" value="beginner"/>
                                 <Picker.Item label="I want a challenge" value="intermediate"/>
 
                             </Picker>
                         </View>
-                    </View>
-                    <View style={styles.field}>
-                        <Text style={styles.label}> <Icon name="more-time" size={30} color="#0E9CDA"/> Duration
-                            Availability: {durationPreference}</Text>
-                        <View style={styles.picker}>
+                        <Text style={{fontSize: 16, fontWeight: "bold", marginTop: 18, marginBottom: 9}}>Preferred
+                            Duration</Text>
+                        <View style={styles.newPicker}>
                             <Picker
                                 selectedValue={response.durationPreference}
                                 onValueChange={(value) =>
                                     setResponse({...response, durationPreference: value})
                                 }
                             >
-                                <Picker.Item label="Select" value=""/>
                                 <Picker.Item label="between 15-30 Minutes" value="short_duration"/>
                                 <Picker.Item label="between 30-60 Minutes" value="medium_duration"/>
                                 <Picker.Item label="more than 60 Minutes" value="long_duration"/>
                             </Picker>
                         </View>
-                    </View>
-                    <View style={styles.field}>
-                        <Text style={styles.label}> <Icon name="directions-run" size={30} color="#0E9CDA"/> Activity
-                            Preference: {trainingPreference} </Text>
-                        <View style={styles.picker}>
+                        <Text style={{fontSize: 16, fontWeight: "bold", marginTop: 18, marginBottom: 9}}>Preferred
+                            Intensity</Text>
+                        <View style={styles.newPicker}>
                             <Picker
                                 selectedValue={response.trainingPreference}
                                 onValueChange={(value) =>
                                     setResponse({...response, trainingPreference: value})
                                 }
                             >
-                                <Picker.Item label="Select" value=""/>
                                 <Picker.Item label="HIIT" value="hiit"/>
                                 <Picker.Item label="Endurance Training" value="endurance"/>
                                 <Picker.Item label="Strength Training " value="strength"/>
                             </Picker>
                         </View>
-                    </View>
-                </View>
-                <View style={styles.slide}>
-                    <View style={styles.field}>
-                        <Text style={styles.label}> <Icon name="groups" size={30} color="#0E9CDA"/> Social
-                            Preference: {socialPreference}</Text>
-                        <View style={styles.picker}>
+                        <Text style={{fontSize: 16, fontWeight: "bold", marginTop: 18, marginBottom: 9}}>Preferred
+                            Location</Text>
+                        <View style={styles.newPicker}>
                             <Picker
-                                selectedValue={response.socialPreference}
+                                selectedValue={response.locationPreference}
                                 onValueChange={(value) =>
-                                    setResponse({...response, socialPreference: value})
+                                    setResponse({...response, locationPreference: value})
                                 }
                             >
-                                <Picker.Item label="Select" value=""/>
-                                <Picker.Item label="I want to workout alone" value="single"/>
-                                <Picker.Item label="I want to workout in a group" value="group"/>
+                                <Picker.Item label="I want to workout outdoors" value="outdoor"/>
+                                <Picker.Item label="I want to workout indoors" value="indoor"/>
+                            </Picker>
+                        </View>
+                        <Text style={{fontSize: 16, fontWeight: "bold", marginTop: 18, marginBottom: 9}}>Emotional
+                            Preference</Text>
+                        <View style={styles.newPicker}>
+                            <Picker
+                                selectedValue={response.emotionalPreference}
+                                onValueChange={(value) =>
+                                    setResponse({...response, emotionalPreference: value})
+                                }
+                            >
+                                <Picker.Item label="I want a workout that relaxes me" value="relaxing"/>
+                                <Picker.Item label="I want a workout that make me sweat!" value="exciting"/>
 
                             </Picker>
                         </View>
-                        <View style={styles.field}>
-                            <Text style={styles.label}> <Icon name="sports-tennis" size={24}
-                                                              color="#0E9CDA"/> Equipment: {accessories}</Text>
-                            <View style={styles.picker2}>
-
-                                <Picker
-                                    selectedValue={response.accessories}
-                                    onValueChange={(value) =>
-                                        setResponse({...response, accessories: value})
-                                    }
-                                >
-
-                                    <Picker.Item label="Select" value=""/>
-                                    <Picker.Item label="I want to use Equipment" value="with_accessories"/>
-                                    <Picker.Item label="I do not want to use Equipment" value="without_accessories"/>
-
-                                </Picker>
-                            </View>
-                        </View>
-                        <View style={styles.field}>
-                            <Text style={styles.label}> <Icon name="pin-drop" size={30} color="#0E9CDA"/> Location
-                                Preference: {locationPreference}</Text>
-                            <View style={styles.picker2}>
-                                <Picker
-                                    selectedValue={response.locationPreference}
-                                    onValueChange={(value) =>
-                                        setResponse({...response, locationPreference: value})
-                                    }
-                                >
-                                    <Picker.Item label="Select" value=""/>
-                                    <Picker.Item label="I want to workout outdoors" value="outdoor"/>
-                                    <Picker.Item label="I want to workout indoors" value="indoor"/>
-
-                                </Picker>
-                            </View>
-                        </View>
-                        <View style={styles.field}>
-                            <Text style={styles.label}> <Icon name="sentiment-satisfied" size={30}
-                                                              color="#0E9CDA"/> Emotional
-                                Preference: {emotionalPreference} </Text>
-                            <View style={styles.picker2}>
-                                <Picker
-                                    selectedValue={response.emotionalPreference}
-                                    onValueChange={(value) =>
-                                        setResponse({...response, emotionalPreference: value})
-                                    }
-                                >
-                                    <Picker.Item label="Select" value=""/>
-                                    <Picker.Item label="I want a workout that relax me" value="relaxing"/>
-                                    <Picker.Item label="I want a workout that make me sweat!" value="exciting"/>
-
-                                </Picker>
-                            </View>
-                        </View>
-
-                    </View>
-                </View>
-                <View style={styles.slide}>
-                    <View style={styles.surveyContainer}>
-                        <Text style={styles.surveyText}>
-                            The best Workout for you will be selected.
-                        </Text>
-                        {activities.length > 0 && (
-                            <ActivityItem
-                                imageHeight={150}
-                                width="80%"
-                                navigation={navigation}
-                                activity={
-                                    response.timeAvailability === 'evening'
-                                        ? activities.find(activity => activity.intensity === 'Moderate') || activities[0]
-                                        : activities[0]
-                                }
-                            />
-                        )}
-                    </View>
-
-                    <View style={styles.field}>
-                        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                            <Text style={styles.buttonText}>Submit</Text>
+                        <TouchableOpacity style={[styles.preferencesButton]} onPress={() => {
+                            setIsEditingPreferences(false);
+                        }}>
+                            <Text style={styles.buttonText}>Save</Text>
                         </TouchableOpacity>
-                    </View>
-                </View>
 
+                    </ScrollView>
+            }
 
-            </Swiper>
+            </>
+
+            // <Swiper showsButtons={true} loop={false}>
+            //
+            // <View style={styles.slide}>
+            // <Text style={styles.headerText}>Which workout should we do today? </Text>
+            // <View style={styles.field}>
+            // <Text style={styles.label}> <Icon name="schedule" size={24} color="#0E9CDA"/> Time
+            // Availability: {timeAvailability}</Text>
+            // <View style={styles.picker}>
+            //
+            // <Picker
+            //                     placeholder={"Select Time"}
+            //                     selectedValue={response.timeAvailability}
+            //                     onValueChange={(value) =>
+            //                         setResponse({...response, timeAvailability: value})
+            //                     }
+            //                 >
+            //
+            //                     <Picker.Item label="Morning" value="morning"/>
+            //                     <Picker.Item label="Midday" value="midday"/>
+            //                     <Picker.Item label="Afternoon" value="afternoon"/>
+            //                     <Picker.Item label="Evening" value="evening"/>
+            //                 </Picker>
+            //             </View>
+            //         </View>
+            //         <View style={styles.field}>
+            //             <Text style={styles.label}> <Icon name="trending-up" size={24} color="#0E9CDA"/> Skill
+            //                 Level: {skillPreference}</Text>
+            //             <View style={styles.picker}>
+            //
+            //                 <Picker
+            //                     selectedValue={response.skillPreference}
+            //                     onValueChange={(value) =>
+            //                         setResponse({...response, skillPreference: value})
+            //                     }
+            //                 >
+            //
+            //                     <Picker.Item label="Select" value=""/>
+            //                     <Picker.Item label="I am a beginner" value="beginner"/>
+            //                     <Picker.Item label="I want a challenge" value="intermediate"/>
+            //
+            //                 </Picker>
+            //             </View>
+            //         </View>
+            //         <View style={styles.field}>
+            //             <Text style={styles.label}> <Icon name="more-time" size={30} color="#0E9CDA"/> Duration
+            //                 Availability: {durationPreference}</Text>
+            //             <View style={styles.picker}>
+            //                 <Picker
+            //                     selectedValue={response.durationPreference}
+            //                     onValueChange={(value) =>
+            //                         setResponse({...response, durationPreference: value})
+            //                     }
+            //                 >
+            //                     <Picker.Item label="Select" value=""/>
+            //                     <Picker.Item label="between 15-30 Minutes" value="short_duration"/>
+            //                     <Picker.Item label="between 30-60 Minutes" value="medium_duration"/>
+            //                     <Picker.Item label="more than 60 Minutes" value="long_duration"/>
+            //                 </Picker>
+            //             </View>
+            //         </View>
+            // //         <View style={styles.field}>
+            //             <Text style={styles.label}> <Icon name="directions-run" size={30} color="#0E9CDA"/> Activity
+            //                 Preference: {trainingPreference} </Text>
+            //             <View style={styles.picker}>
+            //                 <Picker
+            //                     selectedValue={response.trainingPreference}
+            //                     onValueChange={(value) =>
+            //                         setResponse({...response, trainingPreference: value})
+            //                     }
+            //                 >
+            //                     <Picker.Item label="Select" value=""/>
+            //                     <Picker.Item label="HIIT" value="hiit"/>
+            //                     <Picker.Item label="Endurance Training" value="endurance"/>
+            //                     <Picker.Item label="Strength Training " value="strength"/>
+            //                 </Picker>
+            //             </View>
+            //         </View>
+            //     </View>
+            //     <View style={styles.slide}>
+            //         <View style={styles.field}>
+            //             <Text style={styles.label}> <Icon name="groups" size={30} color="#0E9CDA"/> Social
+            //                 Preference: {socialPreference}</Text>
+            //             <View style={styles.picker}>
+            //                 <Picker
+            //                     selectedValue={response.socialPreference}
+            //                     onValueChange={(value) =>
+            //                         setResponse({...response, socialPreference: value})
+            //                     }
+            //                 >
+            //                     <Picker.Item label="Select" value=""/>
+            //                     <Picker.Item label="I want to workout alone" value="single"/>
+            //                     <Picker.Item label="I want to workout in a group" value="group"/>
+            //
+            //                 </Picker>
+            //             </View>
+            //             <View style={styles.field}>
+            //                 <Text style={styles.label}> <Icon name="sports-tennis" size={24}
+            //                                                   color="#0E9CDA"/> Equipment: {accessories}</Text>
+            //                 <View style={styles.picker2}>
+            //
+            //                     <Picker
+            //                         selectedValue={response.accessories}
+            //                         onValueChange={(value) =>
+            //                             setResponse({...response, accessories: value})
+            //                         }
+            //                     >
+            //
+            //                         <Picker.Item label="Select" value=""/>
+            //                         <Picker.Item label="I want to use Equipment" value="with_accessories"/>
+            //                         <Picker.Item label="I do not want to use Equipment" value="without_accessories"/>
+            //
+            //                     </Picker>
+            //                 </View>
+            //             </View>
+            //             <View style={styles.field}>
+            //                 <Text style={styles.label}> <Icon name="pin-drop" size={30} color="#0E9CDA"/> Location
+            //                     Preference: {locationPreference}</Text>
+            //                 <View style={styles.picker2}>
+            //                     <Picker
+            //                         selectedValue={response.locationPreference}
+            //                         onValueChange={(value) =>
+            //                             setResponse({...response, locationPreference: value})
+            //                         }
+            //                     >
+            //                         <Picker.Item label="Select" value=""/>
+            //                         <Picker.Item label="I want to workout outdoors" value="outdoor"/>
+            //                         <Picker.Item label="I want to workout indoors" value="indoor"/>
+            //
+            //                     </Picker>
+            //                 </View>
+            //             </View>
+            //             <View style={styles.field}>
+            //                 <Text style={styles.label}> <Icon name="sentiment-satisfied" size={30}
+            //                                                   color="#0E9CDA"/> Emotional
+            //                     Preference: {emotionalPreference} </Text>
+            //                 <View style={styles.picker2}>
+            //                     <Picker
+            //                         selectedValue={response.emotionalPreference}
+            //                         onValueChange={(value) =>
+            //                             setResponse({...response, emotionalPreference: value})
+            //                         }
+            //                     >
+            //                         <Picker.Item label="Select" value=""/>
+            //                         <Picker.Item label="I want a workout that relax me" value="relaxing"/>
+            //                         <Picker.Item label="I want a workout that make me sweat!" value="exciting"/>
+            //
+            //                     </Picker>
+            //                 </View>
+            //             </View>
+            //
+            //         </View>
+            //     </View>
+            //     <View style={styles.slide}>
+            //         <View style={styles.surveyContainer}>
+            //             <Text style={styles.surveyText}>
+            //                 The best Workout for you will be selected.
+            //             </Text>
+            //             {activities.length > 0 && (
+            //                 <ActivityItem
+            //                     imageHeight={150}
+            //                     width="80%"
+            //                     navigation={navigation}
+            //                     activity={
+            //                         response.timeAvailability === 'evening'
+            //                             ? activities.find(activity => activity.intensity === 'Moderate') || activities[0]
+            //                             : activities[0]
+            //                     }
+            //                 />
+            //             )}
+            //         </View>
+            //
+            //         <View style={styles.field}>
+            //             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            //                 <Text style={styles.buttonText}>Submit</Text>
+            //             </TouchableOpacity>
+            //         </View>
+            //     </View>
+            //
+            //
+            // </Swiper>
 
         )
             ;
@@ -358,6 +531,7 @@ const Recommender = ({navigation}: RecommenderProps) => {
 
 
 const styles = StyleSheet.create({
+
     imageBackground: {
         flex: 1,
         resizeMode: 'cover',
@@ -377,9 +551,10 @@ const styles = StyleSheet.create({
 
     },
     headerText: {
+        maxWidth: "80%",
         fontWeight: "bold",
         fontSize: 20,
-        marginBottom: 9,
+        marginBottom: 24,
         color: 'black'
     },
 
@@ -412,16 +587,23 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         width: '100%',
         backgroundColor: '#fff',
-        elevation:5,
+        elevation: 5,
     },
-
+    newPicker: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        width: '100%',
+        backgroundColor: '#fff',
+        elevation: 2,
+    },
     picker2: {
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 30,
         width: '125%',
         backgroundColor: '#fff',
-        elevation:5,
+        elevation: 5,
     },
     surveyContainer: {
         alignItems: 'center',
@@ -458,8 +640,34 @@ const styles = StyleSheet.create({
         width: '80%',
         alignSelf: "center"
     },
+    preferencesButton: {
+        backgroundColor: '#0E9CDA',
+        borderRadius: 4,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        width: '100%',
+        marginTop: 24,
+        alignSelf: "center"
+    },
     buttonText: {
         color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+
+    outlinedButton: {
+        borderRadius: 4,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        width: '80%',
+        alignSelf: "center",
+        borderColor: "#0E9CDA",
+        borderWidth: 1,
+        justifyContent: "center", alignItems: "center"
+    },
+    outlinedButtonText: {
+        color: "#0E9CDA",
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center'
@@ -474,8 +682,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     tile: {
-        justifyContent:"center",
-        alignItems:"center",
+        justifyContent: "center",
+        alignItems: "center",
         backgroundColor: '#fff',
         marginBottom: 10,
         marginHorizontal: 5,
@@ -485,7 +693,8 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     tileDetails: {
-        padding: 10,
+        marginTop: 32,
+        maxWidth: "85%"
     },
     tileTitle: {
         fontSize: 18,
@@ -497,7 +706,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     textCentered: {
-        textAlign:"center"
+        textAlign: "center"
     }
 });
 export default Recommender;
