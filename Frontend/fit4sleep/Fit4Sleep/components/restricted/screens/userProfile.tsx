@@ -29,7 +29,7 @@ const UserProfile = () => {
     const [socialPreference, setSocialPreference] = useState<number | null>(null);
     const [locationPreference, setLocationPreference] = useState<number | null>(null);
     const [emotionalPreference, setEmotionalPreference] = useState<number | null>(null);
-    const [accessories, setAccessories] = useState<number | null>(null);
+    const [accessoriesPreference, setAccessoriesPreference] = useState<number | null>(null);
 
     const handleEditButtonPress = () => {
         setEditMode(true);
@@ -63,7 +63,7 @@ const UserProfile = () => {
                 setSocialPreference(response.data.socialPreference);
                 setLocationPreference(response.data.locationPreference);
                 setEmotionalPreference(response.data.emotionalPreference);
-                setAccessories(response.data.accessories);
+                setAccessoriesPreference(response.data.accessoriesPreference);
 
             })
             .catch((error) => {
@@ -151,7 +151,7 @@ const UserProfile = () => {
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
                             <Icon name="sports-tennis" size={24} color="#0E9CDA"/>
-                            <Text style={styles.preferenceText}>{accessories}</Text>
+                            <Text style={styles.preferenceText}>{accessoriesPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
@@ -225,7 +225,7 @@ const UserProfile = () => {
                         <Text style={styles.preferenceText}>
                             The Pittsburgh Sleep Quality Index (PSQI) consists of 19 self-rated questions.
                             The scoring is based only on the self-rated questions.
-                            The 19 self-rated items and 5 adittional questions are grouped into seven "component"
+                            The 19 self-rated items and 5 additional questions are grouped into seven "component"
                             scores, each ranging from 0 to 3
                             points.
                         </Text>
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
 
     },
     preferenceText: {
-        marginLeft: 10,
+        marginLeft: 2,
         marginRight: 5,
         marginTop: 5,
         textAlign: "left",
