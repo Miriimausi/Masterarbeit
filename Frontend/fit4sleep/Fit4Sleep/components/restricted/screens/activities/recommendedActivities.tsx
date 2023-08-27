@@ -1,22 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react';
-import axios from 'axios';
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../../navigator";
 import {
     View,
     StyleSheet,
-    ScrollView,
-    Button,
     SafeAreaView,
     StatusBar,
-    Animated,
     FlatList,
     Text,
     ActivityIndicator
 } from 'react-native';
 import {AuthContext, AuthContextType} from "../../../../contexts/auth-context";
 import ActivityItem from "./activityItem";
-import { MaterialIcons } from '@expo/vector-icons';
+import {MaterialIcons} from '@expo/vector-icons';
 
 export type Activity = {
     id: number,
@@ -84,7 +80,7 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
     if (!isInitialised) {
         return (
             <View>
-                <ActivityIndicator style={{marginTop: 24}} size="large" color={"#000000"} />
+                <ActivityIndicator style={{marginTop: 24}} size="large" color={"#000000"}/>
             </View>
         )
 
@@ -103,9 +99,21 @@ const RecommendedActivities = ({navigation}: ActivitiesProps) => {
                               onRefresh={calculate}
                     >
                     </FlatList> :
-                    <View style={{width: "80%", backgroundColor:"white", alignSelf:"center", marginTop: 21, paddingVertical: 30, paddingHorizontal: 30, borderRadius: 10, elevation: 2, justifyContent:"center", alignItems:"center"}}>
-                        <Text style={{color: "grey", textAlign:"center"}}>Unfortunately we could not find any fitting activities for you.</Text>
-                        <MaterialIcons style={{marginTop: 30}} name="search-off" size={48} color="grey" />
+                    <View style={{
+                        width: "80%",
+                        backgroundColor: "white",
+                        alignSelf: "center",
+                        marginTop: 21,
+                        paddingVertical: 30,
+                        paddingHorizontal: 30,
+                        borderRadius: 10,
+                        elevation: 2,
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }}>
+                        <Text style={{color: "grey", textAlign: "center"}}>Unfortunately we could not find any fitting
+                            activities for you.</Text>
+                        <MaterialIcons style={{marginTop: 30}} name="search-off" size={48} color="grey"/>
                     </View>
             }
 

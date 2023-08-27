@@ -6,15 +6,12 @@ import {
     TouchableOpacity, Image, SafeAreaView, ScrollView,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import Swiper from 'react-native-swiper';
-import {white} from "react-native-paper/lib/typescript/src/styles/themes/v2/colors";
 import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
 import axios from "axios";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../navigator";
 import {Activity} from "./activities/recommendedActivities";
-import {IActivityItemProps} from "./activities/activityItem";
 
 interface RecommenderInterface {
     id: number;

@@ -1,20 +1,14 @@
-import React, {useContext, useRef, useState} from 'react';
-import {Animated, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigator';
 import {AntDesign} from '@expo/vector-icons';
-import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
+import {AuthContext, AuthContextType} from '../../../contexts/auth-context';
 import {ImageBackground} from 'react-native';
 
-type Login = {
-    username: string;
-    password: string;
-}
-
 type LoginProps = {
-    navigation: NavigationProp<RootStackParamList, 'Login'>
-}
-
+    navigation: NavigationProp<RootStackParamList, 'Login'>;
+};
 
 const Login = ({navigation}: LoginProps) => {
     const [username, setUsername] = useState('');
@@ -28,47 +22,44 @@ const Login = ({navigation}: LoginProps) => {
 
     const handleLogin = async () => {
         const loggedIn: boolean = login(username, password);
-    }
-
+    };
 
     return (
-        <ImageBackground
-            source={require('../../../assets/background-image_2.jpg')}
-            style={styles.background}>
+        <ImageBackground source={require('../../../assets/background-image_2.jpg')} style={styles.background}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <Text style={styles.title}>Welcome</Text>
-                    <View style={styles.inputContainer}>
-                        <AntDesign name="user" size={24} color="#bfbfbf"  style={styles.icon} />
-                        <TextInput
-                            placeholder="username"
-                            value={username}
-                            onChangeText={newUserName => setUsername(newUserName)}
-                        />
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <AntDesign name="lock" size={24} color="#bfbfbf"  style={styles.icon}/>
-                        <TextInput
-                            placeholder="password"
-                            value={password}
-                            onChangeText={newPassword => setPassword(newPassword)}
-                            secureTextEntry
-                        />
-                    </View>
-                    <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                        <Text style={styles.loginButtonText}>Login</Text>
-                    </TouchableOpacity>
-                    <View style={styles.registerContainer}>
-                        <Text style={styles.registerText}>
-                            Have you not registered yet? Click here:
-                            <TouchableOpacity onPress={changeToRegister}>
-                                <Text style={styles.registerButtonText}>Register</Text>
-                            </TouchableOpacity>
-                        </Text>
-                    </View>
+                <View style={styles.inputContainer}>
+                    <AntDesign name="user" size={24} color="#bfbfbf" style={styles.icon}/>
+                    <TextInput
+                        placeholder="username"
+                        value={username}
+                        onChangeText={(newUserName) => setUsername(newUserName)}
+                    />
+                </View>
+                <View style={styles.inputContainer}>
+                    <AntDesign name="lock" size={24} color="#bfbfbf" style={styles.icon}/>
+                    <TextInput
+                        placeholder="password"
+                        value={password}
+                        onChangeText={(newPassword) => setPassword(newPassword)}
+                        secureTextEntry
+                    />
+                </View>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                    <Text style={styles.loginButtonText}>Login</Text>
+                </TouchableOpacity>
+                <View style={styles.registerContainer}>
+                    <Text style={styles.registerText}>
+                        Have you not registered yet? Click here:
+                        <TouchableOpacity onPress={changeToRegister}>
+                            <Text style={styles.registerButtonText}>Register</Text>
+                        </TouchableOpacity>
+                    </Text>
+                </View>
             </ScrollView>
         </ImageBackground>
     );
-}
+};
 
 const styles = StyleSheet.create({
     background: {
@@ -86,13 +77,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         margin: 20,
-        marginTop:20,
+        marginTop: 220,
         color: 'white',
         width: '90%',
     },
     inputContainer: {
         flexDirection: 'row',
-        textAlign: 'left',
         height: 50,
         width: '80%',
         borderColor: 'gray',
@@ -101,12 +91,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginVertical: 10,
         backgroundColor: 'white',
-        elevation: 7
-    },
-
-    registerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        elevation: 7,
     },
     loginButton: {
         width: '50%',
@@ -123,8 +108,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-        alignSelf: 'flex-end'
-
+        alignSelf: 'flex-end',
+    },
+    registerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     registerText: {
         fontSize: 12,
@@ -132,16 +120,15 @@ const styles = StyleSheet.create({
         width: 'auto',
         alignSelf: 'center',
         marginLeft: 10,
-        marginTop: 100,
+        marginTop: 60,
         flexDirection: 'row',
     },
     loginButtonText: {
         color: '#FFF',
         textAlign: 'center',
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
-
     registerButtonText: {
         width: 'auto',
         color: 'white',
@@ -151,15 +138,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         textAlign: 'center',
         fontSize: 14,
-        fontWeight: "bold",
-
+        fontWeight: 'bold',
     },
-
-    icon:{
+    icon: {
         marginLeft: 10,
-        marginTop:10,
-
-    }
+        marginTop: 10,
+    },
 });
 
 export default Login;

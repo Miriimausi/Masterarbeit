@@ -2,9 +2,8 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {NavigationProp} from "@react-navigation/native";
 import {RootStackParamList} from "../../../navigator";
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import ActivityItem from "./activityItem";
-import Swiper from "react-native-swiper";
 
 export type Activity = {
     id: number,
@@ -17,7 +16,7 @@ export type Activity = {
 }
 
 type ActivitiesProps = {
-    navigation: NavigationProp<RootStackParamList, 'AllActivities'>
+    navigation: NavigationProp<RootStackParamList>
 }
 
 
@@ -41,23 +40,23 @@ const AllActivities = ({navigation}: ActivitiesProps) => {
 
     return (
 
-            <View style={styles.slide}>
-                <ScrollView style={styles.ActivitiesContainer}>
-                    <View style={styles.container}>
-                        <View style={styles.tilesContainer}>
-                            {activities.map((activity: Activity, index: number) => (
-                                <ActivityItem
-                                    imageHeight={150}
-                                    width={"47.0%"}
-                                    key={index}
-                                    navigation={navigation}
-                                    activity={activity}
-                                ></ActivityItem>
-                            ))}
-                        </View>
+        <View style={styles.slide}>
+            <ScrollView style={styles.ActivitiesContainer}>
+                <View style={styles.container}>
+                    <View style={styles.tilesContainer}>
+                        {activities.map((activity: Activity, index: number) => (
+                            <ActivityItem
+                                imageHeight={150}
+                                width={"47.0%"}
+                                key={index}
+                                navigation={navigation}
+                                activity={activity}
+                            ></ActivityItem>
+                        ))}
                     </View>
-                </ScrollView>
-            </View>
+                </View>
+            </ScrollView>
+        </View>
 
     );
 };

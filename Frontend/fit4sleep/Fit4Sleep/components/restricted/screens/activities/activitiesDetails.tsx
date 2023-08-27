@@ -7,7 +7,6 @@ import Collapsible from 'react-native-collapsible';
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {ScrollView} from 'react-native';
-import Swiper from "react-native-swiper";
 
 
 type Activity = {
@@ -73,7 +72,7 @@ const ActivitiesDetails = ({navigation, route}: { navigation: any, route: any })
                     <View style={styles.tableTitleContainer}>
                         <Text style={styles.tableTitle}>Heart rate zone limits</Text>
                         <TouchableOpacity onPress={showInfo}>
-                            <Icon name="info" size={25} color="#0E9CDA" />
+                            <Icon name="info" size={25} color="#0E9CDA"/>
                         </TouchableOpacity>
                         <Icon
                             name={isTableCollapsed ? 'keyboard-arrow-down' : 'keyboard-arrow-up'}

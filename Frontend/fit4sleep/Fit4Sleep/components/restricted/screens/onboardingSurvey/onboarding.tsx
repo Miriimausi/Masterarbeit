@@ -5,11 +5,9 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
-    ImageBackground,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Swiper from 'react-native-swiper';
-import CustomNumericScale from "./customNumericScale";
 import {AuthContext, AuthContextType} from "../../../../contexts/auth-context";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
@@ -28,13 +26,13 @@ interface SurveyResponse {
     skillPreference: String;
     locationPreference: String;
     emotionalPreference: String;
-
-    accessories: String;
+    accessoriesPreference: String;
 
 }
 
 const OnboardingSurvey = () => {
     const {userId, setIsOnBoarded} = useContext(AuthContext) as AuthContextType;
+
 
     const [response, setResponse] = useState<SurveyResponse>({
         id: 0,
@@ -50,7 +48,7 @@ const OnboardingSurvey = () => {
         skillPreference: '',
         locationPreference: '',
         emotionalPreference: '',
-        accessories: '',
+        accessoriesPreference: '',
 
     });
 
@@ -83,23 +81,6 @@ const OnboardingSurvey = () => {
         return bmi;
     };
 
-    const handleTimeChange = (timeAvailability: string) => {
-        setResponse({...response, timeAvailability: timeAvailability});
-    };
-
-    const handleTrainingPreferenceChange = (trainingPreference: string) => {
-        setResponse({...response, trainingPreference: trainingPreference});
-    };
-
-    const handleDurationChange = (durationPreference: string) => {
-        setResponse({...response, durationPreference: durationPreference});
-    };
-    const handleIntensityChange = (intensityPreference: string) => {
-        setResponse({...response, intensityPreference: intensityPreference});
-    };
-    const handleAccessoriesChange = (accessories: string) => {
-        setResponse({...response, accessories: accessories});
-    };
 
     const handleSubmit = async () => {
         const requestBody = {
@@ -115,12 +96,11 @@ const OnboardingSurvey = () => {
             socialPreference: response.socialPreference,
             locationPreference: response.locationPreference,
             emotionalPreference: response.emotionalPreference,
-            accessories: response.accessories,
-
+            accessoriesPreference: response.accessoriesPreference,
+            createdAt: new Date(),
             userId: userId,
         };
 
-        console.log(requestBody);
 
         try {
             const response = await fetch('http://10.0.2.2:5000/Antecedents/onboarding', {
@@ -132,20 +112,19 @@ const OnboardingSurvey = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                setIsOnBoarded(data.success);  // Success response
+                setIsOnBoarded(data.success);
+                // Success response
             } else {
                 console.log(`[ERROR]: ${data.error}`);
             }
         } catch (error) {
             console.log('An error occurred:', error);  // Error handling
         }
-
     };
 
 
     return (
         <Swiper showsButtons={true} loop={false}>
-
             <View style={styles.slide}>
                 <Text style={styles.headerText}>Personal Information </Text>
 
@@ -186,13 +165,30 @@ const OnboardingSurvey = () => {
                     />
                 </View>
             </View>
-
             < View style={styles.slide}>
                 <Text style={styles.headerText}>Activity Assessment</Text>
 
-
                 <View style={styles.field}>
-                    <Text style={styles.label}> <Icon name="bolt" size={24} color="#0E9CDA"/> Workout Intensity Preference </Text>
+                    <Text style={styles.label}> <Icon name="access-time" size={24} color="#0E9CDA"/> Time Availabilty
+                    </Text>
+                    <View style={styles.picker}>
+                        <Picker
+                            selectedValue={response.timeAvailability}
+                            onValueChange={(value) =>
+                                setResponse({...response, timeAvailability: value})
+                            }
+                        >
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="Morning" value="morning"/>
+                            <Picker.Item label="Midday" value="midday"/>
+                            <Picker.Item label="Afternoon" value="afternoon"/>
+                            <Picker.Item label="Evening" value="evening"/>
+                        </Picker>
+                    </View>
+                </View>
+                <View style={styles.field}>
+                    <Text style={styles.label}> <Icon name="bolt" size={24} color="#0E9CDA"/> Workout Intensity
+                        Preference </Text>
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.intensityPreference}
@@ -201,11 +197,34 @@ const OnboardingSurvey = () => {
                             }
                         >
                             <Picker.Item label="Select" value=""/>
-                            <Picker.Item label="Moderate" value="Moderate"/>
-                            <Picker.Item label="Intensive" value="Itensive"/>
+                            <Picker.Item label="Moderate" value="moderate"/>
+                            <Picker.Item label="Intensive" value="intensive"/>
                         </Picker>
                     </View>
                 </View>
+
+
+                <View style={styles.field}>
+                    <Text style={styles.label}> <Icon name="trending-up" size={24} color="#0E9CDA"/> Your Skill
+                        Level: </Text>
+                    <View style={styles.picker}>
+                        <Picker
+                            selectedValue={response.skillPreference}
+                            onValueChange={(value) =>
+                                setResponse({...response, skillPreference: value})
+                            }
+                        >
+                            <Picker.Item label="Select" value=""/>
+                            <Picker.Item label="I'm at a beginner level" value="beginner"/>
+                            <Picker.Item label="I'm at a intermediate level" value="intermediate"/>
+
+                        </Picker>
+                    </View>
+                </View>
+
+            </View>
+            < View style={styles.slide}>
+                <Text style={styles.headerText}>Activity Assessment</Text>
                 <View style={styles.field}>
                     <Text style={styles.label}> <Icon name="more-time" size={30} color="#0E9CDA"/> Duration
                         Availability:</Text>
@@ -225,7 +244,7 @@ const OnboardingSurvey = () => {
                 </View>
                 <View style={styles.field}>
                     <Text style={styles.label}> <Icon name="directions-run" size={30} color="#0E9CDA"/> Activity
-                        Preference:  </Text>
+                        Preference: </Text>
                     <View style={styles.picker}>
                         <Picker
                             selectedValue={response.trainingPreference}
@@ -246,16 +265,14 @@ const OnboardingSurvey = () => {
                     <View style={styles.picker}>
 
                         <Picker
-                            selectedValue={response.accessories}
+                            selectedValue={response.accessoriesPreference}
                             onValueChange={(value) =>
-                                setResponse({...response, accessories: value})
+                                setResponse({...response, accessoriesPreference: value})
                             }
                         >
-
                             <Picker.Item label="Select" value=""/>
                             <Picker.Item label="I want to use Equipment" value="with_accessories"/>
                             <Picker.Item label="I do not want to use Equipment" value="without_accessories"/>
-
                         </Picker>
                     </View>
                 </View>
@@ -278,24 +295,6 @@ const OnboardingSurvey = () => {
                             <Picker.Item label="I want to workout in a group" value="group"/>
 
                         </Picker>
-                    </View>
-
-                    <View style={styles.field}>
-                        <Text style={styles.label}> <Icon name="trending-up" size={24} color="#0E9CDA"/> Your Skill
-                            Level: </Text>
-                        <View style={styles.picker2}>
-                            <Picker
-                                selectedValue={response.skillPreference}
-                                onValueChange={(value) =>
-                                    setResponse({...response, skillPreference: value})
-                                }
-                            >
-                                <Picker.Item label="Select" value=""/>
-                                <Picker.Item label="I'm at a beginner level" value="beginner"/>
-                                <Picker.Item label="I'm at a intermediate level" value="intermediate"/>
-
-                            </Picker>
-                        </View>
                     </View>
 
 
@@ -381,10 +380,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         backgroundColor: '#0E9CDA',
-        borderRadius:20,
+        borderRadius: 20,
         padding: 10,
-        color:'white',
-        textAlign:"center",
+        color: 'white',
+        textAlign: "center",
         width: '80%',
     },
 
@@ -418,7 +417,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         width: '100%',
         backgroundColor: '#fff',
-        elevation:5,
+        elevation: 5,
     },
     picker2: {
         borderWidth: 1,
@@ -426,7 +425,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         width: '125%',
         backgroundColor: '#fff',
-        elevation:5,
+        elevation: 5,
     },
 
     surveyContainer: {

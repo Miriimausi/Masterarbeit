@@ -10,21 +10,24 @@ export type AuthContextType = {
 
     username: string | null,
 
-    password: string| null,
+    password: string | null,
 
     email: string | null
 }
 
-const AuthContext = createContext<AuthContextType | null>( {
+const AuthContext = createContext<AuthContextType | null>({
     isLoggedIn: false,
     isOnBoarded: false,
-    setIsOnBoarded: () => {},
+    setIsOnBoarded: () => {
+    },
     userId: null,
     username: null,
     password: null,
     email: null,
-    login: () => {},
-    logout: () => {}
+    login: () => {
+    },
+    logout: () => {
+    },
 })
 
 const AuthProvider = ({children}: any) => {
@@ -50,11 +53,10 @@ const AuthProvider = ({children}: any) => {
             setIsOnBoarded(data.user.isOnBoarded);
             setEmail(data.user.email);
             setPassword(data.user.password);
-            setUsername(data.user.username)
+            setUsername(data.user.username);
         } else {
             console.log('You could not log in');
         }
-            // setIsLoggedIn(true);
     }
 
     const logout = () => {
@@ -63,15 +65,15 @@ const AuthProvider = ({children}: any) => {
 
     return (
         <AuthContext.Provider value={{
-            isLoggedIn: isLoggedIn,
-            login: login,
-            logout: logout,
-            isOnBoarded: isOnBoarded,
-            setIsOnBoarded: setIsOnBoarded,
-            userId: userId,
-            username: username,
-            email: email,
-            password: password
+            isLoggedIn,
+            login,
+            logout,
+            isOnBoarded,
+            setIsOnBoarded,
+            userId,
+            username,
+            email,
+            password,
         }}>
             {children}
         </AuthContext.Provider>

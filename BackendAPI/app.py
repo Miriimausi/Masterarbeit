@@ -5,12 +5,10 @@ from flask_restx import Resource, Api, fields, Namespace
 from flask import Flask, request, jsonify
 from flask import redirect, url_for
 from decimal import Decimal
-import json
 from difflib import SequenceMatcher
 from flask import Flask, request
 from flask_restx import Resource
-import requests
-
+from sqlalchemy import Date, func
 
 
 app = Flask(__name__)
@@ -62,13 +60,10 @@ class Questionnaires(db.Model):
         return {
             'id': self.id,
             'question': self.question,
-            'type':self.type,
-          
-            
+            'type':self.type, 
             }
 
 class UserAntecedents(db.Model):
-
     __tablename__="userAntecedents"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     age = db.Column(db.Integer, nullable=False)
@@ -86,6 +81,7 @@ class UserAntecedents(db.Model):
     accessoriesPreference = db.Column(db.String)
     userId =db.Column(db.Integer)
     sleepScore =db.Column(db.Integer)
+    createdAt = db.Column(Date)
 
 
     def to_dict(self):
@@ -103,8 +99,7 @@ class UserAntecedents(db.Model):
             'skillPreference':self.skillPreference,
             'locationPreference':self.locationPreference,
             'emotionalPreference':self.emotionalPreference,
-            ' accessoriesPreference':self. accessoriesPreference,
-
+            'accessoriesPreference':self.accessoriesPreference,
             'userID':self.userId,
             'sleepScore':self.sleepScore
             
@@ -131,7 +126,6 @@ user_model = api.model('Users', {
 user_login_model = api.model('UserLogin', {
     'username': fields.String,
     'password': fields.String,
-
 })
 
 activity_model = api.model('Activities', {
@@ -171,7 +165,8 @@ antecedents_model = api.model('Antecedents', {
     'emotionalPreference':fields.String,
     'accessoriesPreference':fields.String,
     'userId': fields.Integer,
-    'sleepScore': fields.Integer
+    'sleepScore': fields.Integer,
+    'createdAt': fields.DateTime
 })
 
 
@@ -214,6 +209,25 @@ class Authentication(Resource):
         
         return jsonify({'success': True})
     
+@auth_namespace.route('/update')
+class Authentication(Resource):
+    def put(self):
+        username = request.json.get('username')
+        password = request.json.get('password')
+        
+        if not username or not password:
+            return jsonify({'success': False, 'error': 'Incomplete data'})
+        
+        user_to_update = Users.query.filter_by(username=username).first()
+        if not user_to_update:
+            return jsonify({'success': False, 'error': 'User not found'})
+        
+        user_to_update.password = password
+        db.session.commit()
+        
+        return jsonify({'success': True})
+
+    
 @antecedents_namespace.route('/onboarding')
 class Antecedents(Resource):
     @api.expect(antecedents_model)
@@ -234,6 +248,7 @@ class Antecedents(Resource):
         accessoriesPreference = request.json.get('accessoriesPreference')
         sleepScore = request.json.get('sleepScore')
         userId = request.json.get('userId')
+        createdAt = request.json.get('createdAt')
 
         
         users = Users.query.get(userId)
@@ -253,7 +268,8 @@ class Antecedents(Resource):
                 skillPreference= skillPreference,
                 locationPreference=locationPreference,
                 accessoriesPreference=accessoriesPreference,
-                emotionalPreference=emotionalPreference
+                emotionalPreference=emotionalPreference,
+                createdAt =createdAt
             )
 
             if new_antecedents is not None:
@@ -273,7 +289,6 @@ class Antecedents(Resource):
 def calculate_modified_dice_coefficients(item: dict, other_items: list[Activities], modified_weights: dict = None):
     """
     Calculates the Dice coefficient for each item in the list, using the modified weights
-    
     :param item: The item to compare against
     :param other_items: The list of items to compare against
     :param modified_weights: The modified weights to use for each attribute (optional) E.g. {'type': 1.5, 'intensity': 1.2}
@@ -391,7 +406,7 @@ class Antecedents(Resource):
             user.skillPreference = request.json.get('skillPreference')
             user.locationPreference = request.json.get('locationPreference')
             user.emotionalPreference = request.json.get('emotionalPreference')
-            user.accessories = request.json.get('accessoriesPreference')
+            user.accessoriesPreference = request.json.get('accessoriesPreference')
             db.session.commit()
 
             current_prefs = {
@@ -402,14 +417,13 @@ class Antecedents(Resource):
                 'skill': user.skillPreference if user.skillPreference else '',
                 'location': user.locationPreference if user.locationPreference else '',
                 'emotional': user.emotionalPreference if user.emotionalPreference else '',
-                'accessories': user.accessories if user.accessories else '',
+                'accessoriesPreference': user.accessoriesPreference if user.accessoriesPreference else '',
             }
             
             modified_weights = {
                 'type': 3,
                 'intensity':1.5,
                 'accessories':2
-
             }
             similarity_scores = calculate_modified_dice_coefficients(current_prefs, activities, modified_weights)
 
@@ -435,9 +449,7 @@ class Antecedents(Resource):
                     'skill':activity.skill,
                     'location':activity.location,
                     'emotional':activity.emotional,
-                    'accessories': activity.accessories
-            
-
+                    'accessories': activity.accessories      
                 }
                 response_data.append(activity_data)
 
@@ -454,7 +466,7 @@ class Antecedents(Resource):
         
         antecedent = UserAntecedents.query.filter_by(userId=user_id).first()
         if antecedent:
-            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference,'durationPreference': antecedent.durationPreference, 'socialPreference': antecedent.socialPreference, 'skillPreference': antecedent.skillPreference, 'locationPreference': antecedent.locationPreference, 'emotionalPreference': antecedent.emotionalPreference, 'accessoriesPreference':antecedent.accessoriesPreference}, 200
+            return {'timeAvailability': antecedent.timeAvailability, 'trainingPreference': antecedent.trainingPreference, 'intensityPreference': antecedent.intensityPreference,'durationPreference': antecedent.durationPreference, 'socialPreference': antecedent.socialPreference, 'skillPreference': antecedent.skillPreference, 'locationPreference': antecedent.locationPreference, 'emotionalPreference': antecedent.emotionalPreference, 'accessoriesPreference': antecedent.accessoriesPreference}, 200
         else:
             return {'message': 'Antecedent not found'}, 404
         
@@ -599,7 +611,6 @@ class ActivityList(Resource):
         activities = Activities.query.order_by(Activities.id.asc()).all()
         return jsonify([activity.to_dict() for activity in activities])
     
-
 
 def recreate_db():
     db.drop_all()

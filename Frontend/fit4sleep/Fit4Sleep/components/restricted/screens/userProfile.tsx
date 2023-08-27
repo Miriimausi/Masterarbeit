@@ -1,8 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import axios from "axios";
 import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
-import {appColorTheme} from "../../../constants/colors";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface Question {
@@ -13,9 +12,12 @@ interface Question {
 }
 
 const UserProfile = () => {
-    const [editMode, setEditMode] = useState(false);
+
     const [userProfile, setUserProfile] = useState(null);
     const {userId, username, password, email} = useContext(AuthContext) as AuthContextType;
+    const [editMode, setEditMode] = useState(false);
+    const [editedUsername, setEditedUsername] = useState(username);
+    const [editedPassword, setEditedPassword] = useState(password);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [expanded, setExpanded] = useState(false);
     const [scoreExpanded, setScoreExpanded] = useState(false);
@@ -31,13 +33,7 @@ const UserProfile = () => {
     const [emotionalPreference, setEmotionalPreference] = useState<number | null>(null);
     const [accessoriesPreference, setAccessoriesPreference] = useState<number | null>(null);
 
-    const handleEditButtonPress = () => {
-        setEditMode(true);
-    };
 
-    const handleSaveButtonPress = () => {
-        setEditMode(false);
-    };
 
 
     useEffect(() => {
@@ -104,6 +100,35 @@ const UserProfile = () => {
         setScoreExpanded(!scoreExpanded);
     };
 
+    const handleEditButtonPress = () => {
+        setEditMode(true);
+    };
+
+    const handleSaveButtonPress = async () => {
+        try {
+            const response = await fetch('http://10.0.2.2:5000/auth/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: editedUsername,
+                    password: editedPassword
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setEditMode(false);
+            } else {
+                console.log('Error updating profile:', data.error);
+            }
+        } catch (error) {
+            console.log('An error occurred:', error);
+        }
+    };
+
 
     return (
         <ScrollView style={styles.container}>
@@ -119,21 +144,32 @@ const UserProfile = () => {
                             <Text style={styles.headerButton}>Edit</Text>
                         </TouchableOpacity>
                     )}
-
                 </View>
-
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Username:</Text>
-
-
-                    <Text style={styles.value}>{username}</Text>
+                    {editMode ? (
+                        <TextInput
+                            value={editedUsername || ''}
+                            onChangeText={setEditedUsername}
+                        />
+                    ) : (
+                        <Text style={styles.value}>{username}</Text>
+                    )}
                 </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Password:</Text>
-
-                    <Text style={styles.value}>******</Text>
-
+                    {editMode ? (
+                        <TextInput
+                            value={editedPassword || ''}
+                            onChangeText={setEditedPassword}
+                            secureTextEntry
+                        />
+                    ) : (
+                        <Text style={styles.value}>******</Text>
+                    )}
                 </View>
+
+
 
                 <View style={styles.contentContainer}>
                     <View style={styles.preferencesContainer}>
@@ -144,14 +180,14 @@ const UserProfile = () => {
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="directions-run" size={24} color="#0E9CDA"/>
-                            <Text style={styles.preferenceText}>{trainingPreference}</Text>
+                            <Icon name="bolt" size={24} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{intensityPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="sports-tennis" size={24} color="#0E9CDA"/>
-                            <Text style={styles.preferenceText}>{accessoriesPreference}</Text>
+                            <Icon name="trending-up" size={24} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{skillPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
@@ -162,8 +198,8 @@ const UserProfile = () => {
                     </View>
                     <View style={styles.preferencesContainer}>
                         <View style={styles.preferenceItem}>
-                            <Icon name="call-made" size={24} color="#0E9CDA"/>
-                            <Text style={styles.preferenceText}>{skillPreference}</Text>
+                            <Icon name="directions-run" size={24} color="#0E9CDA"/>
+                            <Text style={styles.preferenceText}>{trainingPreference}</Text>
                         </View>
                     </View>
                     <View style={styles.preferencesContainer}>
@@ -199,7 +235,7 @@ const UserProfile = () => {
                 {scoreExpanded && (
 
                     <View style={styles.contentContainer}>
-                        <Text style={styles.scoreText}>                         Your Score: {sleepScore}                           </Text>
+                        <Text style={styles.scoreText}> Your Score: {sleepScore}                           </Text>
                         <Text style={styles.preferenceText}>
                             The index combines seven component scores to create a global score ranging from 0 to 21.
                             A global score of 0 represents no difficulties, while a score of 21 indicates severe
@@ -222,13 +258,17 @@ const UserProfile = () => {
 
                 {expanded && (
                     <View style={styles.contentContainer}>
+
                         <Text style={styles.preferenceText}>
                             The Pittsburgh Sleep Quality Index (PSQI) consists of 19 self-rated questions.
                             The scoring is based only on the self-rated questions.
-                            The 19 self-rated items and 5 additional questions are grouped into seven "component"
-                            scores, each ranging from 0 to 3
-                            points.
                         </Text>
+                        <Text style={styles.preferenceText}>
+                            The 19 self-rated items and 5 additional questions are grouped into seven "component"
+                            scores, each ranging from 0 to 3 points.
+                        </Text>
+
+
                         {questions.map((question) => (
                             <View key={question.id} style={styles.questionContainer}>
                                 <Text style={styles.questionText}>{question.question}</Text>
@@ -426,7 +466,7 @@ const styles = StyleSheet.create({
 
     },
     preferenceText: {
-        marginLeft: 2,
+        marginLeft: 3,
         marginRight: 5,
         marginTop: 5,
         textAlign: "left",

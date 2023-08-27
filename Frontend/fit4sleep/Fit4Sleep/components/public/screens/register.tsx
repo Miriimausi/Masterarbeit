@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
-import {ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {NavigationProp} from "@react-navigation/native";
-import {RootStackParamList} from "../../navigator";
-
+import {ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity} from 'react-native';
+import {NavigationProp} from '@react-navigation/native';
+import {RootStackParamList} from '../../navigator';
 
 type RegisterProps = {
-    navigation: NavigationProp<RootStackParamList, 'Register'>
-}
-const Register = () => {
+    navigation: NavigationProp<RootStackParamList, 'Register'>;
+};
+
+const Register = ({navigation}: RegisterProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -15,24 +15,21 @@ const Register = () => {
         const response = await fetch('http://10.0.2.2:5000/auth/register', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, password})
+            body: JSON.stringify({username, password}),
         });
         const data = await response.json();
         if (data.success) {
             console.log('New User added');
         } else {
-            console.log('No User was registerd');
+            console.log('No User was registered');
         }
-    }
+    };
 
     return (
-        <ImageBackground
-            source={require('../../../assets/background-image_2.jpg')}
-            style={styles.background}>
+        <ImageBackground source={require('../../../assets/background-image_2.jpg')} style={styles.background}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-
                 <Text style={styles.title}>User Registration</Text>
 
                 <TextInput
@@ -58,7 +55,6 @@ const Register = () => {
 };
 
 const styles = StyleSheet.create({
-
     background: {
         resizeMode: 'cover',
         justifyContent: 'center',
@@ -77,10 +73,8 @@ const styles = StyleSheet.create({
         color: 'white',
         width: '90%',
     },
-
     inputContainer: {
         flexDirection: 'row',
-        textAlign: 'left',
         height: 50,
         width: '80%',
         borderColor: 'gray',
@@ -89,10 +83,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginVertical: 10,
         backgroundColor: 'white',
-        elevation: 7
+        elevation: 7,
     },
-
-
     registerButton: {
         width: '50%',
         backgroundColor: '#0E9CDA',
@@ -108,14 +100,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-        alignSelf: 'flex-end'
-
+        alignSelf: 'flex-end',
     },
     registerButtonText: {
         color: '#FFF',
         textAlign: 'center',
         fontSize: 16,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
 });
 

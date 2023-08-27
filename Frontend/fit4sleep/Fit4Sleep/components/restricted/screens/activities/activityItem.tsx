@@ -1,7 +1,5 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import {Activity} from "./allActivities";
-import axios from "axios";
 
 export interface IActivityItemProps {
     navigation: any,
@@ -9,7 +7,6 @@ export interface IActivityItemProps {
     imageHeight: number,
     activity: Activity,
 }
-
 
 
 const ActivityItem = (props: IActivityItemProps) => {
@@ -27,7 +24,6 @@ const ActivityItem = (props: IActivityItemProps) => {
     )
 
 }
-
 
 
 const styles = StyleSheet.create({
@@ -55,7 +51,6 @@ const styles = StyleSheet.create({
     tile: {
         backgroundColor: '#fff',
         marginBottom: 10,
-        // marginHorizontal: 5,
         borderRadius: 10,
         overflow: 'hidden',
         elevation: 4

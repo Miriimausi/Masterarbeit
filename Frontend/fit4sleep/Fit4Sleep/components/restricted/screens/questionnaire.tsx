@@ -7,11 +7,8 @@ import {
     ScrollView, TextInput,
 } from 'react-native';
 import axios from 'axios';
-import * as Progress from 'react-native-progress';
 import {appColorTheme} from "../../../constants/colors";
-import CustomNumericScale from "./onboardingSurvey/customNumericScale";
 import {Picker} from "@react-native-picker/picker";
-import Collapsible from "react-native-collapsible";
 import Swiper from 'react-native-swiper';
 import {AuthContext, AuthContextType} from "../../../contexts/auth-context";
 
@@ -434,9 +431,9 @@ const Questionnaire = () => {
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
                                     <TextInput style={styles.InputContainer}
-                                        placeholder="Type your answer here"
-                                        onChangeText={(answer) => handleAnswer(question, answer)}
-                                        value={answers[question.id] || ''}
+                                               placeholder="Type your answer here"
+                                               onChangeText={(answer) => handleAnswer(question, answer)}
+                                               value={answers[question.id] || ''}
                                     />
                                 </View>
                             </View>
@@ -453,9 +450,9 @@ const Questionnaire = () => {
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
                                     <TextInput style={styles.InputContainer}
-                                        placeholder="Type your answer here"
-                                        onChangeText={(answer) => handleAnswer(question, answer)}
-                                        value={answers[question.id] || ''}
+                                               placeholder="Type your answer here"
+                                               onChangeText={(answer) => handleAnswer(question, answer)}
+                                               value={answers[question.id] || ''}
                                     />
                                 </View>
                             </View>
@@ -472,9 +469,9 @@ const Questionnaire = () => {
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
                                     <TextInput style={styles.InputContainer}
-                                        placeholder="Type your answer here"
-                                        onChangeText={(answer) => handleAnswer(question, answer)}
-                                        value={answers[question.id] || ''}
+                                               placeholder="Type your answer here"
+                                               onChangeText={(answer) => handleAnswer(question, answer)}
+                                               value={answers[question.id] || ''}
                                     />
                                 </View>
                             </View>
@@ -492,9 +489,9 @@ const Questionnaire = () => {
                                 <Text style={styles.questionText}>{question.question}</Text>
                                 <View style={styles.answerContainer}>
                                     <TextInput style={styles.InputContainer}
-                                        placeholder="Type your answer here"
-                                        onChangeText={(answer) => handleAnswer(question, answer)}
-                                        value={answers[question.id] || ''}
+                                               placeholder="Type your answer here"
+                                               onChangeText={(answer) => handleAnswer(question, answer)}
+                                               value={answers[question.id] || ''}
                                     />
                                 </View>
                             </View>
@@ -726,10 +723,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         backgroundColor: '#0E9CDA',
-        borderRadius:20,
+        borderRadius: 20,
         padding: 10,
-        color:'white',
-        textAlign:"center",
+        color: 'white',
+        textAlign: "center",
 
     },
 
@@ -757,7 +754,7 @@ const styles = StyleSheet.create({
 
         marginRight: 5,
         marginTop: 5,
-        marginBottom:30,
+        marginBottom: 30,
         textAlign: "center",
         color: 'grey',
         fontSize: 16,
@@ -779,13 +776,13 @@ const styles = StyleSheet.create({
 
     },
 
-    picker:{
+    picker: {
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 30,
         width: '100%',
         backgroundColor: '#fff',
-        elevation:5,
+        elevation: 5,
 
     },
     center: {
@@ -813,7 +810,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 
-    InputContainer:{
+    InputContainer: {
         flexDirection: 'row',
         textAlign: 'center',
         height: 50,
@@ -864,7 +861,7 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         marginVertical: 20,
-        marginTop:250,
+        marginTop: 250,
     },
     submitButtonText: {
         color: 'white',
