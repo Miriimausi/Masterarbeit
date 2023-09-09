@@ -417,7 +417,7 @@ class Antecedents(Resource):
                 'skill': user.skillPreference if user.skillPreference else '',
                 'location': user.locationPreference if user.locationPreference else '',
                 'emotional': user.emotionalPreference if user.emotionalPreference else '',
-                'accessoriesPreference': user.accessoriesPreference if user.accessoriesPreference else '',
+                'accessories': user.accessoriesPreference if user.accessoriesPreference else '',
             }
             
             modified_weights = {
